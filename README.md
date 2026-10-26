@@ -44,7 +44,7 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Pop-out | The window icon in the panel's header opens these settings in a floating window you can drag around. |
 | Reset everything | Puts every theme setting back to its default after asking first. |
 | Export / Import | Save all theme settings, including per-character colors, to a JSON file and load them back. |
-| Chat position | Dock the chat window on the left, in the middle, or on the right. Also available from the arrow button at the left end of the message box. |
+| Chat position | Dock the chat window on the left, in the middle, or on the right. Also available from the round arrow button just left of the message box. |
 | Show character image | With the chat on the left or right, shows the character's image on the free side, at full height when the image is large enough. |
 | Hide chat background image | Hides your background for a flat Yodayo look. |
 

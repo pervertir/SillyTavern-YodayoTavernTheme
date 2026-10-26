@@ -198,23 +198,36 @@ body.yodayo-tavern #qr--bar > .qr--buttons .qr--button:hover {
     background-color: var(--yt-surface-2);
 }
 
-/* Chat position arrow (left of the message box): one button, with a small menu above it */
+/* Chat position arrow: a separate round button just left of the message box, with a small
+   menu above it. It sits outside the pill, so #form_sheld is its frame. */
 #yt-position-toggle {
     display: none;
 }
 
-body.yodayo-tavern #yt-position-toggle {
+body.yodayo-tavern #form_sheld {
     position: relative;
+}
+
+body.yodayo-tavern #yt-position-toggle {
+    position: absolute;
+    /* the message box is min(85%, 640px) wide and centered; sit 8px to its left */
+    left: calc(50% - min(85%, 640px) / 2 - 48px);
+    bottom: calc(12px + 2px);
+    z-index: 31;
     display: flex;
     align-items: center;
 }
 
 body.yodayo-tavern #yt-position-toggle .yt-position-button {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: var(--yt-panel-surface);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
+    border: 1px solid var(--yt-line-strong);
     border-radius: 9999px;
     color: var(--yt-muted);
     font-size: 14px;
@@ -223,14 +236,14 @@ body.yodayo-tavern #yt-position-toggle .yt-position-button {
 }
 
 body.yodayo-tavern #yt-position-toggle .yt-position-button:hover {
-    background-color: var(--yt-surface-2);
+    background-color: var(--yt-surface-3);
     color: var(--yt-text);
 }
 
 body.yodayo-tavern #yt-position-toggle .yt-position-menu {
     position: absolute;
-    bottom: calc(100% + 10px);
-    left: -6px;
+    bottom: calc(100% + 8px);
+    left: -4px;
     z-index: 50;
     display: flex;
     gap: 2px;
@@ -269,9 +282,13 @@ body.yodayo-tavern #yt-position-toggle .yt-position-option.active {
     color: var(--yt-accent-ink);
 }
 
-/* positions only change anything on wide screens */
+/* positions only change anything on wide screens, and the home page has no message box */
 @media screen and (max-width: 1000px) {
     body.yodayo-tavern #yt-position-toggle {
         display: none;
     }
+}
+
+body.yodayo-tavern.yt-home-active #yt-position-toggle {
+    display: none;
 }

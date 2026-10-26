@@ -355,14 +355,14 @@ function applyRecentChatsDefaults() {
 
 const POSITIONS = Object.freeze([
     { value: 'left', icon: 'fa-arrow-left', label: 'Chat on the left' },
-    { value: 'middle', icon: 'fa-arrows-left-right-to-line', label: 'Chat in the middle' },
+    { value: 'middle', icon: 'fa-arrow-down', label: 'Chat in the middle' },
     { value: 'right', icon: 'fa-arrow-right', label: 'Chat on the right' },
 ]);
 
-/** Arrow button left of the message box, like Yodayo's, that moves the chat left, middle or right. */
+/** Round arrow button to the left of the message box, like Yodayo's, that moves the chat left, middle or right. */
 function initPositionToggle() {
-    const form = document.getElementById('leftSendForm');
-    if (!form) {
+    const formSheld = document.getElementById('form_sheld');
+    if (!formSheld) {
         return;
     }
     const wrap = document.createElement('div');
@@ -428,7 +428,7 @@ function initPositionToggle() {
     });
 
     wrap.append(button, menu);
-    form.prepend(wrap);
+    formSheld.append(wrap);
     refresh();
     $('#yt_chat_position').on('change', refresh);
 }
