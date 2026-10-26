@@ -33,7 +33,7 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Your messages | Put your bubbles on the right (Yodayo style) or the left. |
 | Font | Inter (falls back to the system font), the system UI font, or SillyTavern's default. |
 | Bubble max width | How wide a chat bubble may grow on desktop. |
-| Chat opacity | How see-through the chat panel and message box are (default 80%). |
+| Bubble opacity | How see-through chat bubbles and the message box are (default 80%). |
 | Chat position | Dock the chat window on the left, in the middle, or on the right. |
 | Show character image | With the chat on the left or right, shows the character's image on the free side. |
 | Hide chat background image | Hides your background for a flat Yodayo look. |
