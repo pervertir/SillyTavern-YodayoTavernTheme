@@ -12,15 +12,30 @@ body.yodayo-tavern.yt-nav-rail.yt-home-active #sheld {
     width: min(1180px, calc(100vw - 96px));
 }
 
-/* a solid page like Yodayo's, softened so the background still shows at the edges */
-body.yodayo-tavern.yt-home-active #chat {
-    margin: var(--yt-space-2) 0;
-    padding: 0 var(--yt-space-4) var(--yt-space-4);
+/* A solid page like Yodayo's, softened so the background still shows at the edges.
+   The rounded panel is #sheld and the scrolling happens in #chat inside it, inset from
+   the top and bottom: a rounded scroll box would let its scrollbar run past the corners
+   (the theme's thin scrollbars can't be given track margins in Chrome). */
+body.yodayo-tavern.yt-home-active #sheld {
+    top: var(--yt-space-2);
+    height: calc(100dvh - var(--yt-space-2) * 2);
+    max-height: calc(100dvh - var(--yt-space-2) * 2);
     background-color: rgb(26 28 30 / 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--yt-line);
     border-radius: 24px;
+    overflow: hidden;
+}
+
+body.yodayo-tavern.yt-home-active #chat {
+    margin: 20px 6px 20px 0;
+    padding: 0 var(--yt-space-3) 0 var(--yt-space-4);
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    border-radius: 0;
 }
 
 body.yodayo-tavern.yt-home-active #form_sheld,
@@ -295,7 +310,7 @@ body.yodayo-tavern .yt-home {
     display: flex;
     flex-direction: column;
     gap: var(--yt-space-4);
-    padding: var(--yt-space-4) var(--yt-space-2) 0;
+    padding: 0 var(--yt-space-2);
     font-family: var(--yt-font);
 }
 
@@ -604,9 +619,4 @@ body.yodayo-tavern .yt-card-group .yt-card-media img {
 
 body.yodayo-tavern .yt-card-group:hover .yt-card-media img {
     transform: none;
-}
-
-/* the page's corners are rounder than most, so its scrollbar starts and ends further in */
-body.yodayo-tavern.yt-home-active #chat::-webkit-scrollbar-track {
-    margin-block: 24px;
 }

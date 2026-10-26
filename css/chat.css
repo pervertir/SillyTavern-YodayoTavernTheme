@@ -619,3 +619,40 @@ body.yodayo-tavern #chat .mes:has([data-type="assistant_note"]) .mes_text {
     background: transparent;
     border: none;
 }
+
+/* Back arrow to the home page; shown in any open chat (no welcome panel on screen) */
+#yt-back-home {
+    display: none;
+}
+
+body.yodayo-tavern:not(:has(#chat .welcomePanel)) #yt-back-home {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: var(--yt-space-2);
+    left: var(--yt-space-2);
+    z-index: 35;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background-color: color-mix(in srgb, var(--yt-surface-2) calc(var(--yt-panel-alpha) * 100%), transparent);
+    backdrop-filter: blur(var(--yt-panel-blur));
+    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    border: 1px solid var(--yt-line-strong);
+    border-radius: 9999px;
+    color: var(--yt-text);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color var(--yt-fast) var(--yt-ease), color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern #yt-back-home:hover {
+    background-color: var(--yt-surface-3);
+    color: var(--yt-accent);
+}
+
+/* keep the first message clear of the arrow */
+body.yodayo-tavern:not(:has(#chat .welcomePanel)) #chat {
+    padding-top: 52px;
+}

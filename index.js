@@ -40,6 +40,7 @@ let syncTavernHome = () => {};
 let refreshColorControls = () => {};
 
 const RAIL_TOGGLE_ID = 'yt-rail-toggle';
+const BACK_BUTTON_ID = 'yt-back-home';
 
 const ART_ID = 'yt-character-art';
 /** A character image at least this share of the art area's height is shown at full height. */
@@ -292,6 +293,23 @@ function initRailToggle() {
     });
 }
 
+/** Arrow at the top of a chat that closes it and returns to the home page. */
+function initBackButton() {
+    const sheld = document.getElementById('sheld');
+    if (!sheld) {
+        return;
+    }
+    const button = document.createElement('button');
+    button.id = BACK_BUTTON_ID;
+    button.type = 'button';
+    button.className = 'fa-solid fa-arrow-left';
+    button.title = 'Back to home';
+    button.setAttribute('aria-label', 'Back to home');
+    // SillyTavern's own "Close chat" option, from the burger menu
+    button.addEventListener('click', () => $('#option_close_chat').trigger('click'));
+    sheld.prepend(button);
+}
+
 async function init() {
     const { renderExtensionTemplateAsync } = SillyTavern.getContext();
     const container = document.getElementById('extensions_settings2');
@@ -316,6 +334,7 @@ async function init() {
     applySettings();
 
     initRailToggle();
+    initBackButton();
     initSheetResizers({ getSettings, saveSettings });
     initSliderFills();
     initVnMode({ getSettings, saveSettings, onModeChange: updateCharacterArt });
