@@ -380,3 +380,12 @@ body.yodayo-tavern #yt-chat-settings-cog:hover {
     border-radius: 9999px;
     padding-left: var(--yt-space-3);
 }
+
+/* a cutout preview sits on a checkerboard so its transparency shows */
+#yt-chat-settings-window .yt-image-preview.yt-cutout {
+    background: repeating-conic-gradient(var(--yt-surface-3) 0% 25%, var(--yt-surface) 0% 50%) 50% / 12px 12px;
+}
+
+#yt-chat-settings-window .yt-remove-status {
+    margin-left: auto;
+}

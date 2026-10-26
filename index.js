@@ -10,6 +10,7 @@ import { applyAdvanced, initAdvancedControls } from './advanced.js';
 import { initSettingsPopout } from './popout.js';
 import { placePagination } from './pagination.js';
 import { initSharpAvatars, sharpenAvatars } from './avatars.js';
+import { getCutout, initBackgroundRemoval, revalidateCutout } from './bgremove.js';
 import { applyBackgroundOverride, getEffectiveOverrides, initCharacterSettings } from './charsettings.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
@@ -48,6 +49,8 @@ const defaultSettings = Object.freeze({
     advanced: {},
     /** Per-chat overrides from the chat's cog: { [chat id]: { colors, advanced, background } } */
     chatThemes: {},
+    /** Background-removed character images: { [source URL]: { path, version } } */
+    cutouts: {},
 });
 
 let syncTavernHome = () => {};
@@ -144,7 +147,14 @@ function updateCharacterArt() {
     const settings = getSettings();
     const docked = settings.chatPosition === 'left' || settings.chatPosition === 'right'
         || document.body.classList.contains('waifuMode');
-    const url = settings.enabled && settings.characterArt && docked ? getCharacterImageUrl() : null;
+    const source = settings.enabled && settings.characterArt && docked ? getCharacterImageUrl() : null;
+    // the cutout once it's ready; the original meanwhile
+    const url = source && getEffectiveOverrides(settings).removeBg
+        ? getCutout(source, () => {
+            updateCharacterArt();
+            refreshCharacterSettings();
+        }) ?? source
+        : source;
 
     let art = document.getElementById(ART_ID);
     if (!url) {
@@ -598,6 +608,7 @@ async function init() {
     }
 
     initSharpAvatars(() => getSettings().enabled);
+    initBackgroundRemoval({ getSettings, saveSettings });
 
     refreshCharacterSettings = initCharacterSettings({
         getSettings,
@@ -625,7 +636,15 @@ async function init() {
         refreshColorControls();
         refreshCharacterSettings();
     });
-    eventSource.on(eventTypes.CHARACTER_EDITED, updateCharacterArt);
+    eventSource.on(eventTypes.CHARACTER_EDITED, async () => {
+        // a new avatar keeps the same file name, so its old cutout may be stale
+        const { characters, characterId } = SillyTavern.getContext();
+        const avatar = characters[characterId]?.avatar;
+        if (avatar) {
+            await revalidateCutout(`characters/${encodeURIComponent(avatar)}`);
+        }
+        updateCharacterArt();
+    });
 
     if (getSettings().enabled && isMoonlitEnabled()) {
         toastr.warning('Moonlit Echoes is also enabled and will override parts of the Yodayo Tavern look.', 'Yodayo Tavern Theme');

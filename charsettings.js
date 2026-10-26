@@ -5,6 +5,7 @@
 
 import { COLOR_FIELDS, getCurrentAvatar } from './colors.js';
 import { ADVANCED_GROUPS } from './advanced.js';
+import { getCachedCutout, isCutoutPending } from './bgremove.js';
 
 const COG_ID = 'yt-chat-settings-cog';
 const WINDOW_ID = 'yt-chat-settings-window';
@@ -43,7 +44,7 @@ function prune(settings, scope) {
     const store = scope === 'chat' ? 'chatThemes' : 'characterThemes';
     const key = scope === 'chat' ? getChatId() : getCurrentAvatar();
     const entry = settings[store]?.[key];
-    if (entry && !Object.keys(entry.colors ?? {}).length && !Object.keys(entry.advanced ?? {}).length && !entry.background && !entry.image) {
+    if (entry && !Object.keys(entry.colors ?? {}).length && !Object.keys(entry.advanced ?? {}).length && !entry.background && !entry.image && entry.removeBg === undefined) {
         delete settings[store][key];
     }
 }
@@ -57,6 +58,8 @@ export function getEffectiveOverrides(settings) {
         advanced: { ...character.advanced, ...chat.advanced },
         background: chat.background || character.background || '',
         image: chat.image || character.image || '',
+        // background removal is on unless this chat or character turns it off
+        removeBg: chat.removeBg ?? character.removeBg ?? true,
     };
 }
 
@@ -117,7 +120,7 @@ function defaultImage() {
 }
 
 /** Saves an image into SillyTavern's user images folder (under the character's name) and returns its path. */
-async function uploadImage(file) {
+export async function uploadImage(file, prefix = 'yodayo-art') {
     const dataUrl = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(String(reader.result));
@@ -133,7 +136,7 @@ async function uploadImage(file) {
             image,
             format: format.replace('jpeg', 'jpg').replace('svg+xml', 'svg'),
             ch_name: characters[characterId]?.name || 'Yodayo Tavern Theme',
-            filename: `yodayo-art-${Date.now()}`,
+            filename: `${prefix}-${Date.now()}`,
         }),
     });
     if (!response.ok) {
@@ -360,11 +363,27 @@ export function initCharacterSettings({ getSettings, onChange }) {
         imageUrl.placeholder = 'Or paste an image URL';
         imageUrl.addEventListener('input', debounce(() => edit(target => { target.image = imageUrl.value.trim(); })));
         imageUrlRow.append(el('label', '', 'URL'), imageUrl);
-        body.append(imageRow, imageUrlRow, el('small', 'yt-muted', 'Shown beside the chat when it sits left or right, and in Visual Novel mode. Leave it unset to use the character card.'));
+        const removeRow = el('div', 'yt-setting-row');
+        const removeLabel = el('label', 'checkbox_label');
+        const removeInput = el('input');
+        removeInput.type = 'checkbox';
+        removeInput.addEventListener('change', () => edit(target => { target.removeBg = removeInput.checked; }));
+        removeLabel.append(removeInput, el('span', '', 'Remove background'));
+        const removeStatus = el('small', 'yt-muted yt-remove-status');
+        removeRow.append(removeLabel, removeStatus, resetButton(() => edit(target => { delete target.removeBg; })));
+        body.append(imageRow, imageUrlRow, removeRow, el('small', 'yt-muted', 'Shown beside the chat when it sits left or right, and in Visual Novel mode. Leave it unset to use the character card. Background removal runs on this device; the first time downloads a 490 MB model.'));
         refreshers.push(() => {
             const own = current().image || '';
-            const effective = getEffectiveOverrides(getSettings()).image || defaultImage();
+            const overrides = getEffectiveOverrides(getSettings());
+            const source = overrides.image || defaultImage();
+            const cutout = overrides.removeBg && source ? getCachedCutout(source) : null;
+            const effective = cutout || source;
             preview.src = effective || '';
+            preview.classList.toggle('yt-cutout', Boolean(cutout));
+            removeInput.checked = overrides.removeBg;
+            removeRow.classList.toggle('yt-value-set', current().removeBg !== undefined);
+            removeStatus.textContent = !overrides.removeBg || !source ? ''
+                : cutout ? 'Done' : isCutoutPending(source) ? 'Working…' : '';
             preview.classList.toggle('displayNone', !effective);
             imageRow.classList.toggle('yt-value-set', Boolean(own));
             if (imageUrl !== document.activeElement) {
