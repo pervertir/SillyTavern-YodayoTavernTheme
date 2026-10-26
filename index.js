@@ -540,7 +540,28 @@ function initBackButton() {
     sheld.prepend(button);
 }
 
+/** Resolves once style.css and every stylesheet it imports have loaded (3s at most). */
+async function waitForStyles() {
+    const deadline = Date.now() + 3000;
+    const loaded = () => {
+        const link = [...document.querySelectorAll('link[rel="stylesheet"]')].find(l => l.href.includes(`${EXTENSION_FOLDER.split('/').pop()}/style.css`));
+        if (!link?.sheet) {
+            return false;
+        }
+        try {
+            return [...link.sheet.cssRules].every(rule => !(rule instanceof CSSImportRule) || rule.styleSheet?.cssRules);
+        } catch {
+            return true;
+        }
+    };
+    while (!loaded() && Date.now() < deadline) {
+        await new Promise(resolve => setTimeout(resolve, 25));
+    }
+}
+
 async function init() {
+    // SillyTavern awaits this before lifting its loading screen, so the old look never shows
+    await waitForStyles();
     const { renderExtensionTemplateAsync } = SillyTavern.getContext();
     const container = document.getElementById('extensions_settings2');
     if (container) {
@@ -611,6 +632,8 @@ async function init() {
     }
 }
 
-// Start once SillyTavern has finished loading; APP_READY re-fires for late listeners.
+// Start while SillyTavern's loading screen is still up: it waits for APP_INITIALIZED
+// listeners before fading the screen out (APP_READY only fires after). Both events re-fire
+// for late listeners, so a theme enabled later still starts.
 const { eventSource: readySource, eventTypes: readyTypes } = SillyTavern.getContext();
-readySource.once(readyTypes.APP_READY, init);
+readySource.once(readyTypes.APP_INITIALIZED, init);
