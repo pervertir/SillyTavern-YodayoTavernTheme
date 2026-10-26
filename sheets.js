@@ -19,6 +19,29 @@ function setSheetWidth(sheet, width) {
     }
 }
 
+/** A close button in each sheet's top-right corner; it clicks the sheet's own rail icon. */
+function addCloseButtons() {
+    for (const sheet of document.querySelectorAll('#top-settings-holder .drawer-content')) {
+        if (sheet.querySelector(':scope > .yt-sheet-close')) {
+            continue;
+        }
+        const toggle = sheet.closest('.drawer')?.querySelector('.drawer-toggle');
+        if (!toggle) {
+            continue;
+        }
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'yt-sheet-close fa-solid fa-xmark';
+        button.title = 'Close';
+        button.setAttribute('aria-label', 'Close');
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            toggle.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        });
+        sheet.prepend(button);
+    }
+}
+
 /** Writes each sheet's saved width onto the sheet. */
 export function applySheetWidths(settings) {
     const widths = settings.sheetWidths ?? {};
@@ -97,6 +120,7 @@ export function initSheetResizers({ getSettings, saveSettings }) {
     });
 
     document.body.append(handle);
+    addCloseButtons();
 
     // follow sheets as they open, close, animate and resize
     const resizeObserver = new ResizeObserver(position);

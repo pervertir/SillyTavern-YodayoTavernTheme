@@ -1,0 +1,114 @@
+/* Menus (drawer sheets): a settings-app layout. On/off settings are full-width rows with
+   the switch on the right, collapsible sections are cards, and every sheet has a close
+   button that stays at its top-right corner (sheets.js adds it). */
+
+/* Toggle rows: label on the left, switch on the right, a soft highlight on hover */
+body.yodayo-tavern .drawer-content .checkbox_label {
+    width: 100%;
+    min-height: 34px;
+    padding: 5px var(--yt-space-2);
+    align-items: center;
+    gap: var(--yt-space-3);
+    border-radius: var(--yt-radius-md);
+    transition: background-color var(--yt-fast) var(--yt-ease);
+    cursor: pointer;
+}
+
+body.yodayo-tavern .drawer-content .checkbox_label:hover {
+    background-color: color-mix(in srgb, var(--yt-surface-3) 45%, transparent);
+}
+
+body.yodayo-tavern .drawer-content .checkbox_label > input[type="checkbox"] {
+    order: 99;
+    margin-left: auto;
+}
+
+body.yodayo-tavern .drawer-content .checkbox_label > :is(span, small, b) {
+    line-height: 1.35;
+}
+
+/* Collapsible sections are cards; their content sits inside the card, not after a rule */
+body.yodayo-tavern .drawer-content .inline-drawer {
+    margin-bottom: var(--yt-space-2);
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern .drawer-content .inline-drawer > .inline-drawer-header,
+body.yodayo-tavern #extensions_settings .inline-drawer > .inline-drawer-header,
+body.yodayo-tavern #extensions_settings2 .inline-drawer > .inline-drawer-header {
+    padding: var(--yt-space-2) var(--yt-space-3);
+    background: transparent;
+    border: none;
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern .drawer-content .inline-drawer > .inline-drawer-content,
+body.yodayo-tavern #extensions_settings .inline-drawer-content,
+body.yodayo-tavern #extensions_settings2 .inline-drawer-content {
+    margin: 0;
+    padding: var(--yt-space-1) var(--yt-space-3) var(--yt-space-3);
+    border: none;
+    border-top: 1px solid var(--yt-line);
+}
+
+/* cards nested inside cards (e.g. inside an extension's settings) stay flat */
+body.yodayo-tavern .drawer-content .inline-drawer .inline-drawer {
+    background: transparent;
+    border-color: var(--yt-line);
+}
+
+/* Titles: the first heading of each sheet reads as the sheet's title */
+body.yodayo-tavern .drawer-content h3 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+/* Even rhythm between blocks */
+body.yodayo-tavern .drawer-content .range-block {
+    margin-bottom: var(--yt-space-2);
+}
+
+/* Close button pinned to the sheet's top-right corner while it scrolls */
+.yt-sheet-close {
+    display: none;
+}
+
+body.yodayo-tavern.yt-nav-rail .drawer-content .yt-sheet-close {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    float: right;
+    width: 28px;
+    height: 28px;
+    /* the negative bottom margin keeps it from pushing the sheet's title down */
+    margin: -4px -4px -28px var(--yt-space-2);
+    padding: 0;
+    background-color: var(--yt-glass-raised);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: 9999px;
+    color: var(--yt-muted);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color var(--yt-fast) var(--yt-ease), color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern.yt-nav-rail .drawer-content .yt-sheet-close:hover {
+    background-color: var(--yt-surface-3);
+    color: var(--yt-text);
+}
+
+/* the AI settings and character panels scroll an inner box, not the sheet itself, so their
+   close button is simply pinned to the corner */
+body.yodayo-tavern.yt-nav-rail .drawer-content:is(.fillLeft, .fillRight) > .yt-sheet-close {
+    position: absolute;
+    top: var(--yt-space-2);
+    right: var(--yt-space-2);
+    float: none;
+    margin: 0;
+}
