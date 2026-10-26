@@ -4,6 +4,7 @@ import { initTavernHome } from './home.js';
 import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
 import { applySheetWidths, initSheetResizers } from './sheets.js';
 import { applyVnHeight, initVnMode } from './vn.js';
+import { initSliderFills } from './sliders.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
 /** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
@@ -316,6 +317,7 @@ async function init() {
 
     initRailToggle();
     initSheetResizers({ getSettings, saveSettings });
+    initSliderFills();
     initVnMode({ getSettings, saveSettings, onModeChange: updateCharacterArt });
 
     const { eventSource, eventTypes } = SillyTavern.getContext();

@@ -167,6 +167,8 @@ body.yodayo-tavern ::-webkit-scrollbar-thumb:hover {
 
 body.yodayo-tavern ::-webkit-scrollbar-track {
     background: transparent;
+    /* keeps the thumb off rounded corners */
+    margin-block: 10px;
 }
 
 /* Respect reduced motion, from the OS or SillyTavern's own Reduced Motion setting */

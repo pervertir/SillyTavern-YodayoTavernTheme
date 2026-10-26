@@ -257,6 +257,8 @@ body.yodayo-tavern input[type="range"] {
     background-color: var(--yt-surface-3);
     background-image: linear-gradient(var(--yt-accent), var(--yt-accent));
     background-repeat: no-repeat;
+    /* sliders.js keeps --yt-fill in step with the value */
+    background-size: var(--yt-fill, 0%) 100%;
     box-shadow: none;
     filter: none;
     cursor: pointer;
@@ -265,9 +267,12 @@ body.yodayo-tavern input[type="range"] {
 /* Zen sliders: SillyTavern styles these with !important, so matching it is the only way */
 body.yodayo-tavern .neo-range-slider {
     height: 4px !important;
+    margin-top: 10px !important;
     border-radius: 9999px !important;
     background-color: var(--yt-surface-3) !important;
     background-image: linear-gradient(var(--yt-accent), var(--yt-accent)) !important;
+    /* SillyTavern leaves this at a fixed 70%; sliders.js tracks the real value */
+    background-size: var(--yt-fill, 0%) 100% !important;
     box-shadow: none !important;
     filter: none !important;
 }
@@ -301,21 +306,45 @@ body.yodayo-tavern input[type="range"]:focus-visible {
     box-shadow: 0 0 0 4px var(--yt-accent-soft);
 }
 
-/* The number box beside a slider becomes a small chip */
+/* The number under or beside a slider is a small centered chip, not a full-width bar */
 body.yodayo-tavern .range-block-counter input,
 body.yodayo-tavern .neo-range-input {
+    display: block;
+    width: 76px;
     min-height: 0;
-    height: 26px;
+    height: 24px;
+    margin: 6px auto 0;
     padding: 0 var(--yt-space-2);
     background-color: var(--yt-surface-2);
     border: 1px solid var(--yt-line);
-    border-radius: var(--yt-radius);
+    border-radius: 9999px;
+    color: var(--yt-text);
     font-size: var(--yt-text-sm);
     font-variant-numeric: tabular-nums;
+    text-align: center;
+    -moz-appearance: textfield;
 }
 
-body.yodayo-tavern .neo-range-input {
-    border-radius: 0 0 var(--yt-radius) var(--yt-radius);
+body.yodayo-tavern .range-block-counter input {
+    margin: 0;
+}
+
+body.yodayo-tavern .range-block-counter input::-webkit-inner-spin-button,
+body.yodayo-tavern .range-block-counter input::-webkit-outer-spin-button,
+body.yodayo-tavern .neo-range-input::-webkit-inner-spin-button,
+body.yodayo-tavern .neo-range-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+body.yodayo-tavern .range-block-counter {
+    flex: 0 0 auto;
+}
+
+/* slider labels sit centered over their slider */
+body.yodayo-tavern .range-block-range-and-counter > small {
+    font-size: var(--yt-text-xs);
+    color: var(--yt-muted);
 }
 
 body.yodayo-tavern .range-block {

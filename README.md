@@ -100,6 +100,7 @@ remembered.
 - `home.js`: the Tavern home page on the welcome screen
 - `vn.js`: the visual novel layout's resize handle
 - `sheets.js`: drag handles that resize the menus
+- `sliders.js`: keeps each slider's fill in step with its value
 - `colors.js`: chat colors (all characters or per character), character image and export/import
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,
   composer, lists, overlays, layout). Every rule is scoped under `body.yodayo-tavern`.

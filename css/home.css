@@ -605,3 +605,8 @@ body.yodayo-tavern .yt-card-group .yt-card-media img {
 body.yodayo-tavern .yt-card-group:hover .yt-card-media img {
     transform: none;
 }
+
+/* the page's corners are rounder than most, so its scrollbar starts and ends further in */
+body.yodayo-tavern.yt-home-active #chat::-webkit-scrollbar-track {
+    margin-block: 24px;
+}
