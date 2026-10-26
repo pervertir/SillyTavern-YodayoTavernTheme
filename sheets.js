@@ -5,6 +5,20 @@ const MIN_WIDTH = 360;
 /** Room always left for the chat beside an open sheet (matches --yt-sheet-room) */
 const MIN_CHAT_ROOM = 120;
 const HANDLE_HALF = 5;
+/** Width of the close-button gutter that css/nav.css adds on top of a sheet's width */
+const CLOSE_GUTTER = 36;
+
+/** How the open sheet is anchored, from the menu bar's edge: left, right or center. */
+function getAnchor() {
+    const classes = document.body.classList;
+    if (classes.contains('yt-nav-right')) {
+        return 'right';
+    }
+    if (classes.contains('yt-nav-top') || classes.contains('yt-nav-bottom')) {
+        return 'center';
+    }
+    return 'left';
+}
 
 function getOpenSheet() {
     const sheet = document.querySelector('#top-settings-holder .drawer-content.openDrawer');
@@ -65,13 +79,15 @@ export function initSheetResizers({ getSettings, saveSettings }) {
     handle.setAttribute('role', 'separator');
     handle.setAttribute('aria-orientation', 'vertical');
 
-    // the handle sits on the open sheet's right edge
+    // the handle sits on the sheet's free edge: right, or left when the bar is on the right
     const position = () => {
         const sheet = getOpenSheet();
         const usable = sheet && document.body.classList.contains('yt-nav-rail') && window.innerWidth > 1000;
         handle.hidden = !usable;
         if (usable) {
-            handle.style.left = `${sheet.getBoundingClientRect().right - HANDLE_HALF}px`;
+            const rect = sheet.getBoundingClientRect();
+            const edge = getAnchor() === 'right' ? rect.left : rect.right;
+            handle.style.left = `${edge - HANDLE_HALF}px`;
         }
     };
 
@@ -83,11 +99,17 @@ export function initSheetResizers({ getSettings, saveSettings }) {
         event.preventDefault();
         handle.setPointerCapture(event.pointerId);
         document.body.classList.add('yt-sheet-resizing');
-        const left = sheet.getBoundingClientRect().left;
+        const rect = sheet.getBoundingClientRect();
+        const anchor = getAnchor();
+        const center = rect.left + rect.width / 2;
 
         const onMove = (moveEvent) => {
-            const max = Math.max(MIN_WIDTH, window.innerWidth - left - MIN_CHAT_ROOM);
-            const width = Math.round(Math.min(Math.max(moveEvent.clientX - left, MIN_WIDTH), max));
+            const x = moveEvent.clientX;
+            const total = anchor === 'right' ? rect.right - x : anchor === 'center' ? (x - center) * 2 : x - rect.left;
+            const room = anchor === 'right' ? rect.right - MIN_CHAT_ROOM : anchor === 'center' ? window.innerWidth - 32 : window.innerWidth - rect.left - MIN_CHAT_ROOM;
+            const max = Math.max(MIN_WIDTH, room - CLOSE_GUTTER);
+            // the stored width excludes the close-button gutter, which the CSS adds back
+            const width = Math.round(Math.min(Math.max(total - CLOSE_GUTTER, MIN_WIDTH), max));
             const settings = getSettings();
             settings.sheetWidths = { ...settings.sheetWidths, [sheet.id]: width };
             setSheetWidth(sheet, width);

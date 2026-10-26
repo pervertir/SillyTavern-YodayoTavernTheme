@@ -2,7 +2,7 @@
 
 A SillyTavern extension that restyles the whole UI after the Yodayo / Moescape Tavern
 chat: frosted chat bubbles straight on your background, a Yodayo-pink accent, Inter type, a
-navigation rail on the left (opened from a SillyTavern-logo button) with drawers as side sheets, switch toggles,
+menu bar on any edge (always shown, or opened from a button, an arrow tab, hover or a shortcut) with drawers as side sheets, switch toggles,
 modern sliders and fields, and popover menus.
 
 ![Chat preview](screenshots/chat.jpg)
@@ -36,7 +36,9 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Bubble max width | How wide a chat bubble may grow on desktop. |
 | Bubble opacity | How see-through chat bubbles and the message box are (default 80%). |
 | Tavern home page | Turns the welcome screen into a Yodayo-style character browser: recent chats, search, tag chips and a grid of character and group cards. An ST Assistant tab opens a chat with SillyTavern's assistant, and New group starts a group chat. |
-| Navigation | Left rail opened by a SillyTavern-logo button in the top-left corner (default), left rail always shown, or SillyTavern's top bar. The rail is desktop only; phones keep the top bar. |
+| Menu bar position | Put SillyTavern's menu bar on the left, right, top or bottom edge (desktop; phones keep SillyTavern's top bar). Menus open beside it. |
+| Show menu bar | Always; with the SillyTavern-logo menu button in the nearest corner; with a small arrow tab on its edge; or on hover at its edge (auto-hide). |
+| Menu bar shortcut | A key combination that shows or hides the menu bar, Alt+M by default. |
 | Menu width | Each menu opens at a width that suits it (for example 440px for AI settings, 820px for User Settings). Drag an open menu's edge to resize it; each menu remembers its own width. Double-click the edge to reset. |
 | Colors | Character name, text, dialogue ("quotes"), narration (*actions*) and bubble, plus your name, text and bubble. Set them for all characters, or for only the open character to override. |
 | Character image | With "Only this character" selected, an image URL to show instead of the card art on the free side. |

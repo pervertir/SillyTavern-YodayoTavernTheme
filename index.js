@@ -28,7 +28,11 @@ const defaultSettings = Object.freeze({
     chatPosition: 'middle',
     characterArt: true,
     panelOpacity: 80,
-    navMode: 'rail-toggle',
+    /** Menu bar: which edge (left, right, top, bottom) and what shows it (always, menu, arrow, autohide) */
+    navPosition: 'left',
+    navTrigger: 'menu',
+    /** Keyboard shortcut that shows or hides the menu bar, e.g. Alt+M */
+    navShortcut: 'Alt+M',
     tavernHome: true,
     /** Colors for all characters, keyed by the fields in colors.js */
     colors: {},
@@ -47,6 +51,12 @@ let refreshColorControls = () => {};
 let refreshAdvancedControls = () => {};
 
 const RAIL_TOGGLE_ID = 'yt-rail-toggle';
+const RAIL_ARROW_ID = 'yt-rail-arrow';
+const NAV_POSITIONS = ['left', 'right', 'top', 'bottom'];
+const NAV_TRIGGERS = ['always', 'menu', 'arrow', 'autohide'];
+/** Arrow tab icon while the bar is hidden, per edge; it flips once the bar is out */
+const ARROW_ICONS = { left: 'fa-chevron-right', right: 'fa-chevron-left', top: 'fa-chevron-down', bottom: 'fa-chevron-up' };
+const ARROW_ICONS_OPEN = { left: 'fa-chevron-left', right: 'fa-chevron-right', top: 'fa-chevron-up', bottom: 'fa-chevron-down' };
 const BACK_BUTTON_ID = 'yt-back-home';
 
 /** SillyTavern's own recent chats settings (welcome-screen.js) and the theme's defaults */
@@ -69,9 +79,11 @@ function getSettings() {
         extensionSettings[MODULE_NAME] = structuredClone(defaultSettings);
     }
     const settings = extensionSettings[MODULE_NAME];
-    // the auto-hiding rail was replaced by the hamburger button
-    if (settings.navMode === 'rail-auto') {
-        settings.navMode = 'rail-toggle';
+    // the single Navigation setting became a position plus a trigger
+    if (settings.navMode !== undefined) {
+        const legacy = { 'rail-toggle': ['left', 'menu'], 'rail-auto': ['left', 'autohide'], rail: ['left', 'always'], top: ['top', 'always'] };
+        [settings.navPosition, settings.navTrigger] = legacy[settings.navMode] ?? ['left', 'menu'];
+        delete settings.navMode;
     }
     // one shared menu width became a width per menu
     delete settings.sheetWidth;
@@ -162,8 +174,14 @@ function applySettings() {
     body.classList.toggle('yt-flat-bg', settings.flatBackground);
     body.classList.toggle('yt-pos-left', settings.chatPosition === 'left');
     body.classList.toggle('yt-pos-right', settings.chatPosition === 'right');
-    body.classList.toggle('yt-nav-rail', settings.navMode !== 'top');
-    body.classList.toggle('yt-rail-pinned', settings.navMode === 'rail');
+    body.classList.add('yt-nav-rail');
+    for (const position of NAV_POSITIONS) {
+        body.classList.toggle(`yt-nav-${position}`, settings.navPosition === position);
+    }
+    for (const trigger of NAV_TRIGGERS) {
+        body.classList.toggle(`yt-nav-${trigger}`, settings.navTrigger === trigger);
+    }
+    updateRailArrow();
 
     body.style.setProperty('--yt-accent', settings.accent);
     body.style.setProperty('--yt-accent-ink', getAccentInk(settings.accent));
@@ -197,7 +215,9 @@ function syncSettingsUI() {
     $('#yt_flat_bg').prop('checked', settings.flatBackground);
     $('#yt_chat_position').val(settings.chatPosition);
     $('#yt_character_art').prop('checked', settings.characterArt);
-    $('#yt_nav_mode').val(settings.navMode);
+    $('#yt_nav_position').val(settings.navPosition);
+    $('#yt_nav_trigger').val(settings.navTrigger);
+    $('#yt_nav_shortcut').val(settings.navShortcut);
     $('#yt_tavern_home').prop('checked', settings.tavernHome);
     $('#yt_panel_opacity').val(settings.panelOpacity);
     $('#yt_panel_opacity_value').text(`${settings.panelOpacity}%`);
@@ -243,8 +263,16 @@ function bindSettingsUI() {
     $('#yt_tavern_home').on('change', function () {
         update('tavernHome', $(this).prop('checked'));
     });
-    $('#yt_nav_mode').on('change', function () {
-        update('navMode', String($(this).val()));
+    $('#yt_nav_position').on('change', function () {
+        setRailOpen(false);
+        update('navPosition', String($(this).val()));
+    });
+    $('#yt_nav_trigger').on('change', function () {
+        setRailOpen(false);
+        update('navTrigger', String($(this).val()));
+    });
+    $('#yt_nav_shortcut').on('change', function () {
+        update('navShortcut', String($(this).val()).trim());
     });
     $('#yt_panel_opacity').on('input', function () {
         const opacity = Number($(this).val());
@@ -292,10 +320,63 @@ function importSettings(data) {
 function setRailOpen(open) {
     document.body.classList.toggle('yt-rail-open', open);
     document.getElementById(RAIL_TOGGLE_ID)?.setAttribute('aria-expanded', String(open));
+    document.getElementById(RAIL_ARROW_ID)?.setAttribute('aria-expanded', String(open));
+    updateRailArrow();
 }
 
-/** SillyTavern-logo button that opens the rail; Escape or a click elsewhere closes it again. */
+/** Points the arrow tab toward the bar when it's hidden, and back toward the edge when it's out. */
+function updateRailArrow() {
+    const arrow = document.getElementById(RAIL_ARROW_ID);
+    if (!arrow) {
+        return;
+    }
+    const position = getSettings().navPosition;
+    const open = document.body.classList.contains('yt-rail-open');
+    arrow.className = `fa-solid ${(open ? ARROW_ICONS_OPEN : ARROW_ICONS)[position] ?? 'fa-chevron-right'}`;
+}
+
+/** Does a keydown match a shortcut written like "Alt+M" or "Ctrl+Shift+K"? */
+function matchesShortcut(event, shortcut) {
+    const parts = String(shortcut || '').split('+').map(part => part.trim().toLowerCase()).filter(Boolean);
+    const key = parts.pop();
+    if (!key) {
+        return false;
+    }
+    const wants = {
+        alt: parts.includes('alt') || parts.includes('option'),
+        ctrl: parts.includes('ctrl') || parts.includes('control'),
+        shift: parts.includes('shift'),
+        meta: parts.includes('meta') || parts.includes('cmd'),
+    };
+    if (event.altKey !== wants.alt || event.ctrlKey !== wants.ctrl || event.shiftKey !== wants.shift || event.metaKey !== wants.meta) {
+        return false;
+    }
+    // Alt changes the typed character on macOS, so compare the physical key too
+    const code = event.code.toLowerCase().replace(/^key|^digit/, '');
+    return event.key.toLowerCase() === key || code === key;
+}
+
+/** SillyTavern-logo button and arrow tab that open the bar; Escape or a click elsewhere closes it again. */
 function initRailToggle() {
+    const arrow = document.createElement('button');
+    arrow.id = RAIL_ARROW_ID;
+    arrow.type = 'button';
+    arrow.title = 'Menu';
+    arrow.setAttribute('aria-label', 'Menu');
+    arrow.setAttribute('aria-controls', 'top-settings-holder');
+    arrow.setAttribute('aria-expanded', 'false');
+    arrow.addEventListener('click', () => setRailOpen(!document.body.classList.contains('yt-rail-open')));
+    document.body.append(arrow);
+    updateRailArrow();
+
+    document.addEventListener('keydown', (event) => {
+        const settings = getSettings();
+        if (settings.enabled && settings.navTrigger !== 'always' && matchesShortcut(event, settings.navShortcut)) {
+            event.preventDefault();
+            setRailOpen(!document.body.classList.contains('yt-rail-open'));
+        }
+    });
+
     const button = document.createElement('button');
     button.id = RAIL_TOGGLE_ID;
     button.type = 'button';
@@ -320,7 +401,7 @@ function initRailToggle() {
         if (!document.body.classList.contains('yt-rail-open') || !(event.target instanceof Element)) {
             return;
         }
-        const insideRail = event.target.closest(`#top-settings-holder, #${RAIL_TOGGLE_ID}, .popup, #toast-container`);
+        const insideRail = event.target.closest(`#top-settings-holder, #${RAIL_TOGGLE_ID}, #${RAIL_ARROW_ID}, .popup, #toast-container`);
         if (!insideRail) {
             setRailOpen(false);
         }

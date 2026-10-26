@@ -40,12 +40,28 @@
             </div>
 
             <div class="yt-setting-row">
-                <label for="yt_nav_mode">Navigation</label>
-                <select id="yt_nav_mode" class="text_pole">
-                    <option value="rail-toggle">Left rail, opened by the menu button</option>
-                    <option value="rail">Left rail, always shown</option>
-                    <option value="top">Top bar</option>
+                <label for="yt_nav_position">Menu bar position</label>
+                <select id="yt_nav_position" class="text_pole">
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                    <option value="top">Top</option>
+                    <option value="bottom">Bottom</option>
                 </select>
+            </div>
+
+            <div class="yt-setting-row">
+                <label for="yt_nav_trigger">Show menu bar</label>
+                <select id="yt_nav_trigger" class="text_pole">
+                    <option value="always">Always</option>
+                    <option value="menu">With the menu button</option>
+                    <option value="arrow">With an arrow tab on its edge</option>
+                    <option value="autohide">On hover at its edge (auto-hide)</option>
+                </select>
+            </div>
+
+            <div class="yt-setting-row">
+                <label for="yt_nav_shortcut">Menu bar shortcut</label>
+                <input id="yt_nav_shortcut" class="text_pole" type="text" placeholder="e.g. Alt+M" spellcheck="false" />
             </div>
 
             <div class="yt-setting-row">
