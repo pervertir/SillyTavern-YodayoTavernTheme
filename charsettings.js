@@ -111,6 +111,15 @@ async function uploadImage(file) {
     return path;
 }
 
+/** Waits until typing pauses, so a half-typed URL isn't loaded on every key. */
+function debounce(fn, ms = 400) {
+    let timer;
+    return () => {
+        clearTimeout(timer);
+        timer = setTimeout(fn, ms);
+    };
+}
+
 function el(tag, className, text) {
     const node = document.createElement(tag);
     if (className) {
@@ -170,7 +179,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
         win.setAttribute('role', 'dialog');
 
         const bar = el('div', 'yt-window-bar');
-        const title = el('b', '', 'Look for this chat');
+        const title = el('b', '', 'Theme for this chat');
         const close = el('button', 'yt-window-close fa-solid fa-xmark');
         close.type = 'button';
         close.title = 'Close';
@@ -237,7 +246,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
         const urlInput = el('input', 'text_pole');
         urlInput.type = 'url';
         urlInput.placeholder = 'Or paste an image URL';
-        urlInput.addEventListener('change', () => edit(target => { target.background = urlInput.value.trim(); }));
+        urlInput.addEventListener('input', debounce(() => edit(target => { target.background = urlInput.value.trim(); })));
         urlRow.append(el('label', '', 'URL'), urlInput);
         body.append(bgRow, urlRow);
         refreshers.push(() => {
@@ -258,7 +267,9 @@ export function initCharacterSettings({ getSettings, onChange }) {
                 bgSelect.append(custom);
             }
             bgSelect.value = own;
-            urlInput.value = own && !own.startsWith('url(') ? own : '';
+            if (urlInput !== document.activeElement) {
+                urlInput.value = own && !own.startsWith('url(') ? own : '';
+            }
         });
 
         // Character image (shown beside a docked chat and in VN mode)
@@ -292,7 +303,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
         const imageUrl = el('input', 'text_pole');
         imageUrl.type = 'url';
         imageUrl.placeholder = 'Or paste an image URL';
-        imageUrl.addEventListener('change', () => edit(target => { target.image = imageUrl.value.trim(); }));
+        imageUrl.addEventListener('input', debounce(() => edit(target => { target.image = imageUrl.value.trim(); })));
         imageUrlRow.append(el('label', '', 'URL'), imageUrl);
         body.append(imageRow, imageUrlRow, el('small', 'yt-muted', 'Shown beside the chat when it sits left or right, and in Visual Novel mode. Leave it unset to use the character card.'));
         refreshers.push(() => {
@@ -301,7 +312,9 @@ export function initCharacterSettings({ getSettings, onChange }) {
             preview.src = effective || '';
             preview.classList.toggle('displayNone', !effective);
             imageRow.classList.toggle('yt-value-set', Boolean(own));
-            imageUrl.value = /^\/?user\/images\//.test(own) ? '' : own;
+            if (imageUrl !== document.activeElement) {
+                imageUrl.value = /^\/?user\/images\//.test(own) ? '' : own;
+            }
         });
 
         // Message style and background effects
@@ -329,9 +342,15 @@ export function initCharacterSettings({ getSettings, onChange }) {
                     input.max = String(item.max ?? '');
                     input.step = String(item.step ?? 1);
                 }
-                input.addEventListener('change', () => edit(target => {
-                    target.advanced[item.key] = item.type === 'number' ? Number(input.value) : input.value;
-                }));
+                // applies while typing; a half-typed number (empty, "-") waits
+                input.addEventListener('input', () => {
+                    if (item.type === 'number' && (input.value === '' || !Number.isFinite(Number(input.value)))) {
+                        return;
+                    }
+                    edit(target => {
+                        target.advanced[item.key] = item.type === 'number' ? Number(input.value) : input.value;
+                    });
+                });
                 row.append(el('label', '', item.label), input);
                 if (item.unit) {
                     row.append(el('span', 'yt-muted', item.unit));
@@ -340,7 +359,9 @@ export function initCharacterSettings({ getSettings, onChange }) {
                 body.append(row);
                 refreshers.push(() => {
                     const own = current().advanced[item.key];
-                    input.value = String(own ?? getSettings().advanced?.[item.key] ?? item.def);
+                    if (input !== document.activeElement) {
+                        input.value = String(own ?? getSettings().advanced?.[item.key] ?? item.def);
+                    }
                     row.classList.toggle('yt-value-set', own !== undefined);
                 });
             }
@@ -353,7 +374,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
             const avatar = getCurrentAvatar();
             const { characters, characterId } = SillyTavern.getContext();
             const name = avatar ? characters[characterId]?.name : '';
-            title.textContent = name ? `Look for ${name}` : 'Look for this chat';
+            title.textContent = name ? `Theme for ${name}` : 'Theme for this chat';
             const characterButton = scopes.querySelector('[data-scope="character"]');
             characterButton.classList.toggle('disabled', !avatar);
             if (!avatar && scope === 'character') {

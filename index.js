@@ -277,7 +277,7 @@ function bindSettingsUI() {
         setRailOpen(false);
         update('navTrigger', String($(this).val()));
     });
-    $('#yt_nav_shortcut').on('change', function () {
+    $('#yt_nav_shortcut').on('input', function () {
         update('navShortcut', String($(this).val()).trim());
     });
     $('#yt_panel_opacity').on('input', function () {

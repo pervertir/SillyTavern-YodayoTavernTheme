@@ -150,7 +150,12 @@ export function initColorControls({ getSettings, onChange }) {
 
     const imageRow = document.getElementById('yt_char_image_row');
     const imageInput = /** @type {HTMLInputElement|null} */ (document.getElementById('yt_char_image'));
-    imageInput?.addEventListener('change', () => {
+    let imageTimer;
+    imageInput?.addEventListener('input', () => {
+        clearTimeout(imageTimer);
+        imageTimer = setTimeout(applyImage, 400);
+    });
+    function applyImage() {
         const avatar = getCurrentAvatar();
         if (!avatar) {
             return;
@@ -159,7 +164,7 @@ export function initColorControls({ getSettings, onChange }) {
         getCharacterTheme(getSettings(), avatar, true).image = url;
         pruneCharacterTheme(getSettings(), avatar);
         onChange();
-    });
+    }
 
     document.getElementById('yt_colors_reset')?.addEventListener('click', () => {
         const settings = getSettings();

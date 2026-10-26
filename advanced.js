@@ -246,9 +246,17 @@ export function initAdvancedControls({ getSettings, onChange }) {
                     area.rows = 6;
                     area.spellcheck = false;
                     area.placeholder = '/* e.g. body.yodayo-tavern #chat { … } */';
-                    area.addEventListener('change', () => setValue(item, area.value));
+                    let timer;
+                    area.addEventListener('input', () => {
+                        clearTimeout(timer);
+                        timer = setTimeout(() => setValue(item, area.value), 300);
+                    });
                     row.append(area);
-                    refreshers.push(() => { area.value = String(getValue(getSettings(), item)); });
+                    refreshers.push(() => {
+                        if (area !== document.activeElement) {
+                            area.value = String(getValue(getSettings(), item));
+                        }
+                    });
                 } else if (item.type === 'select') {
                     const select = document.createElement('select');
                     select.id = id;
@@ -300,7 +308,11 @@ export function initAdvancedControls({ getSettings, onChange }) {
                     } else {
                         input.type = 'text';
                     }
-                    input.addEventListener('change', () => {
+                    // applies while typing; a half-typed number (empty, "-") waits
+                    input.addEventListener('input', () => {
+                        if (item.type === 'number' && (input.value === '' || !Number.isFinite(Number(input.value)))) {
+                            return;
+                        }
                         setValue(item, item.type === 'number' ? Number(input.value) : input.value);
                     });
                     row.append(input);
@@ -310,7 +322,11 @@ export function initAdvancedControls({ getSettings, onChange }) {
                         unit.textContent = item.unit;
                         row.append(unit);
                     }
-                    refreshers.push(() => { input.value = String(getValue(getSettings(), item)); });
+                    refreshers.push(() => {
+                        if (input !== document.activeElement) {
+                            input.value = String(getValue(getSettings(), item));
+                        }
+                    });
                 }
 
                 const reset = document.createElement('div');
