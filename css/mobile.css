@@ -540,3 +540,40 @@
         display: none;
     }
 }
+
+/* System notes and placeholder chats on phones: like a messaging app, few messages sit at
+   the bottom by the message box, short notes are small centered chips, and help pages are
+   compact cards that fit the screen */
+@media screen and (max-width: 1000px) {
+    body.yodayo-tavern:not(.yt-home-active) #chat > .mes:first-of-type {
+        margin-top: auto;
+    }
+
+    body.yodayo-tavern #chat .mes[is_system="true"]:not(:has([data-type="assistant_note"])):not(:has(.mes_text > :nth-child(2))) .mes_block,
+    body.yodayo-tavern #chat .mes.smallSysMes .mes_block {
+        max-width: calc(100% - 24px);
+        padding: 6px 14px;
+        border-radius: 16px;
+    }
+
+    body.yodayo-tavern #chat .mes[is_system="true"]:not(:has(.mes_text > :nth-child(2))) .mes_text,
+    body.yodayo-tavern #chat .mes.smallSysMes .mes_text {
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--yt-muted);
+    }
+
+    body.yodayo-tavern #chat .mes[is_system="true"]:not(:has([data-type="assistant_note"])) .mes_block {
+        padding: 12px 14px;
+        border-radius: 18px;
+    }
+
+    body.yodayo-tavern #chat .mes[is_system="true"] .mes_text {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    body.yodayo-tavern #chat .mes[is_system="true"] .mes_text :is(h1, h2, h3, h4) {
+        font-size: 14px;
+    }
+}

@@ -129,3 +129,8 @@ body.yodayo-tavern #chat .mes.smallSysMes .mes_text p {
 body.yodayo-tavern #chat .mes.smallSysMes {
     padding: var(--yt-space-1) 0;
 }
+
+/* System messages aren't anyone's message: no edit, bookmark or "hidden from the AI" marks */
+body.yodayo-tavern #chat .mes[is_system="true"] :is(.mes_buttons, .mes_edit_buttons, .mes_ghost, .extraMesButtonsHint, .mes_bookmark, .mesIDDisplay, .mes_timer, .tokenCounterDisplay) {
+    display: none !important;
+}
