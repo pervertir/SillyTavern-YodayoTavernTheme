@@ -56,9 +56,7 @@ pre-scaled to its on-screen size so it stays sharp.
 
 On phones the theme works like an app: the menu bar is a frosted tab bar along the bottom
 (or the top, in the settings), clear of the notch and the home indicator, with the open
-menu's icon highlighted. Menus rise from it as sheets. In a chat the bar slips away while you
-scroll down to read and comes back when you scroll up, swipe in from its edge (up from the bottom, down from the top) or tap the handle. The
-Tavern window fits the screen with two cards across, and nothing runs off the side.
+menu's icon highlighted. Menus rise from it as sheets. The Tavern window fits the screen with two cards across, and nothing runs off the side.
 
 | Home | Chat | Character menu |
 | --- | --- | --- |
@@ -121,7 +119,6 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Show menu bar | Always; with the SillyTavern-logo menu button in the nearest corner; with a small arrow tab on its edge; or on hover at its edge (auto-hide). |
 | Menu bar shortcut | A key combination that shows or hides the menu bar, Alt+M by default. |
 | Menu bar on phones | Bottom (default) or top. |
-| Hide the menu bar while scrolling a chat | On phones, the bar slips away as you scroll down and returns when you scroll up or tap its handle. On by default. |
 | Menu width | Each menu opens at a width that suits it (for example 440px for AI settings, 820px for User Settings). Drag an open menu's edge to resize it; each menu remembers its own width. Double-click the edge to reset. |
 | Colors | Character name, text, dialogue ("quotes"), narration (*actions*) and bubble, plus your name, text and bubble. Set them for all characters, or for only the open character to override. |
 | Character image | With "Only this character" selected, an image URL to show instead of the card art on the free side. |
@@ -191,7 +188,7 @@ remembered.
 - `popout.js`: the floating settings window
 - `pagination.js`: moves page controls below their lists
 - `charsettings.js`: the chat's cog and its per-character / per-chat look editor
-- `phone.js`: the phone menu bar's edge and hiding it while scrolling
+- `phone.js`: which edge the phone menu bar sits on
 - `avatars.js`: pre-scales chat and character list avatars so they stay sharp
 - `bgremove.js`: Remove background, through the Background Removal server plugin
 - `colors.js`: chat colors (all characters or per character), character image and export/import

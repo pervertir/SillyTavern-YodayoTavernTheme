@@ -1,14 +1,12 @@
 /* Phones and narrow windows (SillyTavern's own breakpoint, 1000px). Imported last so it wins.
    A phone-app layout: the menu bar is a frosted tab bar on the bottom edge (or the top, from
-   the settings), menus rise from it as sheets, and in a chat the bar slips away while you
-   scroll down and comes back when you scroll up or tap its handle (phone.js sets the body
-   classes yt-phone-nav-top/bottom and yt-m-bar-hidden). Like Moonlit Echoes it stays one row
+   the settings; phone.js sets the body class yt-phone-nav-top/bottom), and menus rise from
+   it as sheets. Like Moonlit Echoes it stays one row
    of icons with menus full width; everything clears the notch and the home indicator, and
    nothing may run off the side.
 
-   --yt-m-top / --yt-m-bottom are the room the chat and home leave at each edge. The bar
-   moves with top/bottom, never transform: a transform on #top-settings-holder would make it
-   the frame for its fixed menu sheets. */
+   --yt-m-top / --yt-m-bottom are the room the chat and home leave at each edge. Never put a
+   transform on #top-settings-holder: it would become the frame for its fixed menu sheets. */
 @media screen and (max-width: 1000px) {
     body.yodayo-tavern {
         --yt-m-tabs: 56px;
@@ -30,11 +28,6 @@
         --yt-m-bottom: var(--yt-m-bar-bottom);
     }
 
-    body.yodayo-tavern.yt-m-bar-hidden {
-        --yt-m-top: var(--yt-m-safe-top);
-        --yt-m-bottom: 0px;
-    }
-
     /* never a sideways scroll */
     html:has(body.yodayo-tavern),
     body.yodayo-tavern {
@@ -49,11 +42,6 @@
     }
 
     /* Menu bar: one frosted row, icons spread evenly, the open menu's icon in an accent pill */
-    body.yodayo-tavern #top-bar,
-    body.yodayo-tavern #top-settings-holder {
-        transition: top var(--yt-slow) var(--yt-ease), bottom var(--yt-slow) var(--yt-ease);
-    }
-
     body.yodayo-tavern #top-bar {
         background-color: var(--yt-glass) !important;
         backdrop-filter: var(--yt-backdrop);
@@ -98,15 +86,6 @@
         padding: 0 max(4px, env(safe-area-inset-right, 0px)) var(--yt-m-safe-bottom) max(4px, env(safe-area-inset-left, 0px));
     }
 
-    /* slipped off its edge */
-    body.yodayo-tavern.yt-phone-nav-top.yt-m-bar-hidden :is(#top-bar, #top-settings-holder) {
-        top: calc(-1 * var(--yt-m-bar-top) - 8px);
-    }
-
-    body.yodayo-tavern.yt-phone-nav-bottom.yt-m-bar-hidden :is(#top-bar, #top-settings-holder) {
-        bottom: calc(-1 * var(--yt-m-bar-bottom) - 8px);
-    }
-
     body.yodayo-tavern #top-settings-holder > .drawer {
         flex: 1 1 0;
         min-width: 0;
@@ -131,45 +110,6 @@
     body.yodayo-tavern #top-settings-holder .drawer-icon.openIcon {
         background-color: var(--yt-accent-soft);
         color: var(--yt-accent);
-    }
-
-    /* the handle that brings a hidden bar back */
-    #yt-m-handle {
-        display: none;
-    }
-
-    body.yodayo-tavern.yt-m-bar-hidden #yt-m-handle {
-        display: block;
-        position: fixed;
-        left: 50%;
-        z-index: 3006;
-        width: 72px;
-        height: 22px;
-        margin-left: -36px;
-        padding: 0;
-        border: none;
-        background: none;
-        cursor: pointer;
-    }
-
-    body.yodayo-tavern.yt-m-bar-hidden #yt-m-handle::before {
-        content: '';
-        position: absolute;
-        left: 16px;
-        right: 16px;
-        top: 9px;
-        height: 4px;
-        border-radius: 9999px;
-        background-color: rgb(240 240 240 / 0.55);
-        box-shadow: 0 0 6px rgb(0 0 0 / 0.5);
-    }
-
-    body.yodayo-tavern.yt-phone-nav-bottom #yt-m-handle {
-        bottom: calc(var(--yt-m-safe-bottom) + 2px);
-    }
-
-    body.yodayo-tavern.yt-phone-nav-top #yt-m-handle {
-        top: calc(var(--yt-m-safe-top) + 2px);
     }
 
     /* Menus: full-width sheets from the bar's edge, frosted like the Tavern window */
@@ -234,7 +174,6 @@
         top: var(--yt-m-top);
         height: calc(100dvh - var(--yt-m-top) - var(--yt-m-bottom));
         max-height: calc(100dvh - var(--yt-m-top) - var(--yt-m-bottom));
-        transition: top var(--yt-slow) var(--yt-ease), height var(--yt-slow) var(--yt-ease);
     }
 
     body.yodayo-tavern:not(.yt-home-active) #chat {
@@ -248,7 +187,7 @@
     }
 
     /* with the bar below, the home indicator is the bar's problem, not the message box's */
-    body.yodayo-tavern.yt-phone-nav-bottom:not(.yt-m-bar-hidden) #form_sheld {
+    body.yodayo-tavern.yt-phone-nav-bottom #form_sheld {
         padding-bottom: 8px;
     }
 

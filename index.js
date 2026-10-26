@@ -1,7 +1,7 @@
 // Yodayo Tavern Theme: toggles the scoped styles in style.css and exposes a small settings panel.
 
 import { initTavernHome } from './home.js';
-import { applyPhoneNav, initPhoneNav } from './phone.js';
+import { applyPhoneNav } from './phone.js';
 import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
 import { applySheetWidths, initSheetResizers } from './sheets.js';
 import { applyVnHeight, initVnMode } from './vn.js';
@@ -37,9 +37,8 @@ const defaultSettings = Object.freeze({
     navTrigger: 'menu',
     /** Keyboard shortcut that shows or hides the menu bar, e.g. Alt+M */
     navShortcut: 'Alt+M',
-    /** Phones: the menu bar's edge (bottom, top), and whether it slips away while scrolling a chat */
+    /** Phones: the menu bar's edge (bottom, top) */
     phoneNav: 'bottom',
-    phoneNavAutohide: true,
     tavernHome: true,
     /** Colors for all characters, keyed by the fields in colors.js */
     colors: {},
@@ -97,6 +96,8 @@ function getSettings() {
         [settings.navPosition, settings.navTrigger] = legacy[settings.navMode] ?? ['left', 'menu'];
         delete settings.navMode;
     }
+    // the phone menu bar no longer hides itself
+    delete settings.phoneNavAutohide;
     // one shared menu width became a width per menu
     delete settings.sheetWidth;
     delete settings.rightSheetWidth;
@@ -201,7 +202,7 @@ function applySettings() {
         body.classList.toggle(`yt-nav-${trigger}`, settings.navTrigger === trigger);
     }
     updateRailArrow();
-    applyPhoneNav();
+    applyPhoneNav(settings);
 
     body.style.setProperty('--yt-accent', settings.accent);
     body.style.setProperty('--yt-accent-ink', getAccentInk(settings.accent));
@@ -243,7 +244,6 @@ function syncSettingsUI() {
     $('#yt_nav_trigger').val(settings.navTrigger);
     $('#yt_nav_shortcut').val(settings.navShortcut);
     $('#yt_phone_nav').val(settings.phoneNav);
-    $('#yt_phone_nav_autohide').prop('checked', settings.phoneNavAutohide);
     $('#yt_tavern_home').prop('checked', settings.tavernHome);
     $('#yt_panel_opacity').val(settings.panelOpacity);
     $('#yt_panel_opacity_value').text(`${settings.panelOpacity}%`);
@@ -302,9 +302,6 @@ function bindSettingsUI() {
     });
     $('#yt_phone_nav').on('change', function () {
         update('phoneNav', String($(this).val()));
-    });
-    $('#yt_phone_nav_autohide').on('change', function () {
-        update('phoneNavAutohide', $(this).prop('checked'));
     });
     $('#yt_panel_opacity').on('input', function () {
         const opacity = Number($(this).val());
@@ -663,7 +660,6 @@ async function init() {
     applySettings();
 
     initRailToggle();
-    initPhoneNav(getSettings);
     initBackButton();
     initDragGuard();
     initPositionToggle();
