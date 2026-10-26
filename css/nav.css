@@ -84,7 +84,7 @@ body.yodayo-tavern .drawer-content h4 {
         justify-content: center;
         align-items: center;
         gap: var(--yt-space-1);
-        background-color: rgb(35 37 39 / 0.92);
+        background-color: rgb(35 37 39 / var(--yt-rail-alpha, 0.6));
         border: 1px solid var(--yt-line-strong);
         border-radius: var(--yt-radius-xl);
         box-shadow: var(--yt-shadow);
@@ -214,7 +214,7 @@ body.yodayo-tavern #yt-rail-toggle {
     align-items: center;
     justify-content: center;
     padding: 0;
-    background-color: rgb(35 37 39 / 0.92);
+    background-color: rgb(35 37 39 / var(--yt-rail-alpha, 0.6));
     border: 1px solid var(--yt-line-strong);
     border-radius: var(--yt-radius-xl);
     box-shadow: var(--yt-shadow-sm);
