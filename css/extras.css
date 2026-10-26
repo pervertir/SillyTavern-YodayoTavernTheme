@@ -184,6 +184,10 @@ body.yodayo-tavern #character_popup .editor_maximize:hover {
 
 /* creation form: the avatar picker is a rounded portrait with a ring on hover */
 body.yodayo-tavern #avatar_div_div {
+    /* a fixed portrait: with overflow hidden, ST's flex: 1 1 0% lets #avatar_controls squeeze it to nothing */
+    flex: 0 0 auto;
+    width: 96px;
+    height: 128px;
     border-radius: var(--yt-radius-lg);
     overflow: hidden;
     box-shadow: 0 0 0 1px var(--yt-line);
@@ -195,6 +199,9 @@ body.yodayo-tavern #avatar_div_div:hover {
 }
 
 body.yodayo-tavern #avatar_load_preview {
+    width: 100%;
+    height: 100%;
+    border: none;
     border-radius: var(--yt-radius-lg);
     object-fit: cover;
     object-position: top;
