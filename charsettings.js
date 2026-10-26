@@ -58,8 +58,8 @@ export function getEffectiveOverrides(settings) {
         advanced: { ...character.advanced, ...chat.advanced },
         background: chat.background || character.background || '',
         image: chat.image || character.image || '',
-        // background removal is on unless this chat or character turns it off
-        removeBg: chat.removeBg ?? character.removeBg ?? true,
+        // background removal is off unless this chat or character turns it on
+        removeBg: chat.removeBg ?? character.removeBg ?? false,
     };
 }
 
@@ -363,15 +363,19 @@ export function initCharacterSettings({ getSettings, onChange }) {
         imageUrl.placeholder = 'Or paste an image URL';
         imageUrl.addEventListener('input', debounce(() => edit(target => { target.image = imageUrl.value.trim(); })));
         imageUrlRow.append(el('label', '', 'URL'), imageUrl);
+        // one button: remove the background, or bring it back once removed
         const removeRow = el('div', 'yt-setting-row');
-        const removeLabel = el('label', 'checkbox_label');
-        const removeInput = el('input');
-        removeInput.type = 'checkbox';
-        removeInput.addEventListener('change', () => edit(target => { target.removeBg = removeInput.checked; }));
-        removeLabel.append(removeInput, el('span', '', 'Remove background'));
+        const removeButton = el('div', 'menu_button menu_button_icon yt-remove-bg');
+        const removeIcon = el('i', 'fa-solid fa-wand-magic-sparkles');
+        const removeText = el('span', '', 'Remove background');
+        removeButton.append(removeIcon, removeText);
+        removeButton.addEventListener('click', () => {
+            const on = getEffectiveOverrides(getSettings()).removeBg;
+            edit(target => { target.removeBg = !on; });
+        });
         const removeStatus = el('small', 'yt-muted yt-remove-status');
-        removeRow.append(removeLabel, removeStatus, resetButton(() => edit(target => { delete target.removeBg; })));
-        body.append(imageRow, imageUrlRow, removeRow, el('small', 'yt-muted', 'Shown beside the chat when it sits left or right, and in Visual Novel mode. Leave it unset to use the character card. Background removal runs on this device; the first time downloads a 490 MB model.'));
+        removeRow.append(removeButton, removeStatus, resetButton(() => edit(target => { delete target.removeBg; })));
+        body.append(imageRow, imageUrlRow, removeRow, el('small', 'yt-muted', 'Shown beside the chat when it sits left or right, and in Visual Novel mode. Leave it unset to use the character card.'));
         refreshers.push(() => {
             const own = current().image || '';
             const overrides = getEffectiveOverrides(getSettings());
@@ -380,7 +384,10 @@ export function initCharacterSettings({ getSettings, onChange }) {
             const effective = cutout || source;
             preview.src = effective || '';
             preview.classList.toggle('yt-cutout', Boolean(cutout));
-            removeInput.checked = overrides.removeBg;
+            removeButton.classList.toggle('active', overrides.removeBg);
+            removeText.textContent = overrides.removeBg ? 'Restore background' : 'Remove background';
+            removeIcon.className = overrides.removeBg ? 'fa-solid fa-image' : 'fa-solid fa-wand-magic-sparkles';
+            removeButton.classList.toggle('disabled', !source);
             removeRow.classList.toggle('yt-value-set', current().removeBg !== undefined);
             removeStatus.textContent = !overrides.removeBg || !source ? ''
                 : cutout ? 'Done' : isCutoutPending(source) ? 'Working…' : '';

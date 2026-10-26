@@ -35,6 +35,15 @@ function getWorker() {
             }
             return;
         }
+        if (type === 'debug') {
+            console.debug('[Yodayo Tavern Theme] background removal mask', event.data.stats);
+            window.yodayoTavernLastMask = event.data.stats;
+            return;
+        }
+        if (progressToast) {
+            toastr.clear(progressToast);
+            progressToast = null;
+        }
         if (type === 'status') {
             return;
         }
@@ -82,7 +91,14 @@ async function cutOut(src) {
     const id = nextId++;
     const mask = await new Promise((resolve, reject) => {
         pending.set(id, { resolve, reject });
-        getWorker().postMessage({ id, bitmap }, [bitmap]);
+        // diagnostics: localStorage "yodayoTavernBgProvider" = "wasm" or "webgpu" forces a backend
+        let provider;
+        try {
+            provider = localStorage.getItem('yodayoTavernBgProvider') || undefined;
+        } catch {
+            provider = undefined;
+        }
+        getWorker().postMessage({ id, bitmap, provider }, [bitmap]);
     });
     const canvas = new OffscreenCanvas(image.naturalWidth, image.naturalHeight);
     const context = canvas.getContext('2d');
@@ -121,6 +137,7 @@ export function getCutout(src, onReady) {
             .catch((error) => {
                 failed.add(src);
                 console.error('[Yodayo Tavern Theme] background removal failed', error);
+                window.yodayoTavernLastBgError = String(error?.message ?? error);
                 toastr.warning('Could not remove the background from the character image; showing it as is.', 'Yodayo Tavern Theme');
             })
             .finally(() => jobs.delete(src));

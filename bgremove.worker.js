@@ -1,120 +1,78 @@
-// Background removal worker: runs ToonOut (BiRefNet fine-tuned for anime, MIT) through
-// onnxruntime-web, on the GPU (WebGPU) when the browser has it and on the CPU otherwise.
-// The model is downloaded once and kept in the browser's Cache Storage.
+// Background removal worker: runs BiRefNet (lite) through transformers.js, on the GPU
+// (WebGPU) when the browser has it and on the CPU otherwise. transformers.js keeps the
+// downloaded model in the browser's Cache Storage, so it's fetched once.
 
-const ORT_VERSION = '1.20.1';
-const ORT_BASE = `https://cdn.jsdelivr.net/npm/onnxruntime-web@${ORT_VERSION}/dist/`;
-const MODEL_URL = 'https://huggingface.co/sprited/birefnet-toonout-onnx/resolve/main/birefnet-toonout-fp16.onnx';
-const CACHE_NAME = 'yodayo-tavern-models';
-const SIZE = 1024;
-const MEAN = [0.485, 0.456, 0.406];
-const STD = [0.229, 0.224, 0.225];
+const TRANSFORMERS_URL = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.1';
+const MODEL_ID = 'onnx-community/BiRefNet_lite-ONNX';
 
-let sessionPromise = null;
+let modelPromise = null;
 
 function post(type, data = {}) {
     self.postMessage({ type, ...data });
 }
 
-/** The model's bytes, from Cache Storage or downloaded (reporting progress) and cached. */
-async function loadModel() {
-    const cache = await caches.open(CACHE_NAME);
-    const cached = await cache.match(MODEL_URL).catch(() => null);
-    if (cached) {
-        return new Uint8Array(await cached.arrayBuffer());
-    }
-    const response = await fetch(MODEL_URL);
-    if (!response.ok || !response.body) {
-        throw new Error(`Model download failed (HTTP ${response.status})`);
-    }
-    const total = Number(response.headers.get('content-length')) || 0;
-    const reader = response.body.getReader();
-    const chunks = [];
-    let received = 0;
-    let lastReport = 0;
-    for (;;) {
-        const { done, value } = await reader.read();
-        if (done) {
-            break;
-        }
-        chunks.push(value);
-        received += value.length;
-        if (Date.now() - lastReport > 250) {
-            lastReport = Date.now();
-            post('progress', { received, total });
-        }
-    }
-    const bytes = new Uint8Array(received);
-    let offset = 0;
-    for (const chunk of chunks) {
-        bytes.set(chunk, offset);
-        offset += chunk.length;
-    }
-    // keep it for next time; if the browser refuses (storage full or restricted), still use it now
-    try {
-        await cache.put(MODEL_URL, new Response(bytes, { headers: { 'content-type': 'application/octet-stream' } }));
-    } catch (error) {
-        console.warn('[Yodayo Tavern Theme] could not cache the background removal model', error);
-    }
-    return bytes;
-}
-
-async function getSession() {
-    sessionPromise ??= (async () => {
-        const ort = await import(`${ORT_BASE}ort.webgpu.min.mjs`);
-        ort.env.wasm.wasmPaths = ORT_BASE;
-        const model = await loadModel();
-        post('status', { message: 'loading' });
-        const providers = 'gpu' in navigator ? ['webgpu', 'wasm'] : ['wasm'];
+async function getModel(forceDevice) {
+    modelPromise ??= (async () => {
+        const { AutoModel, AutoProcessor, RawImage, env } = await import(TRANSFORMERS_URL);
+        env.allowLocalModels = false;
+        const files = new Map();
+        const progress_callback = (event) => {
+            if (event.status === 'progress' && event.total) {
+                files.set(event.file, event);
+                let received = 0;
+                let total = 0;
+                for (const file of files.values()) {
+                    received += file.loaded;
+                    total += file.total;
+                }
+                post('progress', { received, total });
+            }
+        };
+        const device = forceDevice ?? ('gpu' in navigator ? 'webgpu' : 'wasm');
+        let model;
         try {
-            return { ort, session: await ort.InferenceSession.create(model, { executionProviders: providers }) };
+            model = await AutoModel.from_pretrained(MODEL_ID, { device, dtype: 'fp32', progress_callback });
         } catch (error) {
-            if (providers[0] !== 'webgpu') {
+            if (device !== 'webgpu') {
                 throw error;
             }
             console.warn('[Yodayo Tavern Theme] WebGPU unavailable for background removal, using the CPU', error);
-            return { ort, session: await ort.InferenceSession.create(model, { executionProviders: ['wasm'] }) };
+            model = await AutoModel.from_pretrained(MODEL_ID, { device: 'wasm', dtype: 'fp32', progress_callback });
         }
+        const processor = await AutoProcessor.from_pretrained(MODEL_ID);
+        post('status', { message: 'loaded' });
+        return { model, processor, RawImage, device };
     })();
     try {
-        return await sessionPromise;
+        return await modelPromise;
     } catch (error) {
-        sessionPromise = null;
+        modelPromise = null;
         throw error;
     }
 }
 
-/** RGB image → normalized 1×3×1024×1024 tensor data */
-function preprocess(bitmap) {
-    const canvas = new OffscreenCanvas(SIZE, SIZE);
-    const context = canvas.getContext('2d');
-    context.drawImage(bitmap, 0, 0, SIZE, SIZE);
-    const { data } = context.getImageData(0, 0, SIZE, SIZE);
-    const plane = SIZE * SIZE;
-    const input = new Float32Array(3 * plane);
-    for (let i = 0; i < plane; i++) {
-        for (let c = 0; c < 3; c++) {
-            input[c * plane + i] = (data[i * 4 + c] / 255 - MEAN[c]) / STD[c];
-        }
-    }
-    return input;
-}
-
 self.addEventListener('message', async (event) => {
-    const { id, bitmap } = event.data;
+    const { id, bitmap, provider } = event.data;
     try {
-        const { ort, session } = await getSession();
+        const { model, processor, RawImage, device } = await getModel(provider);
         post('status', { id, message: 'running' });
-        const input = new ort.Tensor('float32', preprocess(bitmap), [1, 3, SIZE, SIZE]);
-        const output = await session.run({ [session.inputNames[0]]: input });
-        const mask = output[session.outputNames[0]].data;
-        // the mask as an image whose alpha is the foreground probability
-        const alpha = new Uint8ClampedArray(SIZE * SIZE * 4);
-        for (let i = 0; i < SIZE * SIZE; i++) {
-            alpha[i * 4 + 3] = Math.round(Math.min(Math.max(mask[i], 0), 1) * 255);
+        const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+        canvas.getContext('2d').drawImage(bitmap, 0, 0);
+        const image = await RawImage.fromBlob(await canvas.convertToBlob({ type: 'image/png' }));
+        const { pixel_values } = await processor(image);
+        const { output_image } = await model({ input_image: pixel_values });
+        const probabilities = output_image[0].sigmoid();
+        const [, height, width] = probabilities.dims;
+        const values = probabilities.data;
+        let sum = 0;
+        const alpha = new Uint8ClampedArray(width * height * 4);
+        for (let i = 0; i < width * height; i++) {
+            sum += values[i];
+            alpha[i * 4 + 3] = Math.round(values[i] * 255);
         }
-        const maskBitmap = await createImageBitmap(new ImageData(alpha, SIZE, SIZE));
-        self.postMessage({ type: 'done', id, mask: maskBitmap }, [maskBitmap]);
+        post('debug', { stats: { provider: device, dims: probabilities.dims, mean: sum / (width * height) } });
+        const mask = await createImageBitmap(new ImageData(alpha, width, height));
+        self.postMessage({ type: 'done', id, mask }, [mask]);
     } catch (error) {
         post('error', { id, message: String(error?.message ?? error) });
     } finally {
