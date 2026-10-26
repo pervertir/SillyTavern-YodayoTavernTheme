@@ -101,8 +101,8 @@ body.yodayo-tavern .drawer-content h4 {
 
     /* Menu-button mode: a logo button in the top-left corner opens the rail below it */
     body.yodayo-tavern.yt-nav-rail:not(.yt-rail-pinned) {
-        --yt-rail-top: calc(var(--yt-rail-gap) * 2 + 40px);
-        --yt-dock-gap-left: calc(var(--yt-rail-gap) * 2 + 40px);
+        --yt-rail-top: calc(var(--yt-rail-gap) * 2 + var(--yt-rail-w));
+        --yt-dock-gap-left: calc(var(--yt-rail-gap) * 2 + var(--yt-rail-w));
     }
 
     body.yodayo-tavern.yt-nav-rail:not(.yt-rail-pinned) #yt-rail-toggle {
@@ -190,18 +190,19 @@ body.yodayo-tavern .drawer-content h4 {
     display: none;
 }
 
+/* same width and left edge as the rail, so the two line up as one column */
 body.yodayo-tavern #yt-rail-toggle {
     position: fixed;
-    top: 8px;
-    left: 8px;
-    width: 40px;
-    height: 40px;
+    top: var(--yt-rail-gap, 8px);
+    left: var(--yt-rail-gap, 8px);
+    width: var(--yt-rail-w, 52px);
+    height: var(--yt-rail-w, 52px);
     align-items: center;
     justify-content: center;
     padding: 0;
     background-color: rgb(35 37 39 / 0.92);
     border: 1px solid var(--yt-line-strong);
-    border-radius: var(--yt-radius-lg);
+    border-radius: var(--yt-radius-xl);
     box-shadow: var(--yt-shadow-sm);
     color: var(--yt-text);
     font-size: 16px;
@@ -211,8 +212,8 @@ body.yodayo-tavern #yt-rail-toggle {
 }
 
 body.yodayo-tavern #yt-rail-toggle img {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
     pointer-events: none;
 }
