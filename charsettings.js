@@ -129,7 +129,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
     }
 
     function openWindow() {
-        const settings = getSettings();
+        scope = 'character';
         const win = el('div', 'yodayo-tavern-settings');
         win.id = WINDOW_ID;
         win.setAttribute('role', 'dialog');
