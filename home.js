@@ -12,6 +12,44 @@ const DEFAULT_CHAT_NAME = /^(?:.* - )?\d{4}-\d{1,2}-\d{1,2} ?@\d{1,2}h ?\d{1,2}m
 let activeTagId = null;
 let searchText = '';
 
+/** Character orders, the same choices as SillyTavern's character list. "Date added" is the
+ * card's creation date; "Date modified" is when its file last changed. */
+const SORTS = Object.freeze({
+    recent: { label: 'Recent chats', key: e => e.lastChat, desc: true },
+    'name-asc': { label: 'Name (A–Z)', key: e => e.name.toLowerCase() },
+    'name-desc': { label: 'Name (Z–A)', key: e => e.name.toLowerCase(), desc: true },
+    'added-desc': { label: 'Date added (newest)', key: e => e.added, desc: true },
+    'added-asc': { label: 'Date added (oldest)', key: e => e.added },
+    'modified-desc': { label: 'Date modified', key: e => e.modified, desc: true },
+    fav: { label: 'Favorites first', key: e => (e.fav ? 1 : 0), desc: true },
+    'chats-desc': { label: 'Most chats', key: e => e.chatSize, desc: true },
+    random: { label: 'Random', key: e => e.random },
+});
+const SORT_KEY = 'yodayoTavernHomeSort';
+
+function getSort() {
+    const stored = SillyTavern.getContext().accountStorage?.getItem(SORT_KEY);
+    return stored && SORTS[stored] ? stored : 'recent';
+}
+
+function setSort(value) {
+    SillyTavern.getContext().accountStorage?.setItem(SORT_KEY, value);
+}
+
+/** Sort fields shared by characters and groups */
+function sortFields(item) {
+    const created = Date.parse(item.create_date ?? '');
+    return {
+        name: item.name ?? '',
+        lastChat: Number(item.date_last_chat) || 0,
+        added: Number.isFinite(created) ? created : Number(item.date_added) || 0,
+        modified: Number(item.date_added) || 0,
+        fav: item.fav === true || item.fav === 'true',
+        chatSize: Number(item.chat_size) || 0,
+        random: Math.random(),
+    };
+}
+
 /** Small DOM helper so names and tags from character cards are never parsed as HTML. */
 function el(tag, className, text) {
     const node = document.createElement(tag);
@@ -144,15 +182,22 @@ function renderGrid(home) {
         .filter(({ character }) => activeTagId === null || getTagIds(character).includes(activeTagId))
         .filter(({ character }) => !query || character.name.toLowerCase().includes(query)
             || (character.data?.creator ?? '').toLowerCase().includes(query))
-        .map(entry => ({ lastChat: Number(entry.character.date_last_chat) || 0, name: entry.character.name, render: () => renderCard(entry) }));
+        .map(entry => ({ ...sortFields(entry.character), render: () => renderCard(entry) }));
 
     // groups have no tags, so they show only under "All characters"
     const groups = activeTagId !== null ? [] : (SillyTavern.getContext().groups ?? [])
         .filter(group => !query || group.name.toLowerCase().includes(query))
-        .map(group => ({ lastChat: Number(group.date_last_chat) || 0, name: group.name, render: () => renderGroupCard(group) }));
+        .map(group => ({ ...sortFields(group), render: () => renderGroupCard(group) }));
 
+    const sort = SORTS[getSort()];
+    const compare = (a, b) => {
+        const x = sort.key(a);
+        const y = sort.key(b);
+        const order = typeof x === 'string' ? x.localeCompare(y) : x - y;
+        return sort.desc ? -order : order;
+    };
     const entries = [...characters, ...groups]
-        .sort((a, b) => b.lastChat - a.lastChat || a.name.localeCompare(b.name));
+        .sort((a, b) => compare(a, b) || b.lastChat - a.lastChat || a.name.localeCompare(b.name));
 
     grid.replaceChildren(...entries.map(entry => entry.render()));
 
@@ -248,7 +293,26 @@ function buildHome() {
     const recentDivider = el('div', 'yt-home-divider yt-home-divider-recent');
     recentDivider.append(el('span', '', 'Recent chats'));
 
-    home.append(header, recentDivider, el('div', 'yt-home-recent'), divider, el('div', 'yt-home-chips'), el('div', 'yt-home-grid'));
+    // tag chips, with the sort order on the right
+    const filterBar = el('div', 'yt-home-filterbar');
+    const sortLabel = el('label', 'yt-home-sort');
+    sortLabel.title = 'Sort characters';
+    const sortSelect = el('select');
+    sortSelect.setAttribute('aria-label', 'Sort characters');
+    for (const [value, { label }] of Object.entries(SORTS)) {
+        const option = el('option', '', label);
+        option.value = value;
+        sortSelect.append(option);
+    }
+    sortSelect.value = getSort();
+    sortSelect.addEventListener('change', () => {
+        setSort(sortSelect.value);
+        renderGrid(home);
+    });
+    sortLabel.append(el('i', 'fa-solid fa-arrow-down-wide-short'), sortSelect);
+    filterBar.append(el('div', 'yt-home-chips'), sortLabel);
+
+    home.append(header, recentDivider, el('div', 'yt-home-recent'), divider, filterBar, el('div', 'yt-home-grid'));
     return home;
 }
 

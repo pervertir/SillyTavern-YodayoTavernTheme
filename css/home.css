@@ -646,3 +646,67 @@ body.yodayo-tavern .yt-card-group .yt-card-media img {
 body.yodayo-tavern .yt-card-group:hover .yt-card-media img {
     transform: none;
 }
+
+/* Tag chips on the left, the sort order on the right */
+body.yodayo-tavern .yt-home-filterbar {
+    display: flex;
+    align-items: center;
+    gap: var(--yt-space-3);
+    min-width: 0;
+}
+
+body.yodayo-tavern .yt-home-filterbar .yt-home-chips {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+body.yodayo-tavern .yt-home-sort {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: var(--yt-space-2);
+    height: 36px;
+    padding: 0 4px 0 var(--yt-space-3);
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius);
+    color: var(--yt-muted);
+    cursor: pointer;
+}
+
+body.yodayo-tavern .yt-home-sort:hover,
+body.yodayo-tavern .yt-home-sort:focus-within {
+    border-color: var(--yt-line-strong);
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern .yt-home-sort select {
+    height: 100%;
+    margin: 0;
+    padding: 0 var(--yt-space-2) 0 0;
+    background: transparent;
+    border: none;
+    color: var(--yt-text);
+    font: 500 14px var(--yt-font);
+    cursor: pointer;
+    box-shadow: none;
+}
+
+body.yodayo-tavern .yt-home-sort select:focus-visible {
+    outline: none !important;
+}
+
+body.yodayo-tavern .yt-home-sort option {
+    background-color: var(--yt-surface);
+    color: var(--yt-text);
+}
+
+@media screen and (max-width: 600px) {
+    body.yodayo-tavern .yt-home-filterbar {
+        flex-wrap: wrap;
+    }
+
+    body.yodayo-tavern .yt-home-filterbar .yt-home-chips {
+        flex-basis: 100%;
+    }
+}
