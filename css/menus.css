@@ -113,3 +113,57 @@ body.yodayo-tavern.yt-nav-rail .drawer-content:is(.fillLeft, .fillRight) > .yt-s
     float: none;
     margin: 0;
 }
+
+/* Section cards in every menu: any block that starts with a section heading (h4, h5 or a
+   SillyTavern standout header) becomes a card. Sheet titles are h3 and stay plain. */
+body.yodayo-tavern .drawer-content div:has(> :is(h4, h5, .standoutHeader):first-child):not(.inline-drawer, .inline-drawer-content, .inline-drawer-header) {
+    margin-bottom: var(--yt-space-2);
+    padding: var(--yt-space-3);
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+/* a card's heading is its title, not a second boxed bar */
+body.yodayo-tavern .drawer-content div:has(> :is(h4, h5, .standoutHeader):first-child) > :is(h4, h5, .standoutHeader):first-child {
+    margin-top: 0;
+    padding-top: 0;
+    background: transparent;
+    border: none;
+}
+
+/* cards inside cards (or inside collapsible cards) stay flat */
+body.yodayo-tavern .drawer-content :is(div:has(> :is(h4, h5, .standoutHeader):first-child), .inline-drawer) div:has(> :is(h4, h5, .standoutHeader):first-child):not(.inline-drawer, .inline-drawer-content, .inline-drawer-header) {
+    padding: var(--yt-space-1) 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+/* Chat Style: this theme designs Bubbles, Flat and Document only, so other styles that
+   theme extensions add to the list are hidden while it's on */
+body.yodayo-tavern #chat_display option:not([value="0"], [value="1"], [value="2"]) {
+    display: none;
+}
+
+/* SillyTavern pins some help icons to a sheet's top-right corner; move them clear of the
+   close button's gutter */
+body.yodayo-tavern.yt-nav-rail .drawer-content > .topRightInset {
+    right: calc(var(--yt-close-gutter, 36px) + var(--yt-space-3));
+}
+
+/* API Connections has no section headings to hang cards on, so its three areas are cards
+   directly: connection profile, the API and its settings, and auto-connect */
+body.yodayo-tavern #rm_api_block > :is(.wide100p, .flex-container.flexFlowColumn, .flex-container.alignitemscenter.spaceBetween) {
+    margin-bottom: var(--yt-space-2);
+    padding: var(--yt-space-3);
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern #rm_api_block > :is(.wide100p, .flex-container.flexFlowColumn, .flex-container.alignitemscenter.spaceBetween) div:has(> :is(h4, h5, .standoutHeader):first-child) {
+    padding: var(--yt-space-1) 0;
+    background: transparent;
+    border: none;
+}

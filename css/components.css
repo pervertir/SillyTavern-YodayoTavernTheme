@@ -1,0 +1,131 @@
+/* SillyTavern parts found in an audit of its CSS that the other files don't cover yet. */
+
+/* Avatars: round, rounded and square avatars show the top of portrait images, where faces
+   are, instead of the middle. Rectangular avatar mode shows the whole image anyway. */
+body.yodayo-tavern:not(.big-avatars) .avatar img,
+body.yodayo-tavern .yt-home .recentChat .avatar img,
+body.yodayo-tavern .avatar-container .avatar img {
+    object-fit: cover;
+    object-position: top center;
+}
+
+/* Slash command and macro autocomplete */
+body.yodayo-tavern .autoComplete-wrap .autoComplete,
+body.yodayo-tavern .autoComplete-detailsWrap .autoComplete-details {
+    background-color: var(--yt-glass-raised);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-lg);
+    box-shadow: var(--yt-shadow);
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern .autoComplete > .item {
+    border-radius: var(--yt-radius);
+}
+
+body.yodayo-tavern .autoComplete > .item.selected {
+    background-color: var(--yt-accent-soft);
+}
+
+/* Character right-click menu */
+body.yodayo-tavern #character_context_menu {
+    background-color: var(--yt-glass-raised);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-lg);
+    box-shadow: var(--yt-shadow);
+    padding: var(--yt-space-1);
+}
+
+body.yodayo-tavern #character_context_menu button {
+    width: 100%;
+    padding: 7px var(--yt-space-3);
+    background: transparent;
+    border: none;
+    border-radius: var(--yt-radius-md);
+    color: var(--yt-text);
+    text-align: left;
+}
+
+body.yodayo-tavern #character_context_menu button:hover {
+    background-color: var(--yt-surface-3);
+}
+
+/* Prompt Manager rows */
+body.yodayo-tavern #completion_prompt_manager #completion_prompt_manager_list li.completion_prompt_manager_prompt {
+    border-radius: var(--yt-radius-md);
+    border-color: var(--yt-line);
+}
+
+body.yodayo-tavern #completion_prompt_manager #completion_prompt_manager_list li.completion_prompt_manager_prompt:hover {
+    background-color: color-mix(in srgb, var(--yt-surface-3) 45%, transparent);
+}
+
+/* Token probabilities viewer */
+body.yodayo-tavern #logprobsViewer {
+    background-color: var(--yt-glass);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-xl);
+}
+
+body.yodayo-tavern .logprobs_top_candidate {
+    border-radius: var(--yt-radius-sm);
+}
+
+/* Group chats: member rows */
+body.yodayo-tavern .group_member {
+    border: 1px solid transparent;
+    border-radius: var(--yt-radius-lg);
+    transition: background-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .group_member:hover {
+    background-color: color-mix(in srgb, var(--yt-surface-3) 45%, transparent);
+}
+
+/* Tag manager, chat backups, data cleanup and API key manager lists */
+body.yodayo-tavern :is(.tag_view_item, .chatBackupsListItem, .dataMaidItem, .secretKeyManagerItem, .userAccount) {
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern :is(.tag_view_item, .chatBackupsListItem, .dataMaidItem, .secretKeyManagerItem):hover {
+    border-color: var(--yt-line-strong);
+}
+
+/* File and audio attachments in messages */
+body.yodayo-tavern :is(.mes_file_container, .mes_audio_container, .file_attached) {
+    background-color: var(--yt-glass-raised);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+/* Macro browser */
+body.yodayo-tavern .macroBrowser {
+    border-radius: var(--yt-radius-lg);
+}
+
+/* Info and warning blocks inside menus and popups */
+body.yodayo-tavern .info-block {
+    border-radius: var(--yt-radius-lg);
+    border: 1px solid var(--yt-line);
+}
+
+body.yodayo-tavern .info-block.warning {
+    border-color: color-mix(in srgb, var(--yt-warning) 40%, transparent);
+    background-color: color-mix(in srgb, var(--yt-warning) 10%, transparent);
+}
+
+/* Drag-and-drop placeholders and sortable lists (jQuery UI) */
+body.yodayo-tavern .ui-sortable-placeholder,
+body.yodayo-tavern .ui-state-highlight {
+    background: var(--yt-accent-soft);
+    border: 1px dashed var(--yt-accent-line);
+    border-radius: var(--yt-radius-md);
+}
