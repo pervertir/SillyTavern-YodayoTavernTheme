@@ -195,3 +195,24 @@ body.yodayo-tavern .drawer-content .checkbox_label > :is(small, span) {
     font-size: var(--yt-text-sm);
     color: var(--yt-text);
 }
+
+/* Scrollbars: sheets never scroll sideways (the close button's gutter and a few wide rows
+   used to add a horizontal bar), and the AI response settings scroll only their inner list.
+   As a flex column the list takes exactly the room left under the pin row; with
+   height: 100% it overflowed by that row and the sheet grew a second scrollbar. */
+body.yodayo-tavern.yt-nav-rail .drawer-content {
+    overflow-x: hidden;
+}
+
+body.yodayo-tavern.yt-nav-rail #left-nav-panel.openDrawer {
+    display: flex !important;
+    flex-direction: column;
+    overflow-y: hidden;
+}
+
+body.yodayo-tavern.yt-nav-rail #left-nav-panel.openDrawer > .scrollableInner {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    overflow-y: auto;
+}
