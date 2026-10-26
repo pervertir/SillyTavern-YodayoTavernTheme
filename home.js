@@ -245,7 +245,10 @@ function buildHome() {
     const divider = el('div', 'yt-home-divider');
     divider.append(el('span', '', 'Characters'));
 
-    home.append(header, el('div', 'yt-home-recent'), divider, el('div', 'yt-home-chips'), el('div', 'yt-home-grid'));
+    const recentDivider = el('div', 'yt-home-divider yt-home-divider-recent');
+    recentDivider.append(el('span', '', 'Recent chats'));
+
+    home.append(header, recentDivider, el('div', 'yt-home-recent'), divider, el('div', 'yt-home-chips'), el('div', 'yt-home-grid'));
     return home;
 }
 

@@ -35,6 +35,12 @@ body.yodayo-tavern .yt-home-recent:empty {
     display: none;
 }
 
+/* no recent chats: drop the heading too */
+body.yodayo-tavern .yt-home-divider-recent:has(+ .yt-home-recent:empty),
+body.yodayo-tavern .yt-home-divider-recent:has(+ .yt-home-recent .noRecentChat) {
+    display: none;
+}
+
 body.yodayo-tavern .yt-home .welcomePanel {
     max-width: none;
     margin: 0;
