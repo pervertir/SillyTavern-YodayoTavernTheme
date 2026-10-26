@@ -167,3 +167,28 @@ body.yodayo-tavern #rm_api_block > :is(.wide100p, .flex-container.flexFlowColumn
     background: transparent;
     border: none;
 }
+
+/* User Settings: the "UI Theme" heading only wraps the preset picker, but the whole first
+   column (avatars, chat style, theme colors, sliders, toggles) belongs to that section,
+   so the column is the card */
+body.yodayo-tavern #user-settings-block #UI-Theme-Block {
+    margin-bottom: var(--yt-space-2);
+    padding: var(--yt-space-3);
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern #user-settings-block #UI-Theme-Block #UI-presets-block {
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+/* SillyTavern writes some toggle labels as <small> and others as <span>; give them all the
+   same size and color so the lists read evenly */
+body.yodayo-tavern .drawer-content .checkbox_label > :is(small, span) {
+    font-size: var(--yt-text-sm);
+    color: var(--yt-text);
+}
