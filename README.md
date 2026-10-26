@@ -40,6 +40,8 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Menu width | Each menu opens at a width that suits it (for example 440px for AI settings, 820px for User Settings). Drag an open menu's edge to resize it; each menu remembers its own width. Double-click the edge to reset. |
 | Colors | Character name, text, dialogue ("quotes"), narration (*actions*) and bubble, plus your name, text and bubble. Set them for all characters, or for only the open character to override. |
 | Character image | With "Only this character" selected, an image URL to show instead of the card art on the free side. |
+| Advanced | Every look setting Moonlit Echoes offers that applies to this theme, in groups: theme colors (secondary color, menu, menu bar, icon, chat field and scrollbar colors), message style (avatar size, spacing, name and text sizes, line height, context marker), background effects (blur, opacity, chat field blur), theme extras, chat (edge fade, justified text, hidden message details, favorite symbol), visual novel mode, phones and tablets, and raw CSS. |
+| Pop-out | The window icon in the panel's header opens these settings in a floating window you can drag around. |
 | Export / Import | Save all theme settings, including per-character colors, to a JSON file and load them back. |
 | Chat position | Dock the chat window on the left, in the middle, or on the right. |
 | Show character image | With the chat on the left or right, shows the character's image on the free side, at full height when the image is large enough. |
@@ -102,6 +104,8 @@ remembered.
 - `sheets.js`: drag handles that resize the menus
 - `sliders.js`: keeps each slider's fill in step with its value
 - `swipes.js`: marks single-swipe messages so their counter can hide
+- `advanced.js`: the Advanced settings and how each one is applied
+- `popout.js`: the floating settings window
 - `colors.js`: chat colors (all characters or per character), character image and export/import
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,
   composer, lists, overlays, layout). Every rule is scoped under `body.yodayo-tavern`.

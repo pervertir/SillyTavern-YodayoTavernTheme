@@ -6,6 +6,8 @@ import { applySheetWidths, initSheetResizers } from './sheets.js';
 import { applyVnHeight, initVnMode } from './vn.js';
 import { initSliderFills } from './sliders.js';
 import { initSwipeCounters } from './swipes.js';
+import { applyAdvanced, initAdvancedControls } from './advanced.js';
+import { initSettingsPopout } from './popout.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
 /** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
@@ -35,10 +37,13 @@ const defaultSettings = Object.freeze({
     vnHeight: 0.3,
     /** Widths the user dragged menus to: { [sheet id]: px } */
     sheetWidths: {},
+    /** Advanced look settings from advanced.js: { [key]: value } */
+    advanced: {},
 });
 
 let syncTavernHome = () => {};
 let refreshColorControls = () => {};
+let refreshAdvancedControls = () => {};
 
 const RAIL_TOGGLE_ID = 'yt-rail-toggle';
 const BACK_BUTTON_ID = 'yt-back-home';
@@ -172,6 +177,7 @@ function applySettings() {
 
     $('#yt_conflict_note').toggleClass('displayNone', !(settings.enabled && isMoonlitEnabled()));
     applyColors(settings);
+    applyAdvanced(settings);
     applySheetWidths(settings);
     applyVnHeight(settings);
     updateCharacterArt();
@@ -258,6 +264,7 @@ function importSettings(data) {
     applySettings();
     syncSettingsUI();
     refreshColorControls();
+    refreshAdvancedControls();
     saveSettings();
 }
 
@@ -362,6 +369,14 @@ async function init() {
         },
     });
     initBackupControls({ getSettings, onImport: importSettings });
+    refreshAdvancedControls = initAdvancedControls({
+        getSettings,
+        onChange: () => {
+            applySettings();
+            saveSettings();
+        },
+    });
+    initSettingsPopout();
     syncTavernHome = initTavernHome(() => getSettings().enabled && getSettings().tavernHome);
     applySettings();
 

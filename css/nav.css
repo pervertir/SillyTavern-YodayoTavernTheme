@@ -174,7 +174,10 @@ body.yodayo-tavern .drawer-content h4 {
         margin: 0;
         /* each sheet has its own default (below); sheets.js sets --yt-sheet-user on a
            sheet when its edge is dragged */
-        width: min(var(--yt-sheet-user, var(--yt-sheet-default, 560px)), calc(100vw - var(--yt-sheet-left) - var(--yt-sheet-room)));
+        /* plus a right-hand gutter that holds the close button, so it never covers content */
+        --yt-close-gutter: 36px;
+        width: min(calc(var(--yt-sheet-user, var(--yt-sheet-default, 560px)) + var(--yt-close-gutter)), calc(100vw - var(--yt-sheet-left) - var(--yt-sheet-room)));
+        padding-right: calc(var(--yt-space-3) + var(--yt-close-gutter));
         min-width: 0;
         max-height: calc(100dvh - var(--yt-rail-gap) * 2);
     }

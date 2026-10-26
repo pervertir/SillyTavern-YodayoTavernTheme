@@ -1,0 +1,233 @@
+/* Advanced settings (advanced.js). Variables are only set on <body> when a setting differs
+   from its default, so every rule here falls back to the theme's normal look. Checkbox
+   settings toggle body.yt-adv-<key>; selects set body[data-yt-<key>]. */
+
+/* Theme colors */
+body.yodayo-tavern a,
+body.yodayo-tavern .character_select.is_fav .ch_name::after {
+    color: var(--yt-accent-2, var(--yt-accent));
+}
+
+body.yodayo-tavern.yt-nav-rail #top-settings-holder::before,
+body.yodayo-tavern #yt-rail-toggle {
+    background-color: var(--yt-rail-bg, rgb(35 37 39 / var(--yt-rail-alpha, 0.6)));
+}
+
+body.yodayo-tavern .drawer-icon:not(.openIcon):not(:hover) {
+    color: var(--yt-icon, var(--yt-muted));
+}
+
+/* the blur is only set when chosen: any backdrop-filter, even 0px, would change how
+   SillyTavern positions things inside the chat column */
+body.yodayo-tavern:not(.yt-home-active) #sheld {
+    background-color: var(--yt-chat-field-bg, transparent);
+    backdrop-filter: var(--yt-chat-field-backdrop, none);
+    -webkit-backdrop-filter: var(--yt-chat-field-backdrop, none);
+}
+
+body.yodayo-tavern * {
+    scrollbar-color: var(--yt-scrollbar, var(--yt-surface-3)) transparent;
+}
+
+/* Message style */
+body.yodayo-tavern.yt-adv-hideAvatarBorder #chat .mes .avatar img {
+    border: none;
+}
+
+/* rectangular avatar mode keeps SillyTavern's own proportions */
+body.yodayo-tavern:not(.big-avatars) #chat .mes .avatar,
+body.yodayo-tavern:not(.big-avatars) #chat .mes .avatar img {
+    width: var(--yt-avatar-size, 50px);
+    height: var(--yt-avatar-size, 50px);
+}
+
+body.yodayo-tavern #chat .mes .mes_text p {
+    margin-top: var(--yt-p-top, 0.35em);
+    margin-bottom: var(--yt-p-bottom, 0.35em);
+}
+
+body.yodayo-tavern #chat .mes:not([is_user="true"]) .name_text {
+    font-size: var(--yt-char-name-size, 13px);
+}
+
+body.yodayo-tavern #chat .mes[is_user="true"] .name_text {
+    font-size: var(--yt-user-name-size, 13px);
+}
+
+body.yodayo-tavern #chat .mes .mes_text {
+    font-size: var(--yt-mes-size, var(--mainFontSize));
+    line-height: var(--yt-mes-line, 1.6);
+    letter-spacing: var(--yt-mes-tracking, normal);
+}
+
+body.yodayo-tavern #chat .mes.lastInContext {
+    border-top: var(--yt-context-marker, 1px dashed var(--yt-accent-line)) !important;
+}
+
+/* Background effects */
+body.yodayo-tavern #bg1,
+body.yodayo-tavern #bg_custom {
+    filter: blur(var(--yt-bg-blur, 0px));
+    opacity: var(--yt-bg-opacity, 1);
+}
+
+@media screen and (max-width: 1000px) {
+    body.yodayo-tavern:not(.yt-home-active) #sheld {
+        backdrop-filter: var(--yt-chat-field-backdrop-mobile, none);
+        -webkit-backdrop-filter: var(--yt-chat-field-backdrop-mobile, none);
+    }
+}
+
+/* Theme extras */
+body.yodayo-tavern.yt-adv-colorize .drawer-content h3,
+body.yodayo-tavern.yt-adv-colorize .drawer-content h4,
+body.yodayo-tavern.yt-adv-colorize .drawer-content .inline-drawer-header b,
+body.yodayo-tavern.yt-adv-colorize .drawer-icon,
+body.yodayo-tavern.yt-adv-colorize .yt-home-divider {
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern.yt-adv-noRailAnimation #top-settings-holder,
+body.yodayo-tavern.yt-adv-noRailAnimation .drawer-content {
+    transition: none;
+    animation: none;
+}
+
+@media screen and (min-width: 1001px) {
+    body.yodayo-tavern.yt-nav-rail:not(.yt-adv-lockPanelHeight) .drawer-content:is(.fillLeft, .fillRight).openDrawer {
+        height: auto;
+    }
+
+    body.yodayo-tavern.yt-nav-rail.yt-adv-fitMenuHeight .drawer-content:not(.fillLeft, .fillRight).openDrawer {
+        height: auto;
+    }
+}
+
+body.yodayo-tavern.yt-adv-noRadius *,
+body.yodayo-tavern.yt-adv-noRadius *::before,
+body.yodayo-tavern.yt-adv-noRadius *::after {
+    border-radius: 0 !important;
+}
+
+body.yodayo-tavern.yt-adv-wideEntryInputs .world_entry_form_control:has(.keyprimarytextpole, .keysecondarytextpole) {
+    flex: 1 1 100%;
+}
+
+body.yodayo-tavern.yt-adv-compactWorldInfo #WorldInfo .flex-container {
+    gap: var(--yt-space-1);
+}
+
+body.yodayo-tavern.yt-adv-compactWorldInfo #WorldInfo .menu_button {
+    min-height: 28px;
+    margin: 0;
+}
+
+/* Chat */
+body.yodayo-tavern[data-yt-chat-fade="top"] #chat {
+    mask-image: linear-gradient(to bottom, transparent 0, #000 32px);
+}
+
+body.yodayo-tavern[data-yt-chat-fade="bottom"] #chat {
+    mask-image: linear-gradient(to top, transparent 0, #000 32px);
+}
+
+body.yodayo-tavern[data-yt-chat-fade="both"] #chat {
+    mask-image: linear-gradient(to bottom, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
+}
+
+body.yodayo-tavern.yt-adv-modelIcon #chat .mes .icon-svg.timestamp-icon {
+    display: inline-block !important;
+}
+
+body.yodayo-tavern.yt-adv-justify #chat .mes .mes_text {
+    text-align: justify;
+    hyphens: auto;
+}
+
+body.yodayo-tavern.yt-adv-hideDetails #chat .mes :is(.mesIDDisplay, .mes_timer, .tokenCounterDisplay) {
+    opacity: 0;
+    transition: opacity var(--yt-details-duration, 0.8s) var(--yt-ease);
+}
+
+body.yodayo-tavern.yt-adv-hideDetails #chat .mes:hover :is(.mesIDDisplay, .mes_timer, .tokenCounterDisplay) {
+    opacity: 1;
+}
+
+body.yodayo-tavern .character_select.is_fav .ch_name::after,
+body.yodayo-tavern .group_select.is_fav .ch_name::after {
+    content: var(--yt-fav-symbol, "★");
+    margin-left: 4px;
+    display: inline-block;
+}
+
+body.yodayo-tavern.yt-adv-favAnimation .character_select.is_fav .ch_name::after,
+body.yodayo-tavern.yt-adv-favAnimation .group_select.is_fav .ch_name::after {
+    animation: yt-fav-pulse 2.4s var(--yt-ease) infinite;
+}
+
+@keyframes yt-fav-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.25); opacity: 0.75; }
+}
+
+/* Visual novel mode */
+body.yodayo-tavern.waifuMode[data-yt-vn-fade="bottom"] :is(#yt-character-art img, img.expression) {
+    mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+}
+
+body.yodayo-tavern.waifuMode[data-yt-vn-fade="top"] :is(#yt-character-art img, img.expression) {
+    mask-image: linear-gradient(to top, #000 70%, transparent 100%);
+}
+
+/* Phones and tablets */
+@media screen and (max-width: 1000px) {
+    body.yodayo-tavern.yt-adv-mobileHideScrollbar * {
+        scrollbar-width: none;
+    }
+
+    body.yodayo-tavern.yt-adv-mobileHideScrollbar ::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* the theme's pill composer is the default; switching it off restores SillyTavern's bar */
+    body.yodayo-tavern:not(.yt-adv-mobileComposer) #send_form {
+        border-radius: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    body.yodayo-tavern.yt-adv-mobileInlineMeta #chat .mes .ch_name > .flex-container {
+        flex-wrap: nowrap;
+        white-space: nowrap;
+    }
+
+    body.yodayo-tavern.yt-adv-mobileInputSpacing #form_sheld {
+        padding: 10px 10px calc(14px + env(safe-area-inset-bottom, 0px));
+    }
+
+    body.yodayo-tavern.yt-adv-tabletMenus .drawer-content {
+        width: 100vw !important;
+        left: 0 !important;
+        right: 0 !important;
+        border-radius: 0;
+    }
+
+    body.yodayo-tavern[data-yt-mobile-qr-rows="1"] #qr--bar { max-height: 40px; overflow-y: auto; }
+    body.yodayo-tavern[data-yt-mobile-qr-rows="2"] #qr--bar { max-height: 76px; overflow-y: auto; }
+    body.yodayo-tavern[data-yt-mobile-qr-rows="3"] #qr--bar { max-height: 112px; overflow-y: auto; }
+
+    body.yodayo-tavern.yt-adv-mobileQrBelow #qr--bar {
+        order: 30;
+    }
+
+    body.yodayo-tavern.yt-adv-mobileHotswapScroll .hotswap {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+}
+
+@media screen and (min-width: 1001px) {
+    body.yodayo-tavern.yt-adv-desktopInputSpacing #form_sheld {
+        padding: 14px 16px 18px;
+    }
+}

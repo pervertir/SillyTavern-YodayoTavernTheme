@@ -62,3 +62,26 @@
 .yodayo-tavern-settings #yt_color_scope {
     flex: 1 1 140px;
 }
+
+.yodayo-tavern-settings .yt-setting-stack {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.yodayo-tavern-settings .yt-setting-stack > label {
+    flex: none;
+}
+
+.yodayo-tavern-settings #yt_advanced input[type="number"],
+.yodayo-tavern-settings #yt_advanced input[type="text"] {
+    flex: 1;
+    min-width: 0;
+}
+
+.yodayo-tavern-settings #yt_advanced .yt-setting-row > label {
+    flex: 1 1 50%;
+}
+
+.yodayo-tavern-settings #yt_advanced .inline-drawer {
+    margin-bottom: 6px;
+}

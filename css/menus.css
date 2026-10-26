@@ -86,8 +86,9 @@ body.yodayo-tavern.yt-nav-rail .drawer-content .yt-sheet-close {
     float: right;
     width: 28px;
     height: 28px;
-    /* the negative bottom margin keeps it from pushing the sheet's title down */
-    margin: -4px -4px -28px var(--yt-space-2);
+    /* sits in the sheet's right gutter (see nav.css); the negative bottom margin keeps it
+       from pushing the sheet's title down */
+    margin: -4px calc(-1 * var(--yt-close-gutter, 36px)) -28px var(--yt-space-2);
     padding: 0;
     background-color: var(--yt-glass-raised);
     border: 1px solid var(--yt-line-strong);

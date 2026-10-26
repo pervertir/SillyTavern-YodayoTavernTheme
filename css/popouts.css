@@ -1,0 +1,133 @@
+/* Pop-out windows: SillyTavern's own (#movingDivs drawers such as Summarize, the gallery
+   and group member lists, plus Author's Note and CFG) and the theme's settings window. */
+
+body.yodayo-tavern #movingDivs > .draggable,
+body.yodayo-tavern #floatingPrompt,
+body.yodayo-tavern #cfgConfig,
+body.yodayo-tavern #yt-settings-window {
+    background-color: var(--yt-glass);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-xl);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    filter: none;
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern #movingDivs > .draggable {
+    padding: 40px var(--yt-space-3) var(--yt-space-3);
+}
+
+body.yodayo-tavern #movingDivs > .draggable .dragTitle {
+    position: absolute;
+    top: 10px;
+    left: var(--yt-space-4);
+    font-size: var(--yt-text-md);
+    font-weight: 600;
+}
+
+/* window controls: small ghost icons in the top-right corner */
+body.yodayo-tavern .draggable .panelControlBar,
+body.yodayo-tavern #floatingPrompt .panelControlBar,
+body.yodayo-tavern #cfgConfig .panelControlBar {
+    top: 6px;
+    right: 6px;
+    gap: 2px;
+    opacity: 1;
+}
+
+body.yodayo-tavern .panelControlBar > div {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    color: var(--yt-muted);
+    font-size: 13px;
+    opacity: 1;
+    transition: background-color var(--yt-fast) var(--yt-ease), color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .panelControlBar > div:hover {
+    background-color: var(--yt-surface-3);
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern .panelControlBar .dragClose::before {
+    content: "\f00d";
+}
+
+/* The theme's own settings window */
+#yt-settings-window {
+    position: fixed;
+    top: 64px;
+    right: 24px;
+    z-index: 3050;
+    width: min(440px, calc(100vw - 32px));
+    max-height: calc(100dvh - 88px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#yt-settings-window .yt-window-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 10px 10px 16px;
+    border-bottom: 1px solid var(--yt-line);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+
+#yt-settings-window .yt-window-bar:active {
+    cursor: grabbing;
+}
+
+#yt-settings-window .yt-window-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 9999px;
+    color: var(--yt-muted);
+    cursor: pointer;
+}
+
+#yt-settings-window .yt-window-close:hover {
+    background-color: var(--yt-surface-3);
+    color: var(--yt-text);
+}
+
+#yt-settings-window .yt-window-body {
+    overflow-y: auto;
+    padding: 8px 14px 14px;
+}
+
+/* the pop-out button in the settings panel's header */
+.yodayo-tavern-settings .yt-popout-button {
+    margin-left: auto;
+    margin-right: 8px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    font-size: 12px;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.yodayo-tavern-settings .yt-popout-button:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.08);
+}
