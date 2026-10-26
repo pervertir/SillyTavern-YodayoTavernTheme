@@ -56,6 +56,7 @@ export function getEffectiveOverrides(settings) {
         colors: { ...character.colors, ...chat.colors },
         advanced: { ...character.advanced, ...chat.advanced },
         background: chat.background || character.background || '',
+        image: chat.image || character.image || '',
     };
 }
 
@@ -74,6 +75,40 @@ function listBackgrounds() {
     return [...document.querySelectorAll('#bg_menu_content .bg_example, #bg_custom_content .bg_example')]
         .map(el => ({ name: el.getAttribute('title') || el.getAttribute('bgfile') || '', url: String($(el).data('url') || '') }))
         .filter(bg => bg.url);
+}
+
+/** The open character's card image, used when no custom image is set. */
+function defaultImage() {
+    const { characters, characterId, groupId } = SillyTavern.getContext();
+    const avatar = groupId || characterId === undefined ? null : characters[characterId]?.avatar;
+    return avatar && avatar !== 'none' ? `characters/${encodeURIComponent(avatar)}` : '';
+}
+
+/** Saves an image into SillyTavern's user images folder (under the character's name) and returns its path. */
+async function uploadImage(file) {
+    const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+    });
+    const [, format = 'png', image = ''] = dataUrl.match(/^data:image\/([a-z0-9.+-]+);base64,(.*)$/i) ?? [];
+    const { characters, characterId, getRequestHeaders } = SillyTavern.getContext();
+    const response = await fetch('/api/images/upload', {
+        method: 'POST',
+        headers: getRequestHeaders(),
+        body: JSON.stringify({
+            image,
+            format: format.replace('jpeg', 'jpg').replace('svg+xml', 'svg'),
+            ch_name: characters[characterId]?.name || 'Yodayo Tavern Theme',
+            filename: `yodayo-art-${Date.now()}`,
+        }),
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+    const { path } = await response.json();
+    return path;
 }
 
 function el(tag, className, text) {
@@ -224,6 +259,49 @@ export function initCharacterSettings({ getSettings, onChange }) {
             }
             bgSelect.value = own;
             urlInput.value = own && !own.startsWith('url(') ? own : '';
+        });
+
+        // Character image (shown beside a docked chat and in VN mode)
+        body.append(el('h4', 'yt-section-title', 'Character image'));
+        const imageRow = el('div', 'yt-setting-row yt-image-row');
+        const preview = el('img', 'yt-image-preview');
+        preview.alt = '';
+        const fileInput = el('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.hidden = true;
+        const upload = el('div', 'menu_button menu_button_icon', 'Upload');
+        upload.prepend(el('i', 'fa-solid fa-upload'));
+        upload.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', async () => {
+            const file = fileInput.files?.[0];
+            fileInput.value = '';
+            if (!file) {
+                return;
+            }
+            try {
+                const path = await uploadImage(file);
+                edit(target => { target.image = path; });
+            } catch (error) {
+                console.error('[Yodayo Tavern Theme] image upload failed', error);
+                toastr.error('The image could not be uploaded.', 'Yodayo Tavern Theme');
+            }
+        });
+        imageRow.append(preview, upload, fileInput, resetButton(() => edit(target => { delete target.image; })));
+        const imageUrlRow = el('div', 'yt-setting-row');
+        const imageUrl = el('input', 'text_pole');
+        imageUrl.type = 'url';
+        imageUrl.placeholder = 'Or paste an image URL';
+        imageUrl.addEventListener('change', () => edit(target => { target.image = imageUrl.value.trim(); }));
+        imageUrlRow.append(el('label', '', 'URL'), imageUrl);
+        body.append(imageRow, imageUrlRow, el('small', 'yt-muted', 'Shown beside the chat when it sits left or right, and in Visual Novel mode. Leave it unset to use the character card.'));
+        refreshers.push(() => {
+            const own = current().image || '';
+            const effective = getEffectiveOverrides(getSettings()).image || defaultImage();
+            preview.src = effective || '';
+            preview.classList.toggle('displayNone', !effective);
+            imageRow.classList.toggle('yt-value-set', Boolean(own));
+            imageUrl.value = /^\/?user\/images\//.test(own) ? '' : own;
         });
 
         // Message style and background effects

@@ -123,7 +123,7 @@ function isMoonlitEnabled() {
 
 /** Image for the open solo chat's character: a custom image if set, else the card. */
 function getCharacterImageUrl() {
-    const override = getCharacterImageOverride(getSettings());
+    const override = getEffectiveOverrides(getSettings()).image || getCharacterImageOverride(getSettings());
     if (override) {
         return override;
     }

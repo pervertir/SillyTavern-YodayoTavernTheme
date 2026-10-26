@@ -257,3 +257,22 @@ body.yodayo-tavern #yt-chat-settings-cog:hover {
     background-color: var(--yt-surface-3);
     color: var(--yt-accent);
 }
+
+/* Character image picker in the look editor */
+#yt-chat-settings-window .yt-image-row {
+    align-items: center;
+}
+
+#yt-chat-settings-window .yt-image-preview {
+    width: 56px;
+    height: 72px;
+    object-fit: cover;
+    object-position: top;
+    border-radius: var(--yt-radius-md, 10px);
+    border: 1px solid var(--yt-line);
+    margin-right: auto;
+}
+
+#yt-chat-settings-window .yt-image-row .menu_button {
+    gap: 6px;
+}
