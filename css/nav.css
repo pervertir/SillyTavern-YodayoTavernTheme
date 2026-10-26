@@ -173,17 +173,36 @@ body.yodayo-tavern .drawer-content h4 {
         bottom: var(--yt-rail-gap);
     }
 
-    /* Auto-hide: an invisible strip along the edge brings the bar back on hover. It only
-       exists while the bar is hidden, so it never covers the chat beside a shown bar. */
-    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide:not(.yt-rail-open) #top-settings-holder:not(:hover, :has(.drawer-content.openDrawer))::after {
+    /* Auto-hide: an invisible strip along the whole screen edge brings the bar back on
+       hover. It only exists while the bar is hidden, so it never covers the chat beside a
+       shown bar. Once shown, the strip moves into the gap between the bar and the screen
+       edge, so a pointer still resting at the edge keeps the bar open instead of the bar
+       sliding away from under it and hiding again. */
+    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide:not(.yt-rail-open) #top-settings-holder::after {
         content: '';
-        position: absolute;
+        position: fixed;
     }
 
-    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-left #top-settings-holder::after { top: 0; bottom: 0; right: -32px; width: 32px; }
-    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-right #top-settings-holder::after { top: 0; bottom: 0; left: -32px; width: 32px; }
-    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-top #top-settings-holder::after { left: 0; right: 0; bottom: -32px; height: 32px; }
-    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-bottom #top-settings-holder::after { left: 0; right: 0; top: -32px; height: 32px; }
+    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-left #top-settings-holder::after { top: 0; bottom: 0; left: 0; width: 14px; }
+    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-right #top-settings-holder::after { top: 0; bottom: 0; right: 0; width: 14px; }
+    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-top #top-settings-holder::after { left: 0; right: 0; top: 0; height: 14px; }
+    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-bottom #top-settings-holder::after { left: 0; right: 0; bottom: 0; height: 14px; }
+
+    /* shown: the strip shrinks to the gap between the bar and the screen edge (still the
+       whole edge long), so a pointer resting at the edge keeps the bar up */
+    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-left #top-settings-holder:is(:hover, :focus-within, :has(.drawer-content.openDrawer))::after { width: calc(var(--yt-rail-gap) + 4px); }
+    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-right #top-settings-holder:is(:hover, :focus-within, :has(.drawer-content.openDrawer))::after { width: calc(var(--yt-rail-gap) + 4px); }
+    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-top #top-settings-holder:is(:hover, :focus-within, :has(.drawer-content.openDrawer))::after { height: calc(var(--yt-rail-gap) + 4px); }
+    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide.yt-nav-bottom #top-settings-holder:is(:hover, :focus-within, :has(.drawer-content.openDrawer))::after { height: calc(var(--yt-rail-gap) + 4px); }
+
+    /* hiding waits a moment, so the pointer can travel from anywhere on the edge to the bar */
+    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide:not(.yt-rail-open) #top-settings-holder {
+        transition-delay: 0.6s;
+    }
+
+    body.yodayo-tavern.yt-nav-rail.yt-nav-autohide #top-settings-holder:is(:hover, :focus-within, :has(.drawer-content.openDrawer)) {
+        transition-delay: 0s;
+    }
 
     /* Icons */
     body.yodayo-tavern.yt-nav-rail #top-settings-holder > .drawer {
