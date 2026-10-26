@@ -1,0 +1,131 @@
+/* SillyTavern's system messages: the safety page after deleting a chat, /help and its
+   sub-pages (hotkeys, formatting, macros, slash commands), the empty-group hint, and
+   /sys narrator lines. Short notes become centered pills; long pages become cards.
+   The assistant chat's "temporary" note has its own pill in chat.css. */
+
+body.yodayo-tavern #chat .mes[is_system="true"]:not(:has([data-type="assistant_note"])) {
+    justify-content: center;
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"]:not(:has([data-type="assistant_note"])) .mesAvatarWrapper,
+body.yodayo-tavern #chat .mes[is_system="true"]:not(:has([data-type="assistant_note"])) .swipe_left,
+body.yodayo-tavern #chat .mes[is_system="true"]:not(:has([data-type="assistant_note"])) .swipeRightBlock {
+    display: none;
+}
+
+/* Card: help pages and anything longer than one paragraph */
+body.yodayo-tavern #chat .mes[is_system="true"]:not(:has([data-type="assistant_note"])) .mes_block {
+    flex: 0 1 auto;
+    width: min(100%, 680px);
+    max-width: min(100%, 680px);
+    min-width: 0;
+    margin: 0 auto;
+    padding: var(--yt-space-4) var(--yt-space-5);
+    background-color: color-mix(in srgb, var(--yt-surface-2) calc(var(--yt-panel-alpha) * 100%), transparent);
+    backdrop-filter: blur(var(--yt-panel-blur));
+    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    border: 1px solid var(--yt-line-strong);
+    border-style: solid;
+    border-radius: var(--yt-radius-xl);
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text {
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: var(--yt-text);
+    font-style: normal;
+    font-size: var(--yt-text-md);
+    line-height: 1.6;
+}
+
+/* "SillyTavern System" as a small label instead of a character name */
+body.yodayo-tavern #chat .mes[is_system="true"] .name_text {
+    color: var(--yt-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text h1,
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text h2,
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text h3,
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text h4 {
+    margin: var(--yt-space-3) 0 var(--yt-space-2);
+    font-size: 15px;
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text ul,
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text ol {
+    margin: var(--yt-space-1) 0 var(--yt-space-3);
+    padding-left: 20px;
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text li {
+    margin: 3px 0;
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text li::marker {
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text kbd,
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text tt,
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text code {
+    display: inline-block;
+    padding: 1px 6px;
+    background-color: var(--yt-surface-3);
+    border: 1px solid var(--yt-line);
+    border-bottom-width: 2px;
+    border-radius: var(--yt-radius-sm);
+    font-family: var(--monoFontFamily);
+    font-size: 0.85em;
+    line-height: 1.4;
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text code {
+    border-bottom-width: 1px;
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text em,
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text i {
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text th,
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text td {
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--yt-line);
+    text-align: left;
+}
+
+/* Pill: one-paragraph notes (the safety page, /sys lines) and the small empty-group hint */
+body.yodayo-tavern #chat .mes[is_system="true"]:not(:has([data-type="assistant_note"])):not(:has(.mes_text > :nth-child(2))) .mes_block,
+body.yodayo-tavern #chat .mes.smallSysMes .mes_block {
+    width: auto;
+    padding: 8px 20px;
+    border-radius: 9999px;
+    text-align: center;
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"]:not(:has(.mes_text > :nth-child(2))) .ch_name,
+body.yodayo-tavern #chat .mes.smallSysMes .ch_name {
+    display: none;
+}
+
+body.yodayo-tavern #chat .mes[is_system="true"]:not(:has(.mes_text > :nth-child(2))) .mes_text p,
+body.yodayo-tavern #chat .mes.smallSysMes .mes_text p {
+    margin: 0;
+}
+
+body.yodayo-tavern #chat .mes.smallSysMes {
+    padding: var(--yt-space-1) 0;
+}
