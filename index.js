@@ -31,6 +31,8 @@ const defaultSettings = Object.freeze({
     characterThemes: {},
     /** Chat height in visual novel mode, as a share of the window height */
     vnHeight: 0.3,
+    /** Widths the user dragged menus to: { [sheet id]: px } */
+    sheetWidths: {},
 });
 
 let syncTavernHome = () => {};
@@ -57,6 +59,9 @@ function getSettings() {
     if (settings.navMode === 'rail-auto') {
         settings.navMode = 'rail-toggle';
     }
+    // one shared menu width became a width per menu
+    delete settings.sheetWidth;
+    delete settings.rightSheetWidth;
     for (const key of Object.keys(defaultSettings)) {
         if (!Object.hasOwn(settings, key)) {
             settings[key] = structuredClone(defaultSettings[key]);

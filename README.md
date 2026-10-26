@@ -37,7 +37,7 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Bubble opacity | How see-through chat bubbles and the message box are (default 80%). |
 | Tavern home page | Turns the welcome screen into a Yodayo-style character browser: recent chats, search, tag chips and a grid of character and group cards. An ST Assistant tab opens a chat with SillyTavern's assistant, and New group starts a group chat. |
 | Navigation | Left rail opened by a SillyTavern-logo button in the top-left corner (default), left rail always shown, or SillyTavern's top bar. The rail is desktop only; phones keep the top bar. |
-| Menu width | Drag the edge of an open menu to resize it; the width is remembered. Double-click the edge to reset. The character panel on the right has its own width. |
+| Menu width | Each menu opens at a width that suits it (for example 440px for AI settings, 820px for User Settings). Drag an open menu's edge to resize it; each menu remembers its own width. Double-click the edge to reset. |
 | Colors | Character name, text, dialogue ("quotes"), narration (*actions*) and bubble, plus your name, text and bubble. Set them for all characters, or for only the open character to override. |
 | Character image | With "Only this character" selected, an image URL to show instead of the card art on the free side. |
 | Export / Import | Save all theme settings, including per-character colors, to a JSON file and load them back. |

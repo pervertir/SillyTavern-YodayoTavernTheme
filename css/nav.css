@@ -61,9 +61,8 @@ body.yodayo-tavern .drawer-content h4 {
         --yt-rail-w: 52px;
         --yt-rail-gap: 8px;
         --yt-sheet-left: calc(var(--yt-rail-gap) * 2 + var(--yt-rail-w));
-        /* sheet widths; index.js sets the -pref values when the user drags a sheet's edge */
-        --yt-sheet-w: min(var(--yt-sheet-w-pref, 560px), calc(100vw - var(--yt-sheet-left) - 120px));
-        --yt-right-sheet-w: min(var(--yt-right-sheet-w-pref, 520px), calc(100vw - var(--yt-rail-gap) - 120px));
+        /* room always left for the chat beside an open sheet */
+        --yt-sheet-room: 120px;
         /* the chat now starts at the top of the window */
         --topBarBlockSize: var(--yt-rail-gap);
     }
@@ -157,10 +156,23 @@ body.yodayo-tavern .drawer-content h4 {
         left: var(--yt-sheet-left);
         right: auto;
         margin: 0;
-        width: var(--yt-sheet-w);
+        /* each sheet has its own default (below); sheets.js sets --yt-sheet-user on a
+           sheet when its edge is dragged */
+        width: min(var(--yt-sheet-user, var(--yt-sheet-default, 560px)), calc(100vw - var(--yt-sheet-left) - var(--yt-sheet-room)));
         min-width: 0;
         max-height: calc(100dvh - var(--yt-rail-gap) * 2);
     }
+
+    /* Default widths, from how much shorter each sheet gets as it widens */
+    body.yodayo-tavern.yt-nav-rail #left-nav-panel { --yt-sheet-default: 440px; }
+    body.yodayo-tavern.yt-nav-rail #rm_api_block { --yt-sheet-default: 480px; }
+    body.yodayo-tavern.yt-nav-rail #AdvancedFormatting { --yt-sheet-default: 860px; }
+    body.yodayo-tavern.yt-nav-rail #WorldInfo { --yt-sheet-default: 720px; }
+    body.yodayo-tavern.yt-nav-rail #user-settings-block { --yt-sheet-default: 820px; }
+    body.yodayo-tavern.yt-nav-rail #Backgrounds { --yt-sheet-default: 640px; }
+    body.yodayo-tavern.yt-nav-rail #rm_extensions_block { --yt-sheet-default: 640px; }
+    body.yodayo-tavern.yt-nav-rail #PersonaManagement { --yt-sheet-default: 800px; }
+    body.yodayo-tavern.yt-nav-rail #right-nav-panel { --yt-sheet-default: 480px; }
 
     body.yodayo-tavern.yt-nav-rail .drawer-content.fillLeft.openDrawer {
         height: calc(100dvh - var(--yt-rail-gap) * 2);
@@ -173,7 +185,7 @@ body.yodayo-tavern .drawer-content h4 {
         right: var(--yt-rail-gap);
         left: auto;
         margin: 0;
-        width: var(--yt-right-sheet-w);
+        width: min(var(--yt-sheet-user, var(--yt-sheet-default, 480px)), calc(100vw - var(--yt-rail-gap) - var(--yt-sheet-room)));
         max-height: calc(100dvh - var(--yt-rail-gap) * 2);
     }
 
@@ -229,17 +241,17 @@ body.yodayo-tavern.yt-rail-open #yt-rail-toggle {
     box-shadow: 0 0 0 3px var(--yt-accent-soft);
 }
 
-/* Resize handles on the open sheet's inner edge (sheets.js). Hidden unless a sheet is open
-   in rail mode on desktop. */
+/* Resize handle on the open sheet's inner edge. sheets.js shows it and sets its left. */
 .yt-sheet-handle {
     display: none;
 }
 
 @media screen and (min-width: 1001px) {
-    body.yodayo-tavern.yt-nav-rail .yt-sheet-handle {
+    body.yodayo-tavern.yt-nav-rail .yt-sheet-handle:not([hidden]) {
+        display: block;
         position: fixed;
-        top: calc(var(--yt-rail-gap) + 24px);
-        bottom: calc(var(--yt-rail-gap) + 24px);
+        top: 32px;
+        bottom: 32px;
         width: 10px;
         cursor: ew-resize;
         z-index: 3010;
@@ -256,25 +268,12 @@ body.yodayo-tavern.yt-rail-open #yt-rail-toggle {
         margin-top: -24px;
         border-radius: 9999px;
         background-color: var(--yt-line-strong);
-        transition: background-color var(--yt-fast) var(--yt-ease), height var(--yt-fast) var(--yt-ease);
+        transition: background-color var(--yt-fast) var(--yt-ease);
     }
 
     body.yodayo-tavern.yt-nav-rail .yt-sheet-handle:hover::after,
     body.yodayo-tavern.yt-sheet-resizing .yt-sheet-handle::after {
         background-color: var(--yt-accent);
-    }
-
-    body.yodayo-tavern.yt-nav-rail .yt-sheet-handle-left {
-        left: calc(var(--yt-sheet-left) + var(--yt-sheet-w) - 5px);
-    }
-
-    body.yodayo-tavern.yt-nav-rail .yt-sheet-handle-right {
-        right: calc(var(--yt-rail-gap) + var(--yt-right-sheet-w) - 5px);
-    }
-
-    body.yodayo-tavern.yt-nav-rail:has(#top-settings-holder .drawer-content.openDrawer:not(.fillRight)) .yt-sheet-handle-left,
-    body.yodayo-tavern.yt-nav-rail:has(#right-nav-panel.openDrawer) .yt-sheet-handle-right {
-        display: block;
     }
 
     /* no text selection or sheet animation while dragging */
