@@ -1,4 +1,4 @@
-// Sharper chat avatars. SillyTavern shows each message's avatar from a large thumbnail
+// Sharper chat and character management avatars. SillyTavern shows each message's avatar from a large thumbnail
 // (864×1280 by default) squeezed into a ~50px circle, and the browser's downsampling at
 // that ratio looks soft. This pre-scales each avatar to its exact on-screen size in steps
 // with high-quality smoothing, and shows the result through CSS `content`, so the img's
@@ -80,20 +80,62 @@ async function sharpen(img) {
     }
 }
 
+/** Character management avatars: the character and group lists and the open character's picture */
+const PANEL_AVATARS = '#right-nav-panel .avatar img, #avatar_load_preview';
+
+function sharpenOrWait(img) {
+    if (!isEnabled()) {
+        img.style.removeProperty('content');
+        delete img.dataset.ytSharp;
+        return;
+    }
+    if (img.complete) {
+        sharpen(img);
+    } else {
+        img.addEventListener('load', () => sharpen(img), { once: true });
+    }
+}
+
+function sharpenPanelAvatars() {
+    for (const img of document.querySelectorAll(PANEL_AVATARS)) {
+        sharpenOrWait(img);
+    }
+}
+
+/**
+ * The character management menu redraws its lists and resizes with its sheet, so its
+ * avatars are sharpened as each loads (load events reach a capturing listener) and again
+ * whenever the menu or its lists change size, which includes opening.
+ */
+function initPanelAvatars() {
+    const panel = document.getElementById('right-nav-panel');
+    if (!panel) {
+        return;
+    }
+    panel.addEventListener('load', (event) => {
+        if (event.target instanceof HTMLImageElement && event.target.matches(PANEL_AVATARS)) {
+            sharpenOrWait(event.target);
+        }
+    }, true);
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(sharpenPanelAvatars);
+    });
+    // the lists themselves too: they lay out only once the menu has opened
+    for (const element of [panel, ...panel.querySelectorAll('#rm_print_characters_block, #rm_group_members, #rm_group_add_members, #avatar_div')]) {
+        observer.observe(element);
+    }
+}
+
 /** Sharpens the avatars of the given messages, or of the whole chat. */
 export function sharpenAvatars(messageId) {
     const scope = messageId === undefined ? '#chat .mes' : `#chat .mes[mesid="${messageId}"]`;
     for (const img of document.querySelectorAll(`${scope} .avatar img`)) {
-        if (!isEnabled()) {
-            img.style.removeProperty('content');
-            delete img.dataset.ytSharp;
-            continue;
-        }
-        if (img.complete) {
-            sharpen(img);
-        } else {
-            img.addEventListener('load', () => sharpen(img), { once: true });
-        }
+        sharpenOrWait(img);
+    }
+    if (messageId === undefined) {
+        sharpenPanelAvatars();
     }
 }
 
@@ -107,5 +149,6 @@ export function initSharpAvatars(enabled) {
     eventSource.on(eventTypes.CHARACTER_MESSAGE_RENDERED, (id) => sharpenAvatars(id));
     eventSource.on(eventTypes.USER_MESSAGE_RENDERED, (id) => sharpenAvatars(id));
     window.addEventListener('resize', all);
+    initPanelAvatars();
     all();
 }
