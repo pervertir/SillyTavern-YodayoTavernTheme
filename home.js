@@ -4,6 +4,7 @@
 import { deleteCharacter } from '../../../../script.js';
 import { renderTemplateAsync } from '../../../templates.js';
 import { openWelcomeScreen } from '../../../welcome-screen.js';
+import { getCachedCutout } from './bgremove.js';
 
 const HOME_ID = 'yt-home';
 const ACTIVE_CLASS = 'yt-home-active';
@@ -599,13 +600,19 @@ function syncAssistant(chat, show) {
         img.addEventListener('load', () => img.classList.remove('displayNone'));
         const bubble = el('div', 'yt-home-assistant-bubble');
         bubble.append(el('div', 'yt-home-assistant-name'), el('div', 'yt-home-assistant-greeting mes_text'));
-        aside.append(img, bubble);
+        const picture = el('div', 'yt-home-assistant-picture');
+        picture.append(img);
+        aside.append(picture, bubble);
         sheld.prepend(aside);
     }
+    // a cutout made with Remove background, if there is one; framed with round corners if not
+    const cutout = getCachedCutout(info.src);
+    const src = cutout || info.src;
     const img = aside.querySelector('img');
-    if (img.getAttribute('src') !== info.src) {
-        img.setAttribute('src', info.src);
+    if (img.getAttribute('src') !== src) {
+        img.setAttribute('src', src);
     }
+    img.classList.toggle('yt-cutout', Boolean(cutout));
     aside.querySelector('.yt-home-assistant-name').textContent = info.name;
     const greeting = aside.querySelector('.yt-home-assistant-greeting');
     if (greeting.innerHTML !== info.greeting) {

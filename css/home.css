@@ -928,14 +928,26 @@ body.yodayo-tavern .yt-home-about-link i {
         min-height: 0;
     }
 
-    /* the picture fills the column down to the greeting, tucking 10px behind its top edge */
-    body.yodayo-tavern #yt-home-assistant img {
+    /* the picture fills the column down to the greeting, tucking 10px behind its top edge;
+       the img is sized to the picture itself so its corners can be rounded */
+    body.yodayo-tavern .yt-home-assistant-picture {
         flex: 1 1 0;
         min-height: 0;
-        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    body.yodayo-tavern #yt-home-assistant img {
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
-        object-position: center bottom;
+        border-radius: 20px 20px 0 0;
         filter: drop-shadow(0 12px 32px rgb(0 0 0 / 0.35));
+    }
+
+    body.yodayo-tavern #yt-home-assistant img.yt-cutout {
+        border-radius: 0;
     }
 
     body.yodayo-tavern .yt-home-assistant-bubble {
