@@ -1,0 +1,243 @@
+/* Phones and narrow windows (SillyTavern's own breakpoint, 1000px). Imported last so it wins.
+   Like Moonlit Echoes, the menu bar stays a single row of icons along the top and menus open
+   full width beneath it; here the bar and the menus are frosted acrylic like the Tavern
+   window, the bar respects the notch, and nothing is allowed to run off the side. */
+@media screen and (max-width: 1000px) {
+    body.yodayo-tavern {
+        --yt-m-bar: calc(48px + env(safe-area-inset-top, 0px));
+        --topBarBlockSize: var(--yt-m-bar);
+        --yt-m-gap: 8px;
+    }
+
+    /* never a sideways scroll */
+    html:has(body.yodayo-tavern),
+    body.yodayo-tavern {
+        overflow-x: clip;
+    }
+
+    /* Menu bar: one frosted row, icons spread evenly, the open menu's icon in an accent pill */
+    body.yodayo-tavern #top-bar {
+        height: var(--yt-m-bar);
+        background-color: var(--yt-glass) !important;
+        backdrop-filter: var(--yt-backdrop);
+        -webkit-backdrop-filter: var(--yt-backdrop);
+        border-bottom: 1px solid var(--yt-line);
+        box-shadow: 0 6px 24px rgb(0 0 0 / 0.25);
+    }
+
+    body.yodayo-tavern #top-settings-holder {
+        height: var(--yt-m-bar);
+        max-height: var(--yt-m-bar);
+        padding: env(safe-area-inset-top, 0px) max(4px, env(safe-area-inset-right, 0px)) 0 max(4px, env(safe-area-inset-left, 0px));
+        justify-content: space-around;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    body.yodayo-tavern #top-settings-holder > .drawer {
+        flex: 1 1 0;
+        min-width: 0;
+        height: 48px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    body.yodayo-tavern #top-settings-holder .drawer-icon {
+        width: 40px;
+        height: 36px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        border-radius: 12px;
+        color: var(--yt-muted);
+        transition: background-color var(--yt-fast) var(--yt-ease), color var(--yt-fast) var(--yt-ease);
+    }
+
+    body.yodayo-tavern #top-settings-holder .drawer-icon.openIcon {
+        background-color: var(--yt-accent-soft);
+        color: var(--yt-accent);
+    }
+
+    /* Menus: full width under the bar, frosted like the Tavern window, scrolling inside */
+    body.yodayo-tavern .drawer-content,
+    body.yodayo-tavern #left-nav-panel,
+    body.yodayo-tavern #right-nav-panel {
+        top: var(--yt-m-bar) !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100dvw !important;
+        min-width: 0 !important;
+        max-width: 100dvw !important;
+        max-height: calc(100dvh - var(--yt-m-bar)) !important;
+        margin: 0;
+        padding: 12px max(12px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+        background-color: var(--yt-glass) !important;
+        backdrop-filter: var(--yt-backdrop);
+        -webkit-backdrop-filter: var(--yt-backdrop);
+        border: none;
+        border-radius: 0 0 20px 20px !important;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    /* the close button sits inside the sheet: there's no side gutter on a phone */
+    body.yodayo-tavern .drawer-content {
+        --yt-close-gutter: 0px;
+    }
+
+    body.yodayo-tavern.no-blur .drawer-content,
+    body.yodayo-tavern.no-blur #left-nav-panel,
+    body.yodayo-tavern.no-blur #right-nav-panel {
+        /* no blur behind them: make the menus nearly solid so they stay readable */
+        background-color: rgb(26 28 30 / 0.96) !important;
+    }
+
+    /* the chat field blur layer may spill past the chat, never past the screen */
+    body.yodayo-tavern:not(.yt-home-active) #yt-chat-blur {
+        left: 0;
+        right: 0;
+    }
+
+    /* Chat: starts below the bar; back and look buttons ride on a frosted strip */
+    body.yodayo-tavern:not(.yt-home-active) #sheld {
+        top: var(--yt-m-bar);
+        height: calc(100dvh - var(--yt-m-bar));
+        max-height: calc(100dvh - var(--yt-m-bar));
+    }
+
+    body.yodayo-tavern:not(.yt-home-active) #chat {
+        padding-top: 52px;
+        mask-image: linear-gradient(to bottom, transparent 0, #000 44px);
+    }
+
+    body.yodayo-tavern #yt-back-home,
+    body.yodayo-tavern #yt-chat-settings-cog {
+        top: 8px;
+    }
+
+    body.yodayo-tavern #chat .mes {
+        max-width: 100%;
+    }
+
+    body.yodayo-tavern #send_form {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Tavern home: the window fits the screen below the bar */
+    body.yodayo-tavern.yt-home-active #sheld {
+        top: calc(var(--yt-m-bar) + var(--yt-m-gap));
+        left: var(--yt-m-gap);
+        right: var(--yt-m-gap);
+        width: auto;
+        height: calc(100dvh - var(--yt-m-bar) - var(--yt-m-gap) * 2 - env(safe-area-inset-bottom, 0px));
+        max-height: none;
+        margin: 0;
+        border-radius: 20px;
+    }
+
+    body.yodayo-tavern.yt-home-active #chat {
+        margin: 12px 4px 12px 0;
+        padding: 0 8px 0 12px;
+    }
+
+    body.yodayo-tavern .yt-home {
+        min-width: 0;
+        padding: 0;
+        gap: var(--yt-space-3);
+    }
+
+    body.yodayo-tavern .yt-home > * {
+        min-width: 0;
+    }
+
+    /* header: the tabs, then search across the full width with icon-only actions */
+    body.yodayo-tavern .yt-home-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--yt-space-3);
+    }
+
+    body.yodayo-tavern .yt-home-actions {
+        min-width: 0;
+        gap: 4px;
+    }
+
+    body.yodayo-tavern .yt-home-search {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 0 var(--yt-space-3);
+    }
+
+    body.yodayo-tavern .yt-home-search input {
+        width: 100%;
+        min-width: 0;
+    }
+
+    body.yodayo-tavern .yt-home-action {
+        flex: 0 0 auto;
+        width: 36px;
+        padding: 0;
+        justify-content: center;
+        font-size: 15px;
+    }
+
+    body.yodayo-tavern .yt-home-action span {
+        display: none;
+    }
+
+    /* tag chips on their own scrolling row, the sort below them on the left */
+    body.yodayo-tavern .yt-home-filterbar {
+        flex-wrap: wrap;
+    }
+
+    body.yodayo-tavern .yt-home-filterbar .yt-home-chips {
+        flex-basis: 100%;
+    }
+
+    /* two cards across on a phone, three on a small tablet */
+    body.yodayo-tavern .yt-home-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--yt-space-2);
+    }
+
+    body.yodayo-tavern .yt-card {
+        min-width: 0;
+    }
+
+    body.yodayo-tavern .yt-card-name,
+    body.yodayo-tavern .yt-card-meta {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* the recent chat hover card can't fit beside the circle on a phone */
+    body.yodayo-tavern .yt-home .welcomeRecent .recentChat .recentChatInfo {
+        width: min(320px, calc(100vw - 48px));
+    }
+
+    /* The chat look editor and other floating windows: full width sheets */
+    body.yodayo-tavern #yt-chat-settings-window {
+        left: var(--yt-m-gap) !important;
+        right: var(--yt-m-gap) !important;
+        width: auto !important;
+        max-width: none !important;
+        top: calc(var(--yt-m-bar) + var(--yt-m-gap)) !important;
+        max-height: calc(100dvh - var(--yt-m-bar) - var(--yt-m-gap) * 2 - env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    /* SillyTavern's popups: inside the screen with a margin */
+    body.yodayo-tavern dialog.popup {
+        max-width: calc(100vw - var(--yt-m-gap) * 2);
+    }
+}
+
+@media screen and (max-width: 1000px) and (min-width: 600px) {
+    body.yodayo-tavern .yt-home-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
