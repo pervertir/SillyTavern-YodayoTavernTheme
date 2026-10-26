@@ -481,6 +481,89 @@ body.yodayo-tavern #toast-container > .toast-success {
     border-left: 3px solid var(--yt-accent);
 }
 
+/* Chat position: dock the chat column (and top bar) left or right.
+   The free side shows the character's expression sprite, or the card image
+   index.js adds as #yt-character-art. */
+body.yodayo-tavern {
+    --yt-dock-gap: 16px;
+    --yt-free-width: calc(100vw - var(--sheldWidth) - var(--yt-dock-gap) * 2);
+}
+
+body.yodayo-tavern.yt-pos-left #sheld,
+body.yodayo-tavern.yt-pos-left #top-bar {
+    margin: 0;
+    left: var(--yt-dock-gap);
+    right: auto;
+}
+
+body.yodayo-tavern.yt-pos-right #sheld,
+body.yodayo-tavern.yt-pos-right #top-bar {
+    margin: 0;
+    left: auto;
+    right: var(--yt-dock-gap);
+}
+
+body.yodayo-tavern.yt-pos-left #top-settings-holder {
+    margin: 0 auto 0 var(--yt-dock-gap);
+}
+
+body.yodayo-tavern.yt-pos-right #top-settings-holder {
+    margin: 0 var(--yt-dock-gap) 0 auto;
+}
+
+body.yodayo-tavern.yt-pos-left #expression-wrapper .expression-holder {
+    left: auto;
+    right: var(--yt-dock-gap);
+    width: var(--yt-free-width);
+    max-width: none;
+}
+
+body.yodayo-tavern.yt-pos-right #expression-wrapper .expression-holder {
+    left: var(--yt-dock-gap);
+    right: auto;
+    width: var(--yt-free-width);
+    max-width: none;
+}
+
+#yt-character-art {
+    display: none;
+}
+
+body.yodayo-tavern #yt-character-art {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    position: fixed;
+    top: var(--topBarBlockSize);
+    bottom: 0;
+    width: var(--yt-free-width);
+    z-index: 1;
+    pointer-events: none;
+}
+
+body.yodayo-tavern.yt-pos-left #yt-character-art {
+    right: var(--yt-dock-gap);
+}
+
+body.yodayo-tavern.yt-pos-right #yt-character-art {
+    left: var(--yt-dock-gap);
+}
+
+body.yodayo-tavern #yt-character-art img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: bottom center;
+    border-radius: var(--yt-radius-lg) var(--yt-radius-lg) 0 0;
+    filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.5));
+}
+
+/* A visible expression sprite already shows the character, so the card image steps aside */
+body.yodayo-tavern:has(#expression-wrapper img.expression[src]:not([src=""])) #yt-character-art,
+body.yodayo-tavern.waifuMode #yt-character-art {
+    display: none;
+}
+
 /* Mobile: keep bubbles readable on narrow screens */
 @media screen and (max-width: 1000px) {
     body.yodayo-tavern #chat {
@@ -493,5 +576,23 @@ body.yodayo-tavern #toast-container > .toast-success {
 
     body.yodayo-tavern #form_sheld {
         padding: 6px 6px 8px 6px;
+    }
+
+    /* the chat fills the screen on mobile, so docking and side art don't apply */
+    body.yodayo-tavern.yt-pos-left #sheld,
+    body.yodayo-tavern.yt-pos-left #top-bar,
+    body.yodayo-tavern.yt-pos-right #sheld,
+    body.yodayo-tavern.yt-pos-right #top-bar {
+        left: 0;
+        right: 0;
+    }
+
+    body.yodayo-tavern.yt-pos-left #top-settings-holder,
+    body.yodayo-tavern.yt-pos-right #top-settings-holder {
+        margin: 0 auto;
+    }
+
+    body.yodayo-tavern #yt-character-art {
+        display: none;
     }
 }

@@ -33,7 +33,20 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Your messages | Put your bubbles on the right (Yodayo style) or the left. |
 | Font | Inter (falls back to the system font), the system UI font, or SillyTavern's default. |
 | Bubble max width | How wide a chat bubble may grow on desktop. |
+| Chat position | Dock the chat window on the left, in the middle, or on the right. |
+| Show character image | With the chat on the left or right, shows the character's image on the free side. |
 | Hide chat background image | Hides your background for a flat Yodayo look. |
+
+### Chat position
+
+With the chat docked to one side, the character appears on the other. If you use
+Character Expressions, the expression sprite moves there. Otherwise the extension
+shows the character's card image. Group chats and Visual Novel mode keep their own
+layout, and on phones the chat always fills the screen.
+
+| Chat on the left | Chat on the right |
+| --- | --- |
+| ![Chat docked left](screenshots/position-left.jpg) | ![Chat docked right](screenshots/position-right.jpg) |
 
 ## Palette
 

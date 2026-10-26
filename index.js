@@ -11,7 +11,11 @@ const defaultSettings = Object.freeze({
     font: 'inter',
     bubbleWidth: 720,
     flatBackground: false,
+    chatPosition: 'middle',
+    characterArt: true,
 });
+
+const ART_ID = 'yt-character-art';
 
 const fonts = {
     inter: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
@@ -53,6 +57,44 @@ function isMoonlitEnabled() {
     return Boolean(moonlit?.enabled) && folderLoaded;
 }
 
+/** Full-size card image of the character in the open solo chat, or null. */
+function getCharacterImageUrl() {
+    const { characters, characterId, groupId } = SillyTavern.getContext();
+    if (groupId || characterId === undefined) {
+        return null;
+    }
+    const avatar = characters[characterId]?.avatar;
+    if (!avatar || avatar === 'none') {
+        return null;
+    }
+    return `characters/${encodeURIComponent(avatar)}`;
+}
+
+/** Puts the character image on the side opposite the chat when it is docked left or right. */
+function updateCharacterArt() {
+    const settings = getSettings();
+    const docked = settings.chatPosition === 'left' || settings.chatPosition === 'right';
+    const url = settings.enabled && settings.characterArt && docked ? getCharacterImageUrl() : null;
+
+    let art = document.getElementById(ART_ID);
+    if (!url) {
+        art?.remove();
+        return;
+    }
+    if (!art) {
+        art = document.createElement('div');
+        art.id = ART_ID;
+        const img = document.createElement('img');
+        img.alt = '';
+        art.append(img);
+        document.body.append(art);
+    }
+    const img = art.querySelector('img');
+    if (img.getAttribute('src') !== url) {
+        img.setAttribute('src', url);
+    }
+}
+
 function applySettings() {
     const settings = getSettings();
     const body = document.body;
@@ -60,6 +102,8 @@ function applySettings() {
     body.classList.toggle(BODY_CLASS, settings.enabled);
     body.classList.toggle('yt-user-left', settings.userSide === 'left');
     body.classList.toggle('yt-flat-bg', settings.flatBackground);
+    body.classList.toggle('yt-pos-left', settings.chatPosition === 'left');
+    body.classList.toggle('yt-pos-right', settings.chatPosition === 'right');
 
     body.style.setProperty('--yt-accent', settings.accent);
     body.style.setProperty('--yt-accent-ink', getAccentInk(settings.accent));
@@ -72,6 +116,7 @@ function applySettings() {
     }
 
     $('#yt_conflict_note').toggleClass('displayNone', !(settings.enabled && isMoonlitEnabled()));
+    updateCharacterArt();
 }
 
 function syncSettingsUI() {
@@ -83,6 +128,8 @@ function syncSettingsUI() {
     $('#yt_bubble_width').val(settings.bubbleWidth);
     $('#yt_bubble_width_value').text(`${settings.bubbleWidth}px`);
     $('#yt_flat_bg').prop('checked', settings.flatBackground);
+    $('#yt_chat_position').val(settings.chatPosition);
+    $('#yt_character_art').prop('checked', settings.characterArt);
 }
 
 function bindSettingsUI() {
@@ -116,6 +163,12 @@ function bindSettingsUI() {
     $('#yt_flat_bg').on('change', function () {
         update('flatBackground', $(this).prop('checked'));
     });
+    $('#yt_chat_position').on('change', function () {
+        update('chatPosition', String($(this).val()));
+    });
+    $('#yt_character_art').on('change', function () {
+        update('characterArt', $(this).prop('checked'));
+    });
 }
 
 jQuery(async () => {
@@ -125,6 +178,10 @@ jQuery(async () => {
     syncSettingsUI();
     bindSettingsUI();
     applySettings();
+
+    const { eventSource, eventTypes } = SillyTavern.getContext();
+    eventSource.on(eventTypes.CHAT_CHANGED, updateCharacterArt);
+    eventSource.on(eventTypes.CHARACTER_EDITED, updateCharacterArt);
 
     if (getSettings().enabled && isMoonlitEnabled()) {
         toastr.warning('Moonlit Echoes is also enabled and will override parts of the Yodayo Tavern look.', 'Yodayo Tavern Theme');
