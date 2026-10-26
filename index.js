@@ -5,6 +5,7 @@ import { applyColors, getCharacterImageOverride, initBackupControls, initColorCo
 import { applySheetWidths, initSheetResizers } from './sheets.js';
 import { applyVnHeight, initVnMode } from './vn.js';
 import { initSliderFills } from './sliders.js';
+import { initSwipeCounters } from './swipes.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
 /** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
@@ -369,6 +370,7 @@ async function init() {
     applyRecentChatsDefaults();
     initSheetResizers({ getSettings, saveSettings });
     initSliderFills();
+    initSwipeCounters();
     initVnMode({ getSettings, saveSettings, onModeChange: updateCharacterArt });
 
     const { eventSource, eventTypes } = SillyTavern.getContext();

@@ -1,0 +1,99 @@
+/* Decluttering: controls stay out of sight until they're needed (hover, focus, or having
+   something to show), and boxes that only add borders are dropped. See the plan doc. */
+
+/* Chat: swipe arrows and the counter show on hover or focus, and always on the last
+   message; with a single swipe (swipes.js marks it) the counter never shows */
+@media (hover: hover) {
+    body.yodayo-tavern #chat .mes:not(.last_mes) .swipe_left,
+    body.yodayo-tavern #chat .mes:not(.last_mes) .swipeRightBlock {
+        opacity: 0;
+        transition: opacity var(--yt-fast) var(--yt-ease);
+    }
+
+    body.yodayo-tavern #chat .mes:not(.last_mes):hover .swipe_left,
+    body.yodayo-tavern #chat .mes:not(.last_mes):hover .swipeRightBlock,
+    body.yodayo-tavern #chat .mes:not(.last_mes):focus-within .swipe_left,
+    body.yodayo-tavern #chat .mes:not(.last_mes):focus-within .swipeRightBlock {
+        opacity: 1;
+    }
+}
+
+body.yodayo-tavern #chat .mes.yt-single-swipe .swipes-counter {
+    visibility: hidden;
+}
+
+/* Chat: the avatar ring drops to a hairline */
+body.yodayo-tavern #chat .mes .avatar img,
+body.yodayo-tavern #chat .mes:not([is_user="true"]) .avatar img {
+    border: 1px solid var(--yt-line-strong);
+}
+
+/* Menus: icon-only buttons are ghost buttons with no box until hovered; text buttons and
+   active or primary buttons keep their fill */
+body.yodayo-tavern .drawer-content .menu_button:is(.fa-solid, .fa-regular, .fa-brands):not(.active, .toggleEnabled, .redWarningBG, .caution),
+body.yodayo-tavern .drawer-content .menu_button.menu_button_icon:not(:has(span, b)):not(.active, .toggleEnabled, .redWarningBG, .caution) {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern .drawer-content .menu_button:is(.fa-solid, .fa-regular, .fa-brands):not(.active, .toggleEnabled, .redWarningBG, .caution):not(.disabled, [disabled]):hover,
+body.yodayo-tavern .drawer-content .menu_button.menu_button_icon:not(:has(span, b)):not(.active, .toggleEnabled, .redWarningBG, .caution):not(.disabled, [disabled]):hover {
+    background-color: var(--yt-surface-3);
+    border-color: transparent;
+    color: var(--yt-text);
+}
+
+/* Menus: help text is smaller and muted */
+body.yodayo-tavern .toggle-description,
+body.yodayo-tavern #clickSlidersTips,
+body.yodayo-tavern .drawer-content .notes-link,
+body.yodayo-tavern .drawer-content small.text_muted {
+    font-size: var(--yt-text-xs);
+    color: var(--yt-faint);
+}
+
+/* the HotSwaps bar shows only a hint when there are no favorites; skip it until there are */
+body.yodayo-tavern .hotswap:has(> small:only-child) {
+    display: none;
+}
+
+/* Menus: info and question-mark icons recede until hovered */
+body.yodayo-tavern .drawer-content :is(.note-link-span, .fa-circle-info, .fa-circle-question, .fa-question-circle),
+body.yodayo-tavern .drawer-content .opacity50p.fa-circle-info {
+    opacity: 0.4;
+    transition: opacity var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .drawer-content :is(.note-link-span, .fa-circle-info, .fa-circle-question, .fa-question-circle):hover {
+    opacity: 1;
+}
+
+/* Menus: setting groups are separated by spacing, not boxes */
+body.yodayo-tavern .settingsSectionWrap {
+    border: none;
+    padding: var(--yt-space-2) 0;
+}
+
+/* Drawer chrome: pin and lock toggles stay faint until hovered */
+body.yodayo-tavern :is(#lm_button_panel_pin_div, #rm_button_panel_pin_div, #WI_panel_pin_div) {
+    opacity: 0.35;
+    transition: opacity var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern :is(#lm_button_panel_pin_div, #rm_button_panel_pin_div, #WI_panel_pin_div):hover,
+body.yodayo-tavern :is(#lm_button_panel_pin_div, #rm_button_panel_pin_div, #WI_panel_pin_div):has(input:checked) {
+    opacity: 1;
+}
+
+/* Character panel: no page buttons when everything fits on one page (both directions
+   disabled) */
+body.yodayo-tavern .paginationjs:has(.paginationjs-prev.disabled):has(.paginationjs-next.disabled) :is(.paginationjs-pages, .paginationjs-nav) {
+    display: none;
+}
+
+/* Character panel: token counts are small print */
+body.yodayo-tavern .extension_token_counter {
+    font-size: var(--yt-text-xs);
+    color: var(--yt-faint);
+}
