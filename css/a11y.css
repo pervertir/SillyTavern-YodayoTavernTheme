@@ -86,3 +86,22 @@ body.yodayo-tavern ::selection {
     background-color: color-mix(in srgb, var(--yt-accent) 35%, transparent);
     color: var(--yt-text);
 }
+
+/* Find-in-page (Ctrl/Cmd+F) and other text highlights: the browsers' yellow kept the
+   theme's white text, so nothing could be read. Dark ink on the accent instead. */
+body.yodayo-tavern ::search-text {
+    background-color: color-mix(in srgb, var(--yt-accent) 55%, transparent);
+    color: var(--yt-accent-ink);
+}
+
+body.yodayo-tavern ::search-text:current {
+    background-color: var(--yt-accent);
+    color: var(--yt-accent-ink);
+}
+
+body.yodayo-tavern mark,
+body.yodayo-tavern .ui-state-highlight {
+    background-color: var(--yt-accent);
+    color: var(--yt-accent-ink);
+    border-radius: 3px;
+}
