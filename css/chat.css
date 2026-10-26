@@ -559,3 +559,63 @@ body.yodayo-tavern #chat .mes[is_user="true"] .mes_text em,
 body.yodayo-tavern #chat .mes[is_user="true"] .mes_text i {
     color: color-mix(in srgb, var(--yt-user-text) 70%, transparent);
 }
+
+/* "This chat is temporary" note in assistant chats: a centered grey pill, no avatar or name */
+body.yodayo-tavern #chat .mes:has([data-type="assistant_note"]) {
+    justify-content: center;
+}
+
+body.yodayo-tavern #chat .mes:has([data-type="assistant_note"]) .mesAvatarWrapper,
+body.yodayo-tavern #chat .mes:has([data-type="assistant_note"]) .ch_name,
+body.yodayo-tavern #chat .mes:has([data-type="assistant_note"]) .swipe_left,
+body.yodayo-tavern #chat .mes:has([data-type="assistant_note"]) .swipeRightBlock {
+    display: none;
+}
+
+body.yodayo-tavern #chat .mes:has([data-type="assistant_note"]) .mes_block {
+    flex: 0 1 auto;
+    width: auto;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    align-items: center;
+}
+
+body.yodayo-tavern #chat [data-type="assistant_note"] {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--yt-space-2);
+    padding: 6px 8px 6px 16px;
+    background-color: color-mix(in srgb, var(--yt-surface-2) calc(var(--yt-panel-alpha) * 100%), transparent);
+    backdrop-filter: blur(var(--yt-panel-blur));
+    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    border: 1px solid var(--yt-line-strong);
+    border-radius: 9999px;
+    color: var(--yt-muted);
+    font-size: var(--yt-text-sm);
+    font-style: normal;
+}
+
+body.yodayo-tavern #chat [data-type="assistant_note"] b {
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern #chat [data-type="assistant_note"] .menu_button {
+    min-height: 26px;
+    padding: 0 10px;
+    border-radius: 9999px;
+    font-size: 12px;
+}
+
+body.yodayo-tavern #chat .mes:has([data-type="assistant_note"]) .mes_text {
+    padding: 0;
+    background: transparent;
+    border: none;
+}
