@@ -212,13 +212,16 @@ function setRailOpen(open) {
     document.getElementById(RAIL_TOGGLE_ID)?.setAttribute('aria-expanded', String(open));
 }
 
-/** Hamburger button that opens the rail; Escape or a click elsewhere closes it again. */
+/** SillyTavern-logo button that opens the rail; Escape or a click elsewhere closes it again. */
 function initRailToggle() {
     const button = document.createElement('button');
     button.id = RAIL_TOGGLE_ID;
     button.type = 'button';
-    button.className = 'fa-solid fa-bars';
     button.title = 'Menu';
+    const logo = document.createElement('img');
+    logo.src = 'img/logo.png';
+    logo.alt = '';
+    button.append(logo);
     button.setAttribute('aria-label', 'Menu');
     button.setAttribute('aria-controls', 'top-settings-holder');
     button.setAttribute('aria-expanded', 'false');

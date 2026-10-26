@@ -99,7 +99,7 @@ body.yodayo-tavern .drawer-content h4 {
         left: var(--yt-rail-gap);
     }
 
-    /* Hamburger mode: a round button in the top-left corner opens the rail below it */
+    /* Menu-button mode: a logo button in the top-left corner opens the rail below it */
     body.yodayo-tavern.yt-nav-rail:not(.yt-rail-pinned) {
         --yt-rail-top: calc(var(--yt-rail-gap) * 2 + 40px);
         --yt-dock-gap-left: calc(var(--yt-rail-gap) * 2 + 40px);
@@ -185,7 +185,7 @@ body.yodayo-tavern .drawer-content h4 {
     }
 }
 
-/* Hamburger button; only shown in hamburger mode on desktop (rule above) */
+/* Menu button with the SillyTavern logo; only shown in that mode on desktop (rule above) */
 #yt-rail-toggle {
     display: none;
 }
@@ -210,10 +210,18 @@ body.yodayo-tavern #yt-rail-toggle {
     transition: background-color var(--yt-fast) var(--yt-ease), color var(--yt-fast) var(--yt-ease);
 }
 
+body.yodayo-tavern #yt-rail-toggle img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
 body.yodayo-tavern #yt-rail-toggle:hover {
     background-color: var(--yt-surface-3);
 }
 
 body.yodayo-tavern.yt-rail-open #yt-rail-toggle {
-    color: var(--yt-accent);
+    border-color: var(--yt-accent-line);
+    box-shadow: 0 0 0 3px var(--yt-accent-soft);
 }

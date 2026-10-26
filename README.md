@@ -2,7 +2,7 @@
 
 A SillyTavern extension that restyles the whole UI after the Yodayo / Moescape Tavern
 chat: frosted chat bubbles straight on your background, a lime accent, Inter type, a
-navigation rail on the left (opened from a menu button) with drawers as side sheets, switch toggles,
+navigation rail on the left (opened from a SillyTavern-logo button) with drawers as side sheets, switch toggles,
 modern sliders and fields, and popover menus.
 
 ![Chat preview](screenshots/chat.jpg)
@@ -36,7 +36,7 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Bubble max width | How wide a chat bubble may grow on desktop. |
 | Bubble opacity | How see-through chat bubbles and the message box are (default 80%). |
 | Tavern home page | Turns the welcome screen into a Yodayo-style character browser: search, tag chips and a grid of portrait cards. Click a card to chat. |
-| Navigation | Left rail opened by a menu button in the top-left corner (default), left rail always shown, or SillyTavern's top bar. The rail is desktop only; phones keep the top bar. |
+| Navigation | Left rail opened by a SillyTavern-logo button in the top-left corner (default), left rail always shown, or SillyTavern's top bar. The rail is desktop only; phones keep the top bar. |
 | Chat position | Dock the chat window on the left, in the middle, or on the right. |
 | Show character image | With the chat on the left or right, shows the character's image on the free side. |
 | Hide chat background image | Hides your background for a flat Yodayo look. |
