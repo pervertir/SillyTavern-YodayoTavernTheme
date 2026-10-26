@@ -276,3 +276,63 @@ body.yodayo-tavern #yt-chat-settings-cog:hover {
 #yt-chat-settings-window .yt-image-row .menu_button {
     gap: 6px;
 }
+
+/* Background combobox in the theme editor */
+#yt-chat-settings-window .yt-setting-row .select2-container {
+    flex: 1 1 50%;
+    min-width: 0;
+}
+
+#yt-chat-settings-window .select2-dropdown {
+    z-index: 10002;
+}
+
+#yt-chat-settings-window .select2-results__options {
+    max-height: 320px;
+}
+
+#yt-chat-settings-window .select2-results__group {
+    padding: 8px 10px 4px;
+    color: var(--yt-muted);
+    font-size: var(--yt-text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+#yt-chat-settings-window .yt-bg-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+#yt-chat-settings-window .yt-bg-option > span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#yt-chat-settings-window .yt-bg-option-thumb {
+    flex: 0 0 auto;
+    width: 48px;
+    height: 27px;
+    border-radius: 6px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid var(--yt-line);
+}
+
+/* the picker gets its own line so names and thumbnails have room */
+#yt-chat-settings-window .yt-setting-row:has(.yt-bg-combo) {
+    flex-wrap: wrap;
+}
+
+#yt-chat-settings-window .yt-setting-row:has(.yt-bg-combo) > label {
+    flex: 1 1 auto;
+}
+
+#yt-chat-settings-window .yt-setting-row:has(.yt-bg-combo) .select2-container {
+    order: 3;
+    flex: 1 1 100%;
+}

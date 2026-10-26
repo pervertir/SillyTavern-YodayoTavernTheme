@@ -77,8 +77,36 @@ export function applyBackgroundOverride(settings) {
 
 function listBackgrounds() {
     return [...document.querySelectorAll('#bg_menu_content .bg_example, #bg_custom_content .bg_example')]
-        .map(el => ({ name: el.getAttribute('title') || el.getAttribute('bgfile') || '', url: String($(el).data('url') || '') }))
+        .map(el => ({
+            name: el.getAttribute('title') || el.getAttribute('bgfile') || '',
+            file: el.getAttribute('bgfile') || '',
+            custom: el.getAttribute('custom') === 'true' || Boolean(el.closest('#bg_custom_content')),
+            url: String($(el).data('url') || ''),
+        }))
         .filter(bg => bg.url);
+}
+
+/** SillyTavern's background folders, as the Backgrounds menu shows them. */
+async function loadBackgroundFolders() {
+    try {
+        const response = await fetch('/api/backgrounds/folders', {
+            method: 'POST',
+            headers: SillyTavern.getContext().getRequestHeaders(),
+            body: JSON.stringify({}),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return { folders: data.folders ?? [], imageFolderMap: data.imageFolderMap ?? {} };
+        }
+    } catch (error) {
+        console.warn('[Yodayo Tavern Theme] could not load background folders', error);
+    }
+    return { folders: [], imageFolderMap: {} };
+}
+
+/** Plain image URL from a CSS url("...") value, for thumbnails. */
+function thumbUrl(value) {
+    return value.match(/^url\((['"]?)(.*)\1\)$/)?.[2] ?? value;
 }
 
 /** The open character's card image, used when no custom image is set. */
@@ -243,8 +271,13 @@ export function initCharacterSettings({ getSettings, onChange }) {
         // Background
         body.append(el('h4', 'yt-section-title', 'Background'));
         const bgRow = el('div', 'yt-setting-row');
-        const bgSelect = el('select', 'text_pole');
-        bgSelect.addEventListener('change', () => edit(target => { target.background = bgSelect.value; }));
+        const bgSelect = el('select', 'text_pole yt-bg-combo');
+        let backgroundFolders = { folders: [], imageFolderMap: {} };
+        $(bgSelect).on('change', () => {
+            if (bgSelect.value !== (current().background || '')) {
+                edit(target => { target.background = bgSelect.value; });
+            }
+        });
         bgRow.append(el('label', '', 'Image'), bgSelect, resetButton(() => edit(target => { target.background = ''; })));
         const urlRow = el('div', 'yt-setting-row');
         const urlInput = el('input', 'text_pole');
@@ -259,11 +292,28 @@ export function initCharacterSettings({ getSettings, onChange }) {
             const none = el('option', '', 'Default (SillyTavern background)');
             none.value = '';
             bgSelect.append(none);
-            for (const bg of listBackgrounds()) {
-                const option = el('option', '', bg.name);
-                option.value = bg.url;
-                bgSelect.append(option);
+            // grouped like the Backgrounds menu: chat backgrounds, each folder, then the rest
+            const backgrounds = listBackgrounds();
+            const { folders, imageFolderMap } = backgroundFolders;
+            const addGroup = (label, items) => {
+                if (!items.length) {
+                    return;
+                }
+                const group = el('optgroup');
+                group.label = label;
+                for (const bg of items) {
+                    const option = el('option', '', bg.name);
+                    option.value = bg.url;
+                    group.append(option);
+                }
+                bgSelect.append(group);
+            };
+            addGroup('Chat backgrounds', backgrounds.filter(bg => bg.custom));
+            const system = backgrounds.filter(bg => !bg.custom);
+            for (const folder of folders) {
+                addGroup(folder.name, system.filter(bg => imageFolderMap[bg.file]?.includes(folder.id)));
             }
+            addGroup(folders.length ? 'Not in a folder' : 'Backgrounds', system.filter(bg => !imageFolderMap[bg.file]?.length));
             const known = [...bgSelect.options].some(option => option.value === own);
             if (own && !known) {
                 const custom = el('option', '', 'Custom URL');
@@ -271,6 +321,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
                 bgSelect.append(custom);
             }
             bgSelect.value = own;
+            $(bgSelect).trigger('change.select2');
             if (urlInput !== document.activeElement) {
                 urlInput.value = own && !own.startsWith('url(') ? own : '';
             }
@@ -394,6 +445,45 @@ export function initCharacterSettings({ getSettings, onChange }) {
 
         refreshWindow = refresh;
         refresh();
+
+        // searchable background picker with thumbnails; typing a folder name shows the folder
+        if (typeof $.fn.select2 === 'function') {
+            const template = (item) => {
+                if (!item.id) {
+                    return item.text;
+                }
+                const row = $('<span class="yt-bg-option"></span>');
+                row.append($('<span class="yt-bg-option-thumb"></span>').css('background-image', `url("${thumbUrl(item.id)}")`));
+                row.append($('<span></span>').text(item.text));
+                return row;
+            };
+            $(bgSelect).select2({
+                dropdownParent: $(win),
+                width: '100%',
+                placeholder: 'Search backgrounds or folders',
+                templateResult: template,
+                matcher: (params, data) => {
+                    const term = (params.term ?? '').trim().toLowerCase();
+                    if (!term) {
+                        return data;
+                    }
+                    if (data.children) {
+                        if (data.text.toLowerCase().includes(term)) {
+                            return data;
+                        }
+                        const children = data.children.filter(child => child.text.toLowerCase().includes(term));
+                        return children.length ? { ...data, children } : null;
+                    }
+                    return data.text.toLowerCase().includes(term) ? data : null;
+                },
+            });
+        }
+        loadBackgroundFolders().then(result => {
+            backgroundFolders = result;
+            if (document.getElementById(WINDOW_ID) === win) {
+                refresh();
+            }
+        });
 
         // drag by the title bar
         bar.addEventListener('pointerdown', (event) => {
