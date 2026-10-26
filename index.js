@@ -42,6 +42,11 @@ let refreshColorControls = () => {};
 const RAIL_TOGGLE_ID = 'yt-rail-toggle';
 const BACK_BUTTON_ID = 'yt-back-home';
 
+/** SillyTavern's own recent chats settings (welcome-screen.js) and the theme's defaults */
+const RECENT_CHATS_KEY = 'recentChatsSettings';
+const ST_RECENT_DEFAULTS = { maxDisplayed: 15, collapsedDisplayed: 3 };
+const THEME_RECENT_DEFAULTS = { maxDisplayed: 20, collapsedDisplayed: 20 };
+
 const ART_ID = 'yt-character-art';
 /** A character image at least this share of the art area's height is shown at full height. */
 const ART_FILL_RATIO = 0.5;
@@ -293,6 +298,32 @@ function initRailToggle() {
     });
 }
 
+/**
+ * Shows up to 20 recent chats on the home page, collapsed or not. Runs once, and only
+ * replaces SillyTavern's untouched defaults, so counts the user picked are kept.
+ */
+function applyRecentChatsDefaults() {
+    const settings = getSettings();
+    if (settings.recentChatsDefaultsApplied) {
+        return;
+    }
+    const { accountStorage } = SillyTavern.getContext();
+    let current = null;
+    try {
+        current = JSON.parse(accountStorage.getItem(RECENT_CHATS_KEY) ?? 'null');
+    } catch {
+        current = null;
+    }
+    const untouched = !current
+        || (Number(current.maxDisplayed) === ST_RECENT_DEFAULTS.maxDisplayed
+            && Number(current.collapsedDisplayed) === ST_RECENT_DEFAULTS.collapsedDisplayed);
+    if (untouched) {
+        accountStorage.setItem(RECENT_CHATS_KEY, JSON.stringify(THEME_RECENT_DEFAULTS));
+    }
+    settings.recentChatsDefaultsApplied = true;
+    saveSettings();
+}
+
 /** Arrow at the top of a chat that closes it and returns to the home page. */
 function initBackButton() {
     const sheld = document.getElementById('sheld');
@@ -335,6 +366,7 @@ async function init() {
 
     initRailToggle();
     initBackButton();
+    applyRecentChatsDefaults();
     initSheetResizers({ getSettings, saveSettings });
     initSliderFills();
     initVnMode({ getSettings, saveSettings, onModeChange: updateCharacterArt });
