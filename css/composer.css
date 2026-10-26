@@ -105,3 +105,89 @@ body.yodayo-tavern #send_but:active {
 body.yodayo-tavern #mes_stop {
     color: var(--yt-accent);
 }
+
+/* Burger (options) and wand (extensions) menus become popovers */
+body.yodayo-tavern #options,
+body.yodayo-tavern #extensionsMenu {
+    background-color: var(--yt-surface-2);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-lg);
+    box-shadow: var(--yt-shadow);
+    padding: var(--yt-space-1);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+body.yodayo-tavern #options .options-content,
+body.yodayo-tavern #extensionsMenu .list-group,
+body.yodayo-tavern .options-content,
+body.yodayo-tavern .list-group {
+    border: none;
+    border-radius: var(--yt-radius-md);
+    padding: 0;
+    font-size: var(--yt-text-md);
+}
+
+body.yodayo-tavern #options .options-content > a,
+body.yodayo-tavern #extensionsMenu .list-group-item,
+body.yodayo-tavern #extensionsMenu .extension_container > div {
+    display: flex;
+    align-items: center;
+    gap: var(--yt-space-3);
+    padding: 7px var(--yt-space-3);
+    border-radius: var(--yt-radius-md);
+    color: var(--yt-text);
+    opacity: 1;
+    transition: background-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern #options .options-content > a:hover,
+body.yodayo-tavern #extensionsMenu .list-group-item:hover,
+body.yodayo-tavern #extensionsMenu .extension_container > div:hover {
+    background-color: var(--yt-surface-3);
+}
+
+body.yodayo-tavern .options-content i,
+body.yodayo-tavern .extensionsMenuExtensionButton {
+    width: 18px;
+    height: 18px;
+    font-size: 14px;
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern .options-content hr {
+    margin: var(--yt-space-1) var(--yt-space-2);
+    border-top-color: var(--yt-line);
+}
+
+/* Quick Reply: a row of chips above the message box */
+body.yodayo-tavern #qr--bar {
+    background: transparent;
+    border: none;
+    padding: 0 var(--yt-space-1) var(--yt-space-2);
+    gap: var(--yt-space-1);
+}
+
+body.yodayo-tavern #qr--bar > .qr--buttons {
+    gap: var(--yt-space-1);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+body.yodayo-tavern #qr--bar > .qr--buttons .qr--button {
+    flex: 0 0 auto;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background-color: var(--yt-panel-surface);
+    backdrop-filter: blur(var(--yt-panel-blur));
+    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    border: 1px solid var(--yt-line-strong);
+    color: var(--yt-text);
+    font-size: var(--yt-text-sm);
+}
+
+body.yodayo-tavern #qr--bar > .qr--buttons .qr--button:hover {
+    border-color: var(--yt-accent-line);
+    background-color: var(--yt-surface-2);
+}
