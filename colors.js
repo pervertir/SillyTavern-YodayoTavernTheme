@@ -44,7 +44,8 @@ function getCharacterTheme(settings, avatar, create = false) {
 /** Drops a character's entry once nothing is customized, so settings stay small. */
 function pruneCharacterTheme(settings, avatar) {
     const theme = settings.characterThemes[avatar];
-    if (theme && !Object.keys(theme.colors).length && !theme.image) {
+    const emptyAdvanced = !Object.keys(theme?.advanced ?? {}).length;
+    if (theme && !Object.keys(theme.colors).length && !theme.image && !theme.background && emptyAdvanced) {
         delete settings.characterThemes[avatar];
     }
 }
@@ -54,10 +55,12 @@ export function getCharacterImageOverride(settings) {
     return getCharacterTheme(settings, getCurrentAvatar())?.image || null;
 }
 
-/** Writes the effective colors (all characters, then this character's overrides) to <body>. */
-export function applyColors(settings) {
-    const own = getCharacterTheme(settings, getCurrentAvatar())?.colors ?? {};
-    const effective = { ...settings.colors, ...own };
+/**
+ * Writes the effective colors to <body>: the universal colors, then the character's and
+ * chat's overrides (charsettings.js works those out and passes them in).
+ */
+export function applyColors(settings, overrides = {}) {
+    const effective = { ...settings.colors, ...overrides };
     for (const field of COLOR_FIELDS) {
         const value = effective[field.key];
         if (HEX_COLOR.test(value ?? '')) {

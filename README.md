@@ -45,6 +45,7 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Advanced | Every look setting Moonlit Echoes offers that applies to this theme, in groups: theme colors (secondary color, menu, menu bar, icon, chat field and scrollbar colors), message style (avatar size, spacing, name and text sizes, line height, context marker), background effects (blur, opacity, chat field blur), theme extras, chat (edge fade, justified text, hidden message details, favorite symbol), visual novel mode, phones and tablets, and raw CSS. |
 | Pop-out | The window icon in the panel's header opens these settings in a floating window you can drag around. |
 | Reset everything | Puts every theme setting back to its default after asking first. |
+| Chat look editor | The cog at the top right of an open chat sets colors, a background, message style and background effects for this character or only this chat. Chat settings win over character settings, which win over the universal settings in this panel. |
 | Export / Import | Save all theme settings, including per-character colors, to a JSON file and load them back. |
 | Chat position | Dock the chat window on the left, in the middle, or on the right. Also available from the round arrow button just left of the message box. |
 | Show character image | With the chat on the left or right, shows the character's image on the free side, at full height when the image is large enough. |
@@ -110,6 +111,7 @@ remembered.
 - `advanced.js`: the Advanced settings and how each one is applied
 - `popout.js`: the floating settings window
 - `pagination.js`: moves page controls below their lists
+- `charsettings.js`: the chat's cog and its per-character / per-chat look editor
 - `colors.js`: chat colors (all characters or per character), character image and export/import
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,
   composer, lists, overlays, layout). Every rule is scoped under `body.yodayo-tavern`.

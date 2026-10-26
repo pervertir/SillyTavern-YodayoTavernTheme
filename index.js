@@ -9,6 +9,7 @@ import { initSwipeCounters } from './swipes.js';
 import { applyAdvanced, initAdvancedControls } from './advanced.js';
 import { initSettingsPopout } from './popout.js';
 import { placePagination } from './pagination.js';
+import { applyBackgroundOverride, getEffectiveOverrides, initCharacterSettings } from './charsettings.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
 /** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
@@ -44,11 +45,14 @@ const defaultSettings = Object.freeze({
     sheetWidths: {},
     /** Advanced look settings from advanced.js: { [key]: value } */
     advanced: {},
+    /** Per-chat overrides from the chat's cog: { [chat id]: { colors, advanced, background } } */
+    chatThemes: {},
 });
 
 let syncTavernHome = () => {};
 let refreshColorControls = () => {};
 let refreshAdvancedControls = () => {};
+let refreshCharacterSettings = () => {};
 
 const RAIL_TOGGLE_ID = 'yt-rail-toggle';
 const RAIL_ARROW_ID = 'yt-rail-arrow';
@@ -195,8 +199,10 @@ function applySettings() {
     }
 
     $('#yt_conflict_note').toggleClass('displayNone', !(settings.enabled && isMoonlitEnabled()));
-    applyColors(settings);
-    applyAdvanced(settings);
+    const overrides = getEffectiveOverrides(settings);
+    applyColors(settings, overrides.colors);
+    applyAdvanced({ ...settings, advanced: { ...settings.advanced, ...overrides.advanced } });
+    applyBackgroundOverride(settings);
     placePagination(settings.enabled);
     applySheetWidths(settings);
     applyVnHeight(settings);
@@ -559,6 +565,13 @@ async function init() {
         },
     });
     initSettingsPopout();
+    refreshCharacterSettings = initCharacterSettings({
+        getSettings,
+        onChange: () => {
+            applySettings();
+            saveSettings();
+        },
+    });
     document.getElementById('yt_reset_all')?.addEventListener('click', resetAllSettings);
     syncTavernHome = initTavernHome(() => getSettings().enabled && getSettings().tavernHome);
     applySettings();
@@ -576,6 +589,7 @@ async function init() {
     eventSource.on(eventTypes.CHAT_CHANGED, () => {
         applySettings();
         refreshColorControls();
+        refreshCharacterSettings();
     });
     eventSource.on(eventTypes.CHARACTER_EDITED, updateCharacterArt);
 

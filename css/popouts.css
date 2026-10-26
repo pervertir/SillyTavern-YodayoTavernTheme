@@ -4,7 +4,8 @@
 body.yodayo-tavern #movingDivs > .draggable,
 body.yodayo-tavern #floatingPrompt,
 body.yodayo-tavern #cfgConfig,
-body.yodayo-tavern #yt-settings-window {
+body.yodayo-tavern #yt-settings-window,
+body.yodayo-tavern #yt-chat-settings-window {
     background-color: var(--yt-glass);
     backdrop-filter: var(--yt-backdrop);
     -webkit-backdrop-filter: var(--yt-backdrop);
@@ -130,4 +131,129 @@ body.yodayo-tavern .panelControlBar .dragClose::before {
 .yodayo-tavern-settings .yt-popout-button:hover {
     opacity: 1;
     background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* The chat's look editor (charsettings.js) shares the settings window's look */
+#yt-chat-settings-window {
+    position: fixed;
+    top: 64px;
+    right: 24px;
+    z-index: 3050;
+    width: min(420px, calc(100vw - 32px));
+    max-height: calc(100dvh - 88px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#yt-chat-settings-window .yt-window-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 10px 10px 16px;
+    border-bottom: 1px solid var(--yt-line);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+
+#yt-chat-settings-window .yt-window-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 9999px;
+    color: var(--yt-muted);
+    cursor: pointer;
+}
+
+#yt-chat-settings-window .yt-window-close:hover {
+    background-color: var(--yt-surface-3);
+    color: var(--yt-text);
+}
+
+#yt-chat-settings-window .yt-window-body {
+    overflow-y: auto;
+    padding: 10px 14px 14px;
+}
+
+#yt-chat-settings-window .yt-scope-switch {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    margin-bottom: 6px;
+    background-color: var(--yt-surface, #232527);
+    border: 1px solid var(--yt-line);
+    border-radius: 9999px;
+}
+
+#yt-chat-settings-window .yt-scope-switch .menu_button {
+    flex: 1;
+    margin: 0;
+    min-height: 28px;
+    border-radius: 9999px;
+    background: transparent;
+    border-color: transparent;
+}
+
+#yt-chat-settings-window .yt-scope-switch .menu_button.active {
+    background-color: var(--yt-accent);
+    border-color: var(--yt-accent);
+    color: var(--yt-accent-ink);
+}
+
+#yt-chat-settings-window .yt-setting-row > label {
+    flex: 1 1 45%;
+}
+
+#yt-chat-settings-window .yt-setting-row input.text_pole,
+#yt-chat-settings-window .yt-setting-row select {
+    flex: 1 1 50%;
+    min-width: 0;
+}
+
+/* reset arrows only show where this scope sets something */
+#yt-chat-settings-window .yt-setting-row:not(.yt-color-set, .yt-value-set) .yt-reset {
+    visibility: hidden;
+}
+
+#yt-chat-settings-window .yt-setting-row:has(select) .yt-reset {
+    visibility: visible;
+}
+
+/* The cog: top-right of an open chat, matching the back arrow on the left */
+#yt-chat-settings-cog {
+    display: none;
+}
+
+body.yodayo-tavern:not(:has(#chat .welcomePanel)) #yt-chat-settings-cog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: var(--yt-space-2);
+    right: var(--yt-space-2);
+    z-index: 35;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background-color: color-mix(in srgb, var(--yt-surface-2) calc(var(--yt-panel-alpha) * 100%), transparent);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: 9999px;
+    color: var(--yt-text);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color var(--yt-fast) var(--yt-ease), color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern #yt-chat-settings-cog:hover {
+    background-color: var(--yt-surface-3);
+    color: var(--yt-accent);
 }

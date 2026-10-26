@@ -128,3 +128,9 @@ body.yodayo-tavern:has(#expression-wrapper img.expression[src]:not([src=""])) #y
         display: none;
     }
 }
+
+/* Background chosen for this character or chat (the chat's cog) */
+body.yodayo-tavern.yt-bg-override #bg1,
+body.yodayo-tavern.yt-bg-override #bg_custom {
+    background-image: var(--yt-bg-override) !important;
+}
