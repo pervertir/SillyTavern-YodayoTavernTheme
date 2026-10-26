@@ -280,10 +280,15 @@
 
     /* nothing in the Tavern window may be wider than the window (Safari sizes flex items and
        search fields by their content unless told not to) */
+    /* !important against SillyTavern's phone rule that pins #sheld to left: 0 at 100dvw */
     body.yodayo-tavern.yt-home-active #sheld {
         box-sizing: border-box;
-        max-width: calc(100vw - var(--yt-m-gap) * 2) !important;
+        left: max(var(--yt-m-gap), env(safe-area-inset-left, 0px)) !important;
+        right: auto !important;
+        width: calc(100dvw - max(var(--yt-m-gap), env(safe-area-inset-left, 0px)) - max(var(--yt-m-gap), env(safe-area-inset-right, 0px))) !important;
+        max-width: none !important;
         min-width: 0 !important;
+        margin: 0 !important;
         padding: 0;
     }
 

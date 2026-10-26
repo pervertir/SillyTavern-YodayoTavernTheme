@@ -302,12 +302,35 @@ body.yodayo-tavern .zoomed_avatar img {
 body.yodayo-tavern .zoomed_avatar .panelControlBar {
     top: 10px;
     right: 10px;
-    padding: 2px;
+    gap: 6px;
+    padding: 0;
+    background: none;
+    border: none;
+    opacity: 1;
+}
+
+/* each control is its own round frosted button (on phones only the close one shows) */
+body.yodayo-tavern .zoomed_avatar .panelControlBar > div {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    margin: 0;
+    padding: 0;
+    flex: 0 0 auto;
     border-radius: 9999px;
     background-color: var(--yt-glass-raised);
     backdrop-filter: var(--yt-backdrop);
     -webkit-backdrop-filter: var(--yt-backdrop);
-    border: 1px solid var(--yt-line);
+    border: 1px solid var(--yt-line-strong);
+    box-shadow: 0 4px 14px rgb(0 0 0 / 0.35);
+    color: var(--yt-text);
+    font-size: 16px;
+    filter: none;
+}
+
+body.yodayo-tavern .zoomed_avatar .panelControlBar > div:hover {
+    background-color: var(--yt-surface-3);
 }
 
 /* ---------- Code blocks: syntax colors from the theme ---------- */
