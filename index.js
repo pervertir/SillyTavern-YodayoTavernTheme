@@ -2,6 +2,7 @@
 
 import { initTavernHome } from './home.js';
 import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
+import { applySheetWidths, initSheetResizers } from './sheets.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
 /** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
@@ -35,6 +36,8 @@ let refreshColorControls = () => {};
 const RAIL_TOGGLE_ID = 'yt-rail-toggle';
 
 const ART_ID = 'yt-character-art';
+/** A character image at least this share of the art area's height is shown at full height. */
+const ART_FILL_RATIO = 0.5;
 
 const fonts = {
     inter: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
@@ -113,6 +116,11 @@ function updateCharacterArt() {
         art.id = ART_ID;
         const img = document.createElement('img');
         img.alt = '';
+        // big enough images fill the full height; small ones keep their size instead of blurring
+        img.addEventListener('load', () => {
+            const big = img.naturalHeight >= art.clientHeight * ART_FILL_RATIO;
+            art.classList.toggle('yt-art-fill', big);
+        });
         art.append(img);
         document.body.append(art);
     }
@@ -147,6 +155,7 @@ function applySettings() {
 
     $('#yt_conflict_note').toggleClass('displayNone', !(settings.enabled && isMoonlitEnabled()));
     applyColors(settings);
+    applySheetWidths(settings);
     updateCharacterArt();
     syncTavernHome();
 }
@@ -296,6 +305,7 @@ async function init() {
     applySettings();
 
     initRailToggle();
+    initSheetResizers({ getSettings, saveSettings });
 
     const { eventSource, eventTypes } = SillyTavern.getContext();
     eventSource.on(eventTypes.CHAT_CHANGED, () => {

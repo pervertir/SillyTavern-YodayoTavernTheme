@@ -66,6 +66,11 @@ body.yodayo-tavern.yt-pos-right #yt-character-art {
     left: var(--yt-dock-gap);
 }
 
+body.yodayo-tavern #yt-character-art.yt-art-fill img {
+    height: 100%;
+    width: auto;
+}
+
 body.yodayo-tavern #yt-character-art img {
     max-width: 100%;
     max-height: 100%;
