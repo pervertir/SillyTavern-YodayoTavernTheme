@@ -1,8 +1,9 @@
 # Yodayo Tavern Theme for SillyTavern
 
-A SillyTavern extension that gives the UI the look of the Yodayo / Moescape Tavern chat:
-flat charcoal surfaces, a lime accent, Inter type, rounded chat bubbles with your
-messages on the right, and a pill-shaped message box with a round send button.
+A SillyTavern extension that restyles the whole UI after the Yodayo / Moescape Tavern
+chat: frosted chat bubbles straight on your background, a lime accent, Inter type, an
+auto-hiding navigation rail on the left with drawers as side sheets, switch toggles,
+modern sliders and fields, and popover menus.
 
 ![Chat preview](screenshots/chat.jpg)
 
@@ -34,6 +35,7 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Font | Inter (falls back to the system font), the system UI font, or SillyTavern's default. |
 | Bubble max width | How wide a chat bubble may grow on desktop. |
 | Bubble opacity | How see-through chat bubbles and the message box are (default 80%). |
+| Navigation | Left rail that auto-hides (default), left rail always shown, or SillyTavern's top bar. The rail is desktop only; phones keep the top bar. |
 | Chat position | Dock the chat window on the left, in the middle, or on the right. |
 | Show character image | With the chat on the left or right, shows the character's image on the free side. |
 | Hide chat background image | Hides your background for a flat Yodayo look. |
@@ -77,7 +79,8 @@ layout, and on phones the chat always fills the screen.
 - `manifest.json`: extension metadata
 - `index.js`: settings panel and the body classes / CSS variables it controls
 - `settings.html`: the settings panel markup
-- `style.css`: the theme, every rule scoped under `body.yodayo-tavern`
+- `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,
+  composer, lists, overlays, layout). Every rule is scoped under `body.yodayo-tavern`.
 
 To work on it live, clone the repo straight into
 `SillyTavern/public/scripts/extensions/third-party/` and reload SillyTavern after edits.

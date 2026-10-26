@@ -83,6 +83,20 @@ body.yodayo-tavern.waifuMode #yt-character-art {
 
 /* Mobile: keep bubbles readable on narrow screens */
 @media screen and (max-width: 1000px) {
+    /* SillyTavern's phone top bar uses very large icons */
+    body.yodayo-tavern {
+        --topBarIconSize: 22px;
+    }
+
+    body.yodayo-tavern .drawer-icon {
+        font-size: 20px;
+        padding: 6px;
+    }
+
+    body.yodayo-tavern #chat .mes .mes_block {
+        padding-right: 18px;
+    }
+
     body.yodayo-tavern #chat {
         padding: 4px 6px 0 6px;
     }
