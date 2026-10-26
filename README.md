@@ -56,6 +56,19 @@ layout, and on phones the chat always fills the screen.
 | --- | --- |
 | ![Chat docked left](screenshots/position-left.jpg) | ![Chat docked right](screenshots/position-right.jpg) |
 
+### Chat styles and visual novel mode
+
+The theme follows SillyTavern's **Chat Style** setting (User Settings):
+
+- **Bubbles:** Yodayo-style bubbles, yours on the right.
+- **Flat:** full-width message rows; yours have an accent stripe.
+- **Document:** one centered reading page with book-style text.
+
+With **Visual Novel Mode** on, the chat becomes a centered panel along the bottom (80% wide,
+30% tall) and the character stands above it, using the expression sprite when there is one.
+Drag the bar on the chat's top edge to give the chat or the image more room; the split is
+remembered.
+
 ## Palette
 
 | Role            | Color                       |
@@ -85,6 +98,7 @@ layout, and on phones the chat always fills the screen.
 - `index.js`: settings panel and the body classes / CSS variables it controls
 - `settings.html`: the settings panel markup
 - `home.js`: the Tavern home page on the welcome screen
+- `vn.js`: the visual novel layout's resize handle
 - `sheets.js`: drag handles that resize the menus
 - `colors.js`: chat colors (all characters or per character), character image and export/import
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,

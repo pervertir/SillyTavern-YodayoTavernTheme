@@ -81,8 +81,7 @@ body.yodayo-tavern #yt-character-art img {
 }
 
 /* A visible expression sprite already shows the character, so the card image steps aside */
-body.yodayo-tavern:has(#expression-wrapper img.expression[src]:not([src=""])) #yt-character-art,
-body.yodayo-tavern.waifuMode #yt-character-art {
+body.yodayo-tavern:has(#expression-wrapper img.expression[src]:not([src=""])) #yt-character-art {
     display: none;
 }
 

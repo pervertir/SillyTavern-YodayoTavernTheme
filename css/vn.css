@@ -1,0 +1,117 @@
+/* Visual novel mode (SillyTavern's VN mode, body.waifuMode): the chat is a centered panel
+   along the bottom and the character stands above it. vn.js sets --yt-vn-h from the
+   drag handle on the chat's top edge. */
+
+body.yodayo-tavern.waifuMode {
+    --yt-vn-h: 30dvh;
+    --yt-vn-gap: 8px;
+}
+
+body.yodayo-tavern.waifuMode #sheld,
+body.yodayo-tavern.waifuMode.yt-pos-left #sheld,
+body.yodayo-tavern.waifuMode.yt-pos-right #sheld {
+    top: auto;
+    bottom: var(--yt-vn-gap);
+    left: 10vw;
+    right: 10vw;
+    width: 80vw;
+    margin: 0;
+    height: var(--yt-vn-h);
+    min-height: 0;
+    max-height: none;
+}
+
+body.yodayo-tavern.waifuMode #chat {
+    border-top: none;
+    border-radius: 0;
+}
+
+/* the character fills the space above the chat */
+body.yodayo-tavern.waifuMode #yt-character-art,
+body.yodayo-tavern.waifuMode.yt-pos-left #yt-character-art,
+body.yodayo-tavern.waifuMode.yt-pos-right #yt-character-art {
+    display: flex;
+    top: var(--yt-vn-gap);
+    bottom: calc(var(--yt-vn-h) + var(--yt-vn-gap) * 2);
+    left: 0;
+    right: 0;
+    width: auto;
+    justify-content: center;
+}
+
+body.yodayo-tavern.waifuMode #yt-character-art img {
+    height: 100%;
+    width: auto;
+    max-width: 90vw;
+    border-radius: var(--yt-radius-lg);
+}
+
+/* expression sprites, when Character Expressions is on, take the same place */
+body.yodayo-tavern.waifuMode #expression-wrapper .expression-holder,
+body.yodayo-tavern.waifuMode #visual-novel-wrapper .expression-holder {
+    top: var(--yt-vn-gap);
+    bottom: calc(var(--yt-vn-h) + var(--yt-vn-gap) * 2);
+    height: auto;
+    max-height: none;
+}
+
+body.yodayo-tavern.waifuMode img.expression {
+    max-height: calc(100dvh - var(--yt-vn-h) - var(--yt-vn-gap) * 3);
+}
+
+body.yodayo-tavern.waifuMode:has(#expression-wrapper img.expression[src]:not([src=""])) #yt-character-art,
+body.yodayo-tavern.waifuMode:has(#visual-novel-wrapper img.expression[src]:not([src=""])) #yt-character-art {
+    display: none;
+}
+
+/* Drag handle on the chat's top edge */
+.yt-vn-handle {
+    display: none;
+}
+
+body.yodayo-tavern.waifuMode .yt-vn-handle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    left: 10vw;
+    right: 10vw;
+    bottom: calc(var(--yt-vn-h) + var(--yt-vn-gap) - 7px);
+    height: 14px;
+    cursor: ns-resize;
+    z-index: 40;
+    touch-action: none;
+}
+
+body.yodayo-tavern.waifuMode .yt-vn-handle::after {
+    content: '';
+    width: 56px;
+    height: 4px;
+    border-radius: 9999px;
+    background-color: var(--yt-line-strong);
+    transition: background-color var(--yt-fast) var(--yt-ease), width var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern.waifuMode .yt-vn-handle:hover::after,
+body.yodayo-tavern.yt-vn-resizing .yt-vn-handle::after {
+    width: 80px;
+    background-color: var(--yt-accent);
+}
+
+body.yodayo-tavern.yt-vn-resizing {
+    user-select: none;
+    cursor: ns-resize;
+}
+
+@media screen and (max-width: 1000px) {
+    body.yodayo-tavern.waifuMode #sheld {
+        left: 0;
+        right: 0;
+        width: 100vw;
+    }
+
+    body.yodayo-tavern.waifuMode .yt-vn-handle {
+        left: 0;
+        right: 0;
+    }
+}

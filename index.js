@@ -3,6 +3,7 @@
 import { initTavernHome } from './home.js';
 import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
 import { applySheetWidths, initSheetResizers } from './sheets.js';
+import { applyVnHeight, initVnMode } from './vn.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
 /** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
@@ -28,6 +29,8 @@ const defaultSettings = Object.freeze({
     colors: {},
     /** Per-character overrides: { [avatar file]: { colors: {}, image: '' } } */
     characterThemes: {},
+    /** Chat height in visual novel mode, as a share of the window height */
+    vnHeight: 0.3,
 });
 
 let syncTavernHome = () => {};
@@ -103,7 +106,8 @@ function getCharacterImageUrl() {
 /** Puts the character image on the side opposite the chat when it is docked left or right. */
 function updateCharacterArt() {
     const settings = getSettings();
-    const docked = settings.chatPosition === 'left' || settings.chatPosition === 'right';
+    const docked = settings.chatPosition === 'left' || settings.chatPosition === 'right'
+        || document.body.classList.contains('waifuMode');
     const url = settings.enabled && settings.characterArt && docked ? getCharacterImageUrl() : null;
 
     let art = document.getElementById(ART_ID);
@@ -156,6 +160,7 @@ function applySettings() {
     $('#yt_conflict_note').toggleClass('displayNone', !(settings.enabled && isMoonlitEnabled()));
     applyColors(settings);
     applySheetWidths(settings);
+    applyVnHeight(settings);
     updateCharacterArt();
     syncTavernHome();
 }
@@ -306,6 +311,7 @@ async function init() {
 
     initRailToggle();
     initSheetResizers({ getSettings, saveSettings });
+    initVnMode({ getSettings, saveSettings, onModeChange: updateCharacterArt });
 
     const { eventSource, eventTypes } = SillyTavern.getContext();
     eventSource.on(eventTypes.CHAT_CHANGED, () => {

@@ -1,0 +1,82 @@
+/* SillyTavern's Chat Style setting (User Settings), each with its own look:
+   Bubbles = body.bubblechat (the Yodayo bubbles in chat.css, unchanged here)
+   Flat    = neither class: full-width message rows
+   Document = body.documentstyle: one centered reading page */
+
+/* Flat: every message is a full-width row, side by side with its avatar, no tails */
+body.yodayo-tavern:not(.bubblechat):not(.documentstyle) #chat .mes,
+body.yodayo-tavern:not(.bubblechat):not(.documentstyle):not(.yt-user-left) #chat .mes[is_user="true"] {
+    flex-direction: row;
+}
+
+body.yodayo-tavern:not(.bubblechat):not(.documentstyle) #chat .mes .mes_block,
+body.yodayo-tavern:not(.bubblechat):not(.documentstyle):not(.yt-user-left) #chat .mes[is_user="true"] .mes_block {
+    flex: 1 1 auto;
+    width: auto;
+    max-width: none;
+    margin: 0 26px 0 0;
+    align-items: stretch;
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern:not(.bubblechat):not(.documentstyle) #chat .mes[is_user="true"] .ch_name,
+body.yodayo-tavern:not(.bubblechat):not(.documentstyle) #chat .mes[is_user="true"] .ch_name > .flex-container,
+body.yodayo-tavern:not(.bubblechat):not(.documentstyle) #chat .mes[is_user="true"] .mes_buttons {
+    flex-direction: row;
+}
+
+/* your rows are marked by an accent stripe rather than their position */
+body.yodayo-tavern:not(.bubblechat):not(.documentstyle) #chat .mes[is_user="true"] .mes_block {
+    border-left: 3px solid var(--yt-accent);
+}
+
+/* Document: the chat is one page; messages are paragraphs on it */
+body.yodayo-tavern.documentstyle #chat {
+    margin: var(--yt-space-2) 0;
+    padding: var(--yt-space-5) clamp(16px, 5%, 48px);
+    background-color: color-mix(in srgb, var(--yt-char-bubble) calc(var(--yt-panel-alpha) * 100%), transparent);
+    backdrop-filter: blur(var(--yt-panel-blur));
+    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-xl);
+}
+
+body.yodayo-tavern.documentstyle #chat .mes,
+body.yodayo-tavern.documentstyle:not(.yt-user-left) #chat .mes[is_user="true"] {
+    flex-direction: row;
+    padding: var(--yt-space-2) 0;
+}
+
+body.yodayo-tavern.documentstyle #chat .mes .mes_block,
+body.yodayo-tavern.documentstyle:not(.yt-user-left) #chat .mes[is_user="true"] .mes_block {
+    flex: 1 1 auto;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+body.yodayo-tavern.documentstyle #chat .mes .mes_text {
+    margin-left: 0;
+    font-family: Literata, Charter, "Iowan Old Style", Georgia, serif;
+    font-size: 1.06em;
+    line-height: 1.75;
+}
+
+body.yodayo-tavern.documentstyle #chat .mes .mes_text p {
+    margin: 0 0 0.8em;
+}
+
+/* your turns read as quiet asides in the margin */
+body.yodayo-tavern.documentstyle #chat .mes[is_user="true"] .mes_text {
+    padding-left: var(--yt-space-3);
+    border-left: 2px solid var(--yt-accent-line);
+    font-style: italic;
+    opacity: 0.85;
+}
