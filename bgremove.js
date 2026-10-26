@@ -1,68 +1,84 @@
-// Removes the background from character images shown beside the chat. The model runs in
-// a worker (bgremove.worker.js); each cutout is saved to SillyTavern's user images and
+// Removes the background from character images shown beside the chat. The model runs on
+// this machine in the theme's SillyTavern server plugin (server-plugin/, installed as
+// plugins/yodayo-bgremove); each cutout is saved to SillyTavern's user images and
 // remembered in the settings, so every image is only processed once.
 
 import { uploadImage } from './charsettings.js';
+
+const PLUGIN_URL = '/api/plugins/yodayo-bgremove';
 
 /** source image URL → Promise of the cutout's path (in flight) */
 const jobs = new Map();
 /** source image URLs that failed this session, so they aren't retried in a loop */
 const failed = new Set();
 
-let worker = null;
-let nextId = 1;
-const pending = new Map();
-let progressToast = null;
-
 let getSettings = () => ({});
 let saveSettings = () => {};
 
-function getWorker() {
-    if (worker) {
-        return worker;
-    }
-    worker = new Worker(new URL('./bgremove.worker.js', import.meta.url), { type: 'module' });
-    worker.addEventListener('message', (event) => {
-        const { type, id } = event.data;
-        if (type === 'progress') {
-            const { received, total } = event.data;
-            const percent = total ? Math.round(received / total * 100) : null;
-            const text = `Downloading the background removal model (one time only)${percent === null ? '' : `: ${percent}%`}`;
-            if (progressToast) {
-                progressToast.find('.toast-message').text(text);
-            } else {
-                progressToast = toastr.info(text, 'Yodayo Tavern Theme', { timeOut: 0, extendedTimeOut: 0, tapToDismiss: false });
+class PluginMissingError extends Error {}
+
+/** Shows the plugin's model download progress while a cutout is being made. */
+function watchProgress() {
+    let toast = null;
+    const timer = setInterval(async () => {
+        try {
+            const status = await fetch(`${PLUGIN_URL}/status`, { cache: 'no-store' }).then(r => r.json());
+            if (status.status !== 'downloading') {
+                return;
             }
-            return;
+            const percent = status.total ? Math.round(status.received / status.total * 100) : null;
+            const text = `Downloading the background removal model (one time only)${percent === null ? '' : `: ${percent}%`}`;
+            if (toast) {
+                toast.find('.toast-message').text(text);
+            } else {
+                toast = toastr.info(text, 'Yodayo Tavern Theme', { timeOut: 0, extendedTimeOut: 0, tapToDismiss: false });
+            }
+        } catch {
+            // the status is only for show
         }
-        if (type === 'debug') {
-            console.debug('[Yodayo Tavern Theme] background removal mask', event.data.stats);
-            window.yodayoTavernLastMask = event.data.stats;
-            return;
+    }, 1000);
+    return () => {
+        clearInterval(timer);
+        if (toast) {
+            toastr.clear(toast);
         }
-        if (progressToast) {
-            toastr.clear(progressToast);
-            progressToast = null;
-        }
-        if (type === 'status') {
-            return;
-        }
-        if (progressToast) {
-            toastr.clear(progressToast);
-            progressToast = null;
-        }
-        const job = pending.get(id);
-        if (!job) {
-            return;
-        }
-        pending.delete(id);
-        if (type === 'done') {
-            job.resolve(event.data.mask);
-        } else {
-            job.reject(new Error(event.data.message));
-        }
+    };
+}
+
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).replace(/^data:[^,]+,/, ''));
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(blob);
     });
-    return worker;
+}
+
+/** Sends one image to the server plugin and returns the cutout as a PNG blob at full size. */
+async function cutOut(src) {
+    const source = await fetch(src);
+    if (!source.ok) {
+        throw new Error(`Could not load ${src}`);
+    }
+    const image = await blobToBase64(await source.blob());
+    const stopProgress = watchProgress();
+    try {
+        const response = await fetch(`${PLUGIN_URL}/remove`, {
+            method: 'POST',
+            headers: SillyTavern.getContext().getRequestHeaders(),
+            body: JSON.stringify({ image }),
+        });
+        if (response.status === 404) {
+            throw new PluginMissingError('The background removal server plugin is not installed');
+        }
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.image) {
+            throw new Error(data.error || `HTTP ${response.status}`);
+        }
+        return fetch(`data:image/png;base64,${data.image}`).then(r => r.blob());
+    } finally {
+        stopProgress();
+    }
 }
 
 /** A version stamp for an image file, so a replaced avatar (same name) gets a new cutout. */
@@ -73,41 +89,6 @@ async function getVersion(src) {
     } catch {
         return '';
     }
-}
-
-function loadImage(src) {
-    return new Promise((resolve, reject) => {
-        const image = new Image();
-        image.onload = () => resolve(image);
-        image.onerror = () => reject(new Error(`Could not load ${src}`));
-        image.src = src;
-    });
-}
-
-/** Runs the model on one image and returns the cutout as a PNG blob at full size. */
-async function cutOut(src) {
-    const image = await loadImage(src);
-    const bitmap = await createImageBitmap(image);
-    const id = nextId++;
-    const mask = await new Promise((resolve, reject) => {
-        pending.set(id, { resolve, reject });
-        // diagnostics: localStorage "yodayoTavernBgProvider" = "wasm" or "webgpu" forces a backend
-        let provider;
-        try {
-            provider = localStorage.getItem('yodayoTavernBgProvider') || undefined;
-        } catch {
-            provider = undefined;
-        }
-        getWorker().postMessage({ id, bitmap, provider }, [bitmap]);
-    });
-    const canvas = new OffscreenCanvas(image.naturalWidth, image.naturalHeight);
-    const context = canvas.getContext('2d');
-    context.drawImage(image, 0, 0);
-    context.globalCompositeOperation = 'destination-in';
-    context.imageSmoothingQuality = 'high';
-    context.drawImage(mask, 0, 0, canvas.width, canvas.height);
-    mask.close?.();
-    return canvas.convertToBlob({ type: 'image/png' });
 }
 
 /**
@@ -137,8 +118,11 @@ export function getCutout(src, onReady) {
             .catch((error) => {
                 failed.add(src);
                 console.error('[Yodayo Tavern Theme] background removal failed', error);
-                window.yodayoTavernLastBgError = String(error?.message ?? error);
-                toastr.warning('Could not remove the background from the character image; showing it as is.', 'Yodayo Tavern Theme');
+                if (error instanceof PluginMissingError) {
+                    toastr.warning('Removing backgrounds needs the theme\'s server plugin. Copy the theme\'s server-plugin folder into SillyTavern\'s plugins folder, run npm install in it, set enableServerPlugins: true in config.yaml and restart SillyTavern.', 'Yodayo Tavern Theme', { timeOut: 15000 });
+                } else {
+                    toastr.warning('Could not remove the background from the character image; showing it as is.', 'Yodayo Tavern Theme');
+                }
             })
             .finally(() => jobs.delete(src));
         jobs.set(src, job);
