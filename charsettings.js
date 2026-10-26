@@ -65,7 +65,11 @@ export function applyBackgroundOverride(settings) {
     const { background } = getEffectiveOverrides(settings);
     document.body.classList.toggle('yt-bg-override', Boolean(background && settings.enabled));
     if (background) {
-        document.body.style.setProperty('--yt-bg-override', background.startsWith('url(') ? background : `url("${background}")`);
+        // a relative url() inside a custom property resolves against the stylesheet that
+        // uses it (this extension's css folder), so make it absolute against the page
+        const raw = background.match(/^url\((['"]?)(.*)\1\)$/)?.[2] ?? background;
+        const absolute = new URL(raw, location.href).href;
+        document.body.style.setProperty('--yt-bg-override', `url("${absolute.replace(/"/g, '%22')}")`);
     } else {
         document.body.style.removeProperty('--yt-bg-override');
     }
