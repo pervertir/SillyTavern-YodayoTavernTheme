@@ -1,0 +1,88 @@
+/* Baseline usability across every component: visible keyboard focus, comfortable hit
+   targets, readable text sizes and contrast, clear disabled states, bigger targets on
+   touch screens. Loaded last so it applies on top of everything else. */
+
+/* Keyboard focus: one accent ring on every interactive control. Text fields keep their
+   own focus border instead. */
+body.yodayo-tavern :is(a, button, summary, select, input[type="checkbox"], input[type="radio"], input[type="range"], input[type="color"], [tabindex]:not([tabindex="-1"]), .menu_button, .right_menu_button, .drawer-toggle, .inline-drawer-toggle, .mes_button, .swipe_left, .swipe_right, .tag, .jg-button, .select2-selection, .interactable):focus-visible {
+    outline: 2px solid var(--yt-accent) !important;
+    outline-offset: 2px;
+}
+
+body.yodayo-tavern :is(input[type="text"], input[type="search"], input[type="url"], input[type="number"], input[type="password"], textarea, .text_pole):focus-visible {
+    outline: none !important;
+    border-color: var(--yt-accent);
+    box-shadow: 0 0 0 3px var(--yt-accent-soft);
+}
+
+/* Hit targets: icon-only buttons get at least a 28px square (40px on touch screens) */
+body.yodayo-tavern :is(.jg-button, .editor_maximize, .tags_view, .rm_stats_button, .drawer-content .fa-solid.opacity50p, .drawer-content .right_menu_button.fa-solid, .popup .right_menu_button.fa-solid) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 9999px;
+    cursor: pointer;
+}
+
+body.yodayo-tavern .jg-button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    font-size: 13px;
+}
+
+body.yodayo-tavern :is(.drawer-content .fa-solid.opacity50p, .editor_maximize, .tags_view, .rm_stats_button):hover {
+    background-color: var(--yt-surface-3);
+}
+
+body.yodayo-tavern .inline-drawer-icon {
+    min-width: 24px;
+    min-height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (pointer: coarse) {
+    body.yodayo-tavern :is(.menu_button, .jg-button, .editor_maximize, .tags_view, .rm_stats_button, .drawer-content .fa-solid.opacity50p, .drawer-content .right_menu_button.fa-solid, .popup .right_menu_button.fa-solid, .mes_button, .yt-sheet-close, .panelControlBar > div) {
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    body.yodayo-tavern :is(input[type="checkbox"], input[type="radio"]) {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+/* Text: nothing smaller than 12px, and secondary text at least 4.5:1 against the panels */
+body.yodayo-tavern :is(small, .fontsize80p, .fontsize90p) {
+    font-size: max(var(--yt-text-xs), 0.85em);
+}
+
+body.yodayo-tavern {
+    --yt-faint: #8a8d92;
+}
+
+body.yodayo-tavern :is(.note-link-span, .notes-link .fa-circle-question) {
+    opacity: 0.75;
+}
+
+body.yodayo-tavern :is(input, textarea, .text_pole)::placeholder {
+    color: var(--yt-muted) !important;
+    opacity: 0.8;
+}
+
+/* Disabled controls look and act disabled */
+body.yodayo-tavern :is(.menu_button, .right_menu_button, button, input, select, textarea):is(.disabled, :disabled) {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Selected text uses the accent */
+body.yodayo-tavern ::selection {
+    background-color: color-mix(in srgb, var(--yt-accent) 35%, transparent);
+    color: var(--yt-text);
+}
