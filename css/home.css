@@ -212,7 +212,10 @@ body.yodayo-tavern .yt-home .yt-recent-label {
 /* Hover card: a rounded rectangle opens behind the circle and the details sit beside
    the circle, never under it. Left padding = circle (64) + inset (8) + gap (16). */
 body.yodayo-tavern .yt-home .welcomeRecent .recentChat .recentChatInfo {
-    display: none;
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity var(--yt-fast) var(--yt-ease), visibility 0s linear var(--yt-fast);
     position: absolute;
     z-index: 1;
     top: -8px;
@@ -237,13 +240,34 @@ body.yodayo-tavern .yt-home .welcomeRecent .recentChat.yt-flip .recentChatInfo {
     padding: 8px 88px 8px 16px;
 }
 
-body.yodayo-tavern .yt-home .welcomeRecent .recentChat:hover .recentChatInfo,
+/* the card waits 2 seconds of hovering before it opens (keyboard focus opens it at once),
+   and closes as soon as the pointer leaves */
+body.yodayo-tavern {
+    --yt-recent-card-delay: 2s;
+}
+
+body.yodayo-tavern .yt-home .welcomeRecent .recentChat:hover .recentChatInfo {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity var(--yt-fast) var(--yt-ease) var(--yt-recent-card-delay), visibility 0s linear var(--yt-recent-card-delay);
+}
+
 body.yodayo-tavern .yt-home .welcomeRecent .recentChat:focus-within .recentChatInfo {
-    display: flex;
+    visibility: visible;
+    opacity: 1;
+    transition: opacity var(--yt-fast) var(--yt-ease);
 }
 
 /* while the card is open the label under the circle steps aside */
-body.yodayo-tavern .yt-home .welcomeRecent .recentChat:hover .yt-recent-label,
+body.yodayo-tavern .yt-home .welcomeRecent .recentChat .yt-recent-label {
+    transition: visibility 0s;
+}
+
+body.yodayo-tavern .yt-home .welcomeRecent .recentChat:hover .yt-recent-label {
+    visibility: hidden;
+    transition: visibility 0s linear var(--yt-recent-card-delay);
+}
+
 body.yodayo-tavern .yt-home .welcomeRecent .recentChat:focus-within .yt-recent-label {
     visibility: hidden;
 }
