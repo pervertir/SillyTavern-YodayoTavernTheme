@@ -122,16 +122,16 @@ body.yodayo-tavern.yt-adv-compactWorldInfo #WorldInfo .menu_button {
     margin: 0;
 }
 
-/* Chat */
-body.yodayo-tavern[data-yt-chat-fade="top"] #chat {
+/* Chat (the edge fade is for conversations only, not the home page) */
+body.yodayo-tavern:not(.yt-home-active)[data-yt-chat-fade="top"] #chat {
     mask-image: linear-gradient(to bottom, transparent 0, #000 32px);
 }
 
-body.yodayo-tavern[data-yt-chat-fade="bottom"] #chat {
+body.yodayo-tavern:not(.yt-home-active)[data-yt-chat-fade="bottom"] #chat {
     mask-image: linear-gradient(to top, transparent 0, #000 32px);
 }
 
-body.yodayo-tavern[data-yt-chat-fade="both"] #chat {
+body.yodayo-tavern:not(.yt-home-active)[data-yt-chat-fade="both"] #chat {
     mask-image: linear-gradient(to bottom, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
 }
 
