@@ -293,14 +293,19 @@ body.yodayo-tavern.yt-home-active #yt-position-toggle {
     display: none;
 }
 
-/* Chrome sometimes paints these frosted, rounded controls as plain squares with nothing in
-   them (after a menu opens over them, or on the welcome page) until a hover or focus nearby
-   repaints them. Their own compositing layer keeps them painted. backdrop-filter already
-   makes them containing blocks, so this changes no layout. */
-body.yodayo-tavern #send_form,
-body.yodayo-tavern #yt-position-toggle .yt-position-button,
-body.yodayo-tavern #yt-position-toggle .yt-position-menu,
-body.yodayo-tavern #yt-chat-settings-window,
-body.yodayo-tavern .yt-home-assistant-bubble {
+/* Chrome sometimes paints frosted (backdrop-filter), rounded surfaces as plain squares, or
+   without their blur, until a hover or focus nearby repaints them: after a menu opens over
+   them, after the menu's own open animation, or on the welcome page. Their own compositing
+   layer keeps them painted. Only while blur is on: backdrop-filter already makes them
+   containing blocks then, so this changes no layout (never on #top-settings-holder, #sheld
+   or dialog.popup, whose fixed children would move). */
+body.yodayo-tavern:not(.no-blur) :is(
+    #send_form,
+    #yt-position-toggle .yt-position-button,
+    #yt-position-toggle .yt-position-menu,
+    #yt-chat-settings-window,
+    .yt-home-assistant-bubble,
+    .drawer-content
+) {
     will-change: transform;
 }
