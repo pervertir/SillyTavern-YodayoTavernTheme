@@ -190,8 +190,10 @@ body.yodayo-tavern .drawer-content h4 {
     body.yodayo-tavern.yt-nav-rail #PersonaManagement { --yt-sheet-default: 800px; }
     body.yodayo-tavern.yt-nav-rail #right-nav-panel { --yt-sheet-default: 480px; }
 
+    /* these sheets always use the full window height; World Info's entries get the room */
     body.yodayo-tavern.yt-nav-rail .drawer-content.fillLeft.openDrawer,
-    body.yodayo-tavern.yt-nav-rail .drawer-content.fillRight.openDrawer {
+    body.yodayo-tavern.yt-nav-rail .drawer-content.fillRight.openDrawer,
+    body.yodayo-tavern.yt-nav-rail #WorldInfo.openDrawer {
         height: calc(100dvh - var(--yt-rail-gap) * 2);
     }
 
