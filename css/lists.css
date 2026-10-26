@@ -314,3 +314,8 @@ body.yodayo-tavern #PersonaManagement .persona_management_left_column {
 body.yodayo-tavern #rm_button_bar #bulkSelectedCount:empty {
     display: none;
 }
+
+/* The character panel's way back to the character list reads as a back arrow, not a list */
+body.yodayo-tavern #rm_button_characters::before {
+    content: '\f060';
+}
