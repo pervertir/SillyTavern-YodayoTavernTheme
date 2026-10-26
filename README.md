@@ -1,13 +1,60 @@
 # Yodayo Tavern Theme for SillyTavern
 
-A SillyTavern extension that restyles the whole UI after the Yodayo / Moescape Tavern
-chat: frosted chat bubbles straight on your background, a Yodayo-pink accent, Inter type, a
-menu bar on any edge (always shown, or opened from a button, an arrow tab, hover or a shortcut) with drawers as side sheets, switch toggles,
-modern sliders and fields, and popover menus.
+A SillyTavern extension that restyles the whole UI after the Yodayo / Moescape Tavern:
+a character browser for a home page, frosted chat bubbles straight on your background, a
+Yodayo-pink accent, Inter type, a menu bar on any edge with drawers as side sheets, and
+per-character looks.
 
-![Chat preview](screenshots/chat.jpg)
+![Tavern home with the welcome assistant](.github/home.jpg)
 
 Built and tested against **SillyTavern 1.19.0**.
+
+## Features
+
+### Tavern home
+
+The welcome screen becomes a Yodayo-style Tavern window: search, Create / New group / Import,
+tag chips, a sort order and a grid of portrait cards for every character and group. Hover a
+card to delete it (with SillyTavern's usual confirmation). Your welcome assistant stands
+beside it with its greeting over the message box; sending a message opens its chat like
+normal. If the assistant has a cutout made with Remove background, the cutout is shown.
+
+Recent chats sit above the characters as a row of circles. Rest the pointer on one for a
+second and it opens into a card with the chat's name, date, size and pin / rename / delete.
+
+![Recent chats hover card](.github/recent-chats.jpg)
+
+### Chat
+
+Frosted bubbles straight on your background, names and quotes in the accent color, yours on
+the right. Dock the chat in the middle, on the left or on the right with the round arrow
+button beside the message box; docked to a side, the character stands on the other side, at
+full height when the picture is large enough.
+
+| Chat in the middle | Chat on the right |
+| --- | --- |
+| ![Chat in the middle](.github/chat.jpg) | ![Chat docked right with the character beside it](.github/chat-right.jpg) |
+
+### Looks per character and per chat
+
+The cog at the top right of a chat opens **Theme for &lt;character&gt;**: colors, a
+background, the character image (upload, URL or **Remove background**), message style and
+background effects, for this character or only this chat. Every change applies as you type
+or drag.
+
+![Chat look editor](.github/look-editor.jpg)
+
+### Menus
+
+SillyTavern's menus open as frosted side sheets beside the menu bar, and each one remembers
+its width. The character list shows portrait cards in grid view, and every avatar is
+pre-scaled to its on-screen size so it stays sharp.
+
+![Character management menu](.github/characters.jpg)
+
+Also: switch toggles, modern sliders and fields, popover menus, focus rings and readable
+contrast throughout; readable find-in-page highlights; and dragging an image already on the
+page no longer imports it as a new character.
 
 ## Install
 
@@ -47,7 +94,7 @@ AMD or Intel on Linux (Vulkan), and falls back to the CPU. The first cutout down
 
 Open **Extensions → Yodayo Tavern Theme**:
 
-![Settings panel](screenshots/settings.jpg)
+![Settings panel](.github/settings.jpg)
 
 | Setting | What it does |
 | --- | --- |
@@ -79,10 +126,6 @@ With the chat docked to one side, the character appears on the other. If you use
 Character Expressions, the expression sprite moves there. Otherwise the extension
 shows the character's card image. Group chats and Visual Novel mode keep their own
 layout, and on phones the chat always fills the screen.
-
-| Chat on the left | Chat on the right |
-| --- | --- |
-| ![Chat docked left](screenshots/position-left.jpg) | ![Chat docked right](screenshots/position-right.jpg) |
 
 ### Chat styles and visual novel mode
 
@@ -134,6 +177,8 @@ remembered.
 - `popout.js`: the floating settings window
 - `pagination.js`: moves page controls below their lists
 - `charsettings.js`: the chat's cog and its per-character / per-chat look editor
+- `avatars.js`: pre-scales chat and character list avatars so they stay sharp
+- `bgremove.js`: Remove background, through the Background Removal server plugin
 - `colors.js`: chat colors (all characters or per character), character image and export/import
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,
   composer, lists, overlays, layout). Every rule is scoped under `body.yodayo-tavern`.
