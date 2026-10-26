@@ -13,8 +13,27 @@ const PAIRS = Object.freeze([
 /** Where each container lived originally, so it can go back */
 const origins = new Map();
 
+/** The character list keeps its grid toggle and bulk edit tools in its page controls; they
+ * move up into the list's button bar so the page controls can sit centered on their own. */
+const CHARACTER_TOOLS = Object.freeze(['charListGridToggle', 'bulkEditButton', 'bulkSelectedCount', 'bulkSelectAllButton', 'bulkDeleteButton']);
+
+function placeCharacterTools(inToolbar) {
+    const pagination = document.getElementById('rm_print_characters_pagination');
+    const toolbar = document.getElementById('rm_button_bar');
+    if (!pagination || !toolbar) {
+        return;
+    }
+    const tools = CHARACTER_TOOLS.map(id => document.getElementById(id)).filter(Boolean);
+    if (inToolbar) {
+        toolbar.append(...tools);
+    } else if (tools.some(tool => tool.parentElement !== pagination)) {
+        pagination.prepend(...tools);
+    }
+}
+
 /** @param {boolean} atBottom Move the controls below their lists, or back */
 export function placePagination(atBottom) {
+    placeCharacterTools(atBottom);
     for (const [paginationId, listId] of PAIRS) {
         const pagination = document.getElementById(paginationId);
         const list = document.getElementById(listId);

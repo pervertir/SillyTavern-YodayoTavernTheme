@@ -309,3 +309,8 @@ body.yodayo-tavern #PersonaManagement .persona_management_left_column {
     /* SillyTavern's overflow:hidden here would stop the bar sticking to the menu's bottom */
     overflow: visible;
 }
+
+/* the grid toggle and bulk edit tools now live in the button bar (pagination.js) */
+body.yodayo-tavern #rm_button_bar #bulkSelectedCount:empty {
+    display: none;
+}
