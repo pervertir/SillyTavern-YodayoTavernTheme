@@ -293,3 +293,65 @@ body.yodayo-tavern.yt-rail-open #yt-rail-toggle {
         transition: none;
     }
 }
+
+/* Top bar mode (Navigation: Top bar, and always on phones): the bar becomes a floating
+   frosted pill with the same 40px round icon buttons as the rail */
+@media screen and (min-width: 1001px) {
+    body.yodayo-tavern:not(.yt-nav-rail) #top-bar {
+        top: 8px;
+        height: 48px;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+    }
+
+    body.yodayo-tavern:not(.yt-nav-rail) #top-settings-holder {
+        top: 8px;
+        height: 48px;
+        width: fit-content;
+        max-width: calc(100vw - 32px);
+        padding: 0 var(--yt-space-1);
+        align-items: center;
+        gap: 2px;
+        background-color: var(--yt-rail-bg, rgb(35 37 39 / var(--yt-rail-alpha, 0.6)));
+        border: 1px solid var(--yt-line-strong);
+        border-radius: 9999px;
+        box-shadow: var(--yt-shadow);
+    }
+
+    body.yodayo-tavern:not(.yt-nav-rail) #top-settings-holder > .drawer {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 auto;
+    }
+
+    body.yodayo-tavern:not(.yt-nav-rail) #top-settings-holder > .drawer > .drawer-toggle {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    body.yodayo-tavern:not(.yt-nav-rail) .drawer-icon {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+    }
+
+    /* the chat starts below the floating bar */
+    body.yodayo-tavern:not(.yt-nav-rail) {
+        --topBarBlockSize: 64px;
+    }
+
+    /* drawers drop down below the bar as rounded sheets */
+    body.yodayo-tavern:not(.yt-nav-rail) .drawer-content:not(.fillLeft, .fillRight) {
+        top: 64px;
+        max-height: calc(100dvh - 72px);
+    }
+}
