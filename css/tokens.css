@@ -23,6 +23,9 @@ body.yodayo-tavern {
     --yt-panel-alpha: 0.8;
     --yt-panel-surface: rgb(35 37 39 / var(--yt-panel-alpha));
     --yt-panel-blur: 12px;
+    /* frosted glass for the menus and the home page, like Yodayo's */
+    --yt-glass: rgb(26 28 30 / 0.72);
+    --yt-glass-blur: 24px;
 
     /* Chat colors; the Colors section in the extension panel overrides these on <body> */
     --yt-char-name: var(--yt-accent);

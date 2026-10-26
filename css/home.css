@@ -20,9 +20,9 @@ body.yodayo-tavern.yt-home-active #sheld {
     top: var(--yt-space-2);
     height: calc(100dvh - var(--yt-space-2) * 2);
     max-height: calc(100dvh - var(--yt-space-2) * 2);
-    background-color: rgb(26 28 30 / 0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background-color: var(--yt-glass);
+    backdrop-filter: blur(var(--yt-glass-blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--yt-glass-blur)) saturate(1.2);
     border: 1px solid var(--yt-line);
     border-radius: 24px;
     overflow: hidden;
