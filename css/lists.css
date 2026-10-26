@@ -137,6 +137,13 @@ body.yodayo-tavern .tag.excluded {
     color: var(--yt-text);
 }
 
+/* the filter row scrolls, which clips anything outside it; leave room for the badge */
+body.yodayo-tavern .rm_tag_controls,
+body.yodayo-tavern .tags:has(> .tag.excluded) {
+    padding-top: 7px;
+    padding-right: 7px;
+}
+
 body.yodayo-tavern .tag.excluded::after {
     content: "\d7";
     position: absolute;
