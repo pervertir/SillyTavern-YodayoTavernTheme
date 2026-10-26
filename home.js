@@ -315,6 +315,12 @@ function buildHome() {
     assistant.type = 'button';
     assistant.title = "Chat with SillyTavern's assistant";
     assistant.addEventListener('click', () => {
+        // on a phone there's no room for the assistant beside the Tavern window, so this tab
+        // shows it in the window's place: picture, greeting and the message box
+        if (window.matchMedia('(max-width: 1000px)').matches && document.getElementById(ASSISTANT_ID)) {
+            document.body.classList.add('yt-m-assistant');
+            return;
+        }
         // SillyTavern's own "Temporary Chat" button opens the assistant; it lives in the
         // welcome panel that the home has moved into its recent chats row
         const button = document.querySelector('#chat .welcomePanel .openTemporaryChat');
@@ -324,7 +330,9 @@ function buildHome() {
             toastr.warning('The assistant chat is not available right now.', 'Yodayo Tavern Theme');
         }
     });
-    title.append(el('div', 'yt-home-title', 'Tavern'), assistant);
+    const tavern = el('div', 'yt-home-title', 'Tavern');
+    tavern.addEventListener('click', () => document.body.classList.remove('yt-m-assistant'));
+    title.append(tavern, assistant);
 
     const actions = el('div', 'yt-home-actions');
     const search = el('label', 'yt-home-search');
@@ -425,6 +433,10 @@ function addRecentArrows(slot, list) {
         next.hidden = list.scrollLeft + list.clientWidth >= list.scrollWidth - 1;
     };
     list.addEventListener('scroll', update, { passive: true });
+    // a sideways swipe here scrolls the row; it isn't SillyTavern's message swipe gesture
+    for (const type of ['swiped-left', 'swiped-right']) {
+        list.addEventListener(type, event => event.stopPropagation());
+    }
     new ResizeObserver(update).observe(list);
     // "show more" adds chats to the row without changing its size
     new MutationObserver(update).observe(list, { childList: true });
@@ -603,6 +615,9 @@ function syncAssistant(chat, show) {
     let aside = document.getElementById(ASSISTANT_ID);
     const info = show ? getAssistantInfo(chat) : null;
     document.body.classList.toggle('yt-home-assistant', Boolean(info));
+    if (!info) {
+        document.body.classList.remove('yt-m-assistant');
+    }
     if (!info || !sheld) {
         aside?.remove();
         return;
@@ -618,7 +633,12 @@ function syncAssistant(chat, show) {
         bubble.append(el('div', 'yt-home-assistant-name'), el('div', 'yt-home-assistant-greeting mes_text'));
         const picture = el('div', 'yt-home-assistant-picture');
         picture.append(img);
-        aside.append(picture, bubble);
+        const back = el('button', 'yt-m-assistant-back fa-solid fa-arrow-left');
+        back.type = 'button';
+        back.title = 'Back to the Tavern';
+        back.setAttribute('aria-label', back.title);
+        back.addEventListener('click', () => document.body.classList.remove('yt-m-assistant'));
+        aside.append(back, picture, bubble);
         sheld.prepend(aside);
     }
     // a cutout made with Remove background, if there is one; framed with round corners if not

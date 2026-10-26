@@ -1047,3 +1047,27 @@ body.yodayo-tavern .yt-card-delete:hover {
         opacity: 1;
     }
 }
+
+/* Recent chats swipe sideways on touch screens: the row scrolls on its own, snaps to a
+   circle, and never drags the page or SillyTavern's message swipes along with it */
+body.yodayo-tavern .yt-home .welcomeRecent .recentChatList {
+    touch-action: pan-x pan-y;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+}
+
+body.yodayo-tavern .yt-home .welcomeRecent .recentChatList .recentChat {
+    scroll-snap-align: start;
+}
+
+/* fingers swipe; the arrows are for mice */
+@media (hover: none) and (pointer: coarse) {
+    body.yodayo-tavern .yt-home .yt-recent-arrow {
+        display: none;
+    }
+}
+
+.yt-m-assistant-back {
+    display: none;
+}

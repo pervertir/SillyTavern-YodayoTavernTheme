@@ -278,6 +278,37 @@
         padding: 0 8px 0 12px;
     }
 
+    /* nothing in the Tavern window may be wider than the window (Safari sizes flex items and
+       search fields by their content unless told not to) */
+    body.yodayo-tavern.yt-home-active #sheld {
+        box-sizing: border-box;
+        max-width: calc(100vw - var(--yt-m-gap) * 2) !important;
+        min-width: 0 !important;
+        padding: 0;
+    }
+
+    body.yodayo-tavern.yt-home-active #chat,
+    body.yodayo-tavern .yt-home,
+    body.yodayo-tavern .yt-home * {
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    body.yodayo-tavern .yt-home-search,
+    body.yodayo-tavern .yt-home-search input,
+    body.yodayo-tavern .yt-home-chips,
+    body.yodayo-tavern .yt-home-grid,
+    body.yodayo-tavern .yt-home .welcomeRecent,
+    body.yodayo-tavern .yt-home .recentChatList {
+        min-width: 0;
+    }
+
+    body.yodayo-tavern .yt-home-search input {
+        flex: 1 1 0;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
     body.yodayo-tavern .yt-home {
         min-width: 0;
         padding: 0;
@@ -374,5 +405,138 @@
 @media screen and (max-width: 1000px) and (min-width: 600px) {
     body.yodayo-tavern .yt-home-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Phones: the ST Assistant tab shows the welcome assistant in the Tavern window's place, as on
+   desktop: its picture down to its greeting, SillyTavern's message box below, and a back
+   arrow to the Tavern. Sending a message opens its chat as usual. */
+@media screen and (max-width: 1000px) {
+    body.yodayo-tavern.yt-home-active.yt-m-assistant #chat {
+        display: none;
+    }
+
+    body.yodayo-tavern.yt-home-active.yt-m-assistant #yt-home-assistant {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
+        padding: 12px 12px 0;
+        gap: 0;
+    }
+
+    body.yodayo-tavern.yt-home-active.yt-m-assistant #form_sheld {
+        display: block;
+        padding: 8px 10px 10px;
+    }
+
+    body.yodayo-tavern.yt-m-assistant #yt-home-assistant .yt-m-assistant-back {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border: 1px solid var(--yt-line-strong);
+        border-radius: 9999px;
+        background-color: var(--yt-glass-raised);
+        backdrop-filter: var(--yt-backdrop);
+        -webkit-backdrop-filter: var(--yt-backdrop);
+        color: var(--yt-text);
+        font-size: 14px;
+    }
+
+    body.yodayo-tavern.yt-m-assistant .yt-home-assistant-picture {
+        flex: 1 1 0;
+        min-height: 0;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    body.yodayo-tavern.yt-m-assistant #yt-home-assistant img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 18px 18px 0 0;
+    }
+
+    body.yodayo-tavern.yt-m-assistant #yt-home-assistant img.yt-cutout {
+        border-radius: 0;
+    }
+
+    body.yodayo-tavern.yt-m-assistant .yt-home-assistant-bubble {
+        position: relative;
+        z-index: 1;
+        flex: 0 1 auto;
+        max-height: 40%;
+        margin-top: -10px;
+        overflow-y: auto;
+        padding: 10px 14px;
+        background-color: var(--yt-panel-surface) !important;
+        backdrop-filter: var(--yt-backdrop);
+        -webkit-backdrop-filter: var(--yt-backdrop);
+        border: 1px solid var(--yt-line);
+        border-radius: 18px;
+        font-size: var(--yt-text-sm);
+    }
+
+    body.yodayo-tavern.yt-m-assistant .yt-home-assistant-name {
+        font-weight: 600;
+        color: var(--yt-accent);
+        margin-bottom: 2px;
+    }
+
+    body.yodayo-tavern.yt-m-assistant .yt-home-assistant-greeting {
+        color: var(--yt-text);
+        line-height: 1.45;
+    }
+
+    body.yodayo-tavern.yt-m-assistant .yt-home-assistant-greeting q::before,
+    body.yodayo-tavern.yt-m-assistant .yt-home-assistant-greeting q::after {
+        content: '';
+    }
+
+    /* "This chat is temporary": one compact line, Load and Save as icons */
+    body.yodayo-tavern #chat [data-type="assistant_note"] {
+        flex-wrap: nowrap;
+        max-width: calc(100vw - 32px);
+        padding: 4px 4px 4px 12px;
+        font-size: 12px;
+        gap: 6px;
+    }
+
+    /* "Note: this chat is temporary and will be deleted…" shortened to a label */
+    body.yodayo-tavern #chat [data-type="assistant_note"] > div:first-child {
+        min-width: 0;
+        white-space: nowrap;
+        font-size: 0;
+    }
+
+    body.yodayo-tavern #chat [data-type="assistant_note"] > div:first-child > * {
+        display: none;
+    }
+
+    body.yodayo-tavern #chat [data-type="assistant_note"] > div:first-child::before {
+        content: 'Temporary chat';
+        font: 600 12px var(--yt-font);
+        color: var(--yt-text);
+    }
+
+    body.yodayo-tavern #chat [data-type="assistant_note"] .menu_button {
+        flex: 0 0 auto;
+        width: 28px;
+        min-height: 28px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    body.yodayo-tavern #chat [data-type="assistant_note"] .menu_button span {
+        display: none;
     }
 }
