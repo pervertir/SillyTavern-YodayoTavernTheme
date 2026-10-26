@@ -124,6 +124,25 @@ async function confirmDelete(character) {
     }
 }
 
+/**
+ * A card picture from SillyTavern's thumbnail, which is far smaller than the card PNG.
+ * Thumbnails are only 96px wide by default, so if this one is too small for the card on
+ * this screen, the full image replaces it.
+ */
+function setCardImage(img, avatar) {
+    const file = encodeURIComponent(avatar);
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.alt = '';
+    img.addEventListener('load', () => {
+        const needed = img.clientWidth * (window.devicePixelRatio || 1);
+        if (needed && img.naturalWidth < needed * 0.9 && !img.src.includes('characters/')) {
+            img.src = `characters/${file}`;
+        }
+    });
+    img.src = `thumbnail?type=avatar&file=${file}`;
+}
+
 function renderCard({ character, index }) {
     const card = el('button', 'yt-card');
     card.type = 'button';
@@ -132,9 +151,7 @@ function renderCard({ character, index }) {
 
     const media = el('div', 'yt-card-media');
     const img = el('img');
-    img.loading = 'lazy';
-    img.alt = '';
-    img.src = `characters/${encodeURIComponent(character.avatar)}`;
+    setCardImage(img, character.avatar);
     img.draggable = false;
     media.append(img);
 
@@ -197,9 +214,8 @@ function renderGroupCard(group) {
     media.classList.add(`yt-card-collage-${Math.max(members.length, 1)}`);
     for (const avatar of members) {
         const img = el('img');
-        img.loading = 'lazy';
-        img.alt = '';
-        img.src = `characters/${encodeURIComponent(avatar)}`;
+        setCardImage(img, avatar);
+        img.draggable = false;
         media.append(img);
     }
 

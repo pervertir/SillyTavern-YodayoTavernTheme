@@ -4,8 +4,10 @@
 // with high-quality smoothing, and shows the result through CSS `content`, so the img's
 // src (which SillyTavern reads, e.g. to zoom the avatar on click) never changes.
 
-/** `${src}|${width}x${height}|${position}` → Promise of an object URL */
+/** `${src}|${width}x${height}|${position}` → Promise of an object URL, oldest first */
 const cache = new Map();
+/** Pre-scaled pictures kept around; older ones nothing shows any more are let go */
+const CACHE_LIMIT = 300;
 
 let isEnabled = () => true;
 
@@ -71,12 +73,30 @@ async function sharpen(img) {
     }
     if (!cache.has(key)) {
         cache.set(key, render(src, width, height, position).catch(() => null));
+        trimCache();
     }
     const url = await cache.get(key);
     // the message may have been re-rendered with another avatar meanwhile
     if (url && img.getAttribute('src') === src && isEnabled()) {
         img.style.setProperty('content', `url("${url}")`);
         img.dataset.ytSharp = key;
+    }
+}
+
+/** Lets go of the oldest pre-scaled pictures once there are too many, skipping any in use. */
+function trimCache() {
+    if (cache.size <= CACHE_LIMIT) {
+        return;
+    }
+    for (const [key, pending] of cache) {
+        if (cache.size <= CACHE_LIMIT * 0.8) {
+            break;
+        }
+        if (document.querySelector(`img[data-yt-sharp="${CSS.escape(key)}"]`)) {
+            continue;
+        }
+        cache.delete(key);
+        pending.then(url => url && URL.revokeObjectURL(url));
     }
 }
 
@@ -148,7 +168,12 @@ export function initSharpAvatars(enabled) {
     eventSource.on(eventTypes.MORE_MESSAGES_LOADED, all);
     eventSource.on(eventTypes.CHARACTER_MESSAGE_RENDERED, (id) => sharpenAvatars(id));
     eventSource.on(eventTypes.USER_MESSAGE_RENDERED, (id) => sharpenAvatars(id));
-    window.addEventListener('resize', all);
+    // only once the window has stopped resizing
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(all, 250);
+    });
     initPanelAvatars();
     all();
 }
