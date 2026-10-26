@@ -13,6 +13,7 @@ const defaultSettings = Object.freeze({
     flatBackground: false,
     chatPosition: 'middle',
     characterArt: true,
+    panelOpacity: 80,
 });
 
 const ART_ID = 'yt-character-art';
@@ -108,6 +109,7 @@ function applySettings() {
     body.style.setProperty('--yt-accent', settings.accent);
     body.style.setProperty('--yt-accent-ink', getAccentInk(settings.accent));
     body.style.setProperty('--yt-bubble-max', `${settings.bubbleWidth}px`);
+    body.style.setProperty('--yt-panel-alpha', String(settings.panelOpacity / 100));
 
     if (settings.font === 'default') {
         body.style.removeProperty('--yt-font');
@@ -130,6 +132,8 @@ function syncSettingsUI() {
     $('#yt_flat_bg').prop('checked', settings.flatBackground);
     $('#yt_chat_position').val(settings.chatPosition);
     $('#yt_character_art').prop('checked', settings.characterArt);
+    $('#yt_panel_opacity').val(settings.panelOpacity);
+    $('#yt_panel_opacity_value').text(`${settings.panelOpacity}%`);
 }
 
 function bindSettingsUI() {
@@ -168,6 +172,11 @@ function bindSettingsUI() {
     });
     $('#yt_character_art').on('change', function () {
         update('characterArt', $(this).prop('checked'));
+    });
+    $('#yt_panel_opacity').on('input', function () {
+        const opacity = Number($(this).val());
+        $('#yt_panel_opacity_value').text(`${opacity}%`);
+        update('panelOpacity', opacity);
     });
 }
 

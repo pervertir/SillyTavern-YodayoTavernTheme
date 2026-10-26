@@ -29,6 +29,10 @@
 body.yodayo-tavern {
     --yt-bg: #1a1c1e;
     --yt-surface: #232527;
+    /* chat panel and message box see-through level; index.js sets it from the slider */
+    --yt-panel-alpha: 0.8;
+    --yt-panel-bg: rgb(26 28 30 / var(--yt-panel-alpha));
+    --yt-panel-surface: rgb(35 37 39 / var(--yt-panel-alpha));
     --yt-surface-2: #2c2e30;
     --yt-surface-3: #36393b;
     --yt-line: rgba(230, 230, 230, 0.1);
@@ -130,8 +134,20 @@ body.yodayo-tavern .standoutHeader {
 }
 
 /* Chat column */
+/* The chat column is one rounded, semi-transparent panel; the chat list and the
+   message area sit on it without backgrounds of their own */
+body.yodayo-tavern #sheld {
+    background-color: var(--yt-panel-bg);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+    overflow: hidden;
+    /* leave a gap at the bottom so the rounded corners show */
+    height: calc(100dvh - var(--topBarBlockSize) - 12px);
+    max-height: calc(100dvh - var(--topBarBlockSize) - 12px);
+}
+
 body.yodayo-tavern #chat {
-    background-color: var(--yt-bg);
+    background-color: transparent;
     text-shadow: none;
     padding: 8px 12px 0 12px;
     gap: 2px;
@@ -309,11 +325,12 @@ body.yodayo-tavern .mes_text blockquote {
 /* Composer: floating pill with a round send button */
 body.yodayo-tavern #form_sheld {
     padding: 8px 12px 10px 12px;
-    background-color: var(--yt-bg);
+    background-color: transparent;
 }
 
+/* !important beats SillyTavern's no-blur mode, which forces a solid color here */
 body.yodayo-tavern #send_form {
-    background-color: var(--yt-surface);
+    background-color: var(--yt-panel-surface) !important;
     border: 1px solid var(--yt-line-strong);
     border-radius: 9999px;
     padding: 2px 6px;
