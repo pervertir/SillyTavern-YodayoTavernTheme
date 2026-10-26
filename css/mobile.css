@@ -1,12 +1,38 @@
 /* Phones and narrow windows (SillyTavern's own breakpoint, 1000px). Imported last so it wins.
-   Like Moonlit Echoes, the menu bar stays a single row of icons along the top and menus open
-   full width beneath it; here the bar and the menus are frosted acrylic like the Tavern
-   window, the bar respects the notch, and nothing is allowed to run off the side. */
+   A phone-app layout: the menu bar is a frosted tab bar on the bottom edge (or the top, from
+   the settings), menus rise from it as sheets, and in a chat the bar slips away while you
+   scroll down and comes back when you scroll up or tap its handle (phone.js sets the body
+   classes yt-phone-nav-top/bottom and yt-m-bar-hidden). Like Moonlit Echoes it stays one row
+   of icons with menus full width; everything clears the notch and the home indicator, and
+   nothing may run off the side.
+
+   --yt-m-top / --yt-m-bottom are the room the chat and home leave at each edge. The bar
+   moves with top/bottom, never transform: a transform on #top-settings-holder would make it
+   the frame for its fixed menu sheets. */
 @media screen and (max-width: 1000px) {
     body.yodayo-tavern {
-        --yt-m-bar: calc(48px + env(safe-area-inset-top, 0px));
-        --topBarBlockSize: var(--yt-m-bar);
+        --yt-m-tabs: 56px;
         --yt-m-gap: 8px;
+        --yt-m-safe-top: env(safe-area-inset-top, 0px);
+        --yt-m-safe-bottom: env(safe-area-inset-bottom, 0px);
+        --yt-m-bar-top: calc(var(--yt-m-tabs) + var(--yt-m-safe-top));
+        --yt-m-bar-bottom: calc(var(--yt-m-tabs) + var(--yt-m-safe-bottom));
+        --yt-m-top: var(--yt-m-safe-top);
+        --yt-m-bottom: 0px;
+        --topBarBlockSize: var(--yt-m-top);
+    }
+
+    body.yodayo-tavern.yt-phone-nav-top {
+        --yt-m-top: var(--yt-m-bar-top);
+    }
+
+    body.yodayo-tavern.yt-phone-nav-bottom {
+        --yt-m-bottom: var(--yt-m-bar-bottom);
+    }
+
+    body.yodayo-tavern.yt-m-bar-hidden {
+        --yt-m-top: var(--yt-m-safe-top);
+        --yt-m-bottom: 0px;
     }
 
     /* never a sideways scroll */
@@ -15,35 +41,82 @@
         overflow-x: clip;
     }
 
+    /* SillyTavern puts translateZ(0) on <html> (a Chrome flicker fix), which makes it the frame
+       for every fixed element; with the body fixed it has no height, so anything pinned to
+       the bottom edge would sit above the screen. Give it the screen's height. */
+    html:has(body.yodayo-tavern) {
+        height: 100dvh;
+    }
+
     /* Menu bar: one frosted row, icons spread evenly, the open menu's icon in an accent pill */
+    body.yodayo-tavern #top-bar,
+    body.yodayo-tavern #top-settings-holder {
+        transition: top var(--yt-slow) var(--yt-ease), bottom var(--yt-slow) var(--yt-ease);
+    }
+
     body.yodayo-tavern #top-bar {
-        height: var(--yt-m-bar);
         background-color: var(--yt-glass) !important;
         backdrop-filter: var(--yt-backdrop);
         -webkit-backdrop-filter: var(--yt-backdrop);
-        border-bottom: 1px solid var(--yt-line);
-        box-shadow: 0 6px 24px rgb(0 0 0 / 0.25);
+        border: none;
+        box-shadow: 0 0 24px rgb(0 0 0 / 0.3);
     }
 
     body.yodayo-tavern #top-settings-holder {
-        height: var(--yt-m-bar);
-        max-height: var(--yt-m-bar);
-        padding: env(safe-area-inset-top, 0px) max(4px, env(safe-area-inset-right, 0px)) 0 max(4px, env(safe-area-inset-left, 0px));
         justify-content: space-around;
         align-items: center;
         box-sizing: border-box;
     }
 
+    body.yodayo-tavern.yt-phone-nav-top :is(#top-bar, #top-settings-holder) {
+        top: 0;
+        bottom: auto;
+        height: var(--yt-m-bar-top);
+        max-height: var(--yt-m-bar-top);
+    }
+
+    body.yodayo-tavern.yt-phone-nav-top #top-bar {
+        border-bottom: 1px solid var(--yt-line);
+    }
+
+    body.yodayo-tavern.yt-phone-nav-top #top-settings-holder {
+        padding: var(--yt-m-safe-top) max(4px, env(safe-area-inset-right, 0px)) 0 max(4px, env(safe-area-inset-left, 0px));
+    }
+
+    body.yodayo-tavern.yt-phone-nav-bottom :is(#top-bar, #top-settings-holder) {
+        top: auto;
+        bottom: 0;
+        height: var(--yt-m-bar-bottom);
+        max-height: var(--yt-m-bar-bottom);
+    }
+
+    body.yodayo-tavern.yt-phone-nav-bottom #top-bar {
+        border-top: 1px solid var(--yt-line);
+    }
+
+    body.yodayo-tavern.yt-phone-nav-bottom #top-settings-holder {
+        padding: 0 max(4px, env(safe-area-inset-right, 0px)) var(--yt-m-safe-bottom) max(4px, env(safe-area-inset-left, 0px));
+    }
+
+    /* slipped off its edge */
+    body.yodayo-tavern.yt-phone-nav-top.yt-m-bar-hidden :is(#top-bar, #top-settings-holder) {
+        top: calc(-1 * var(--yt-m-bar-top) - 8px);
+    }
+
+    body.yodayo-tavern.yt-phone-nav-bottom.yt-m-bar-hidden :is(#top-bar, #top-settings-holder) {
+        bottom: calc(-1 * var(--yt-m-bar-bottom) - 8px);
+    }
+
     body.yodayo-tavern #top-settings-holder > .drawer {
         flex: 1 1 0;
         min-width: 0;
-        height: 48px;
+        height: var(--yt-m-tabs);
         padding: 0;
         justify-content: center;
     }
 
     body.yodayo-tavern #top-settings-holder .drawer-icon {
-        width: 40px;
+        width: 44px;
         height: 36px;
         padding: 0;
         display: inline-flex;
@@ -60,26 +133,82 @@
         color: var(--yt-accent);
     }
 
-    /* Menus: full width under the bar, frosted like the Tavern window, scrolling inside */
+    /* the handle that brings a hidden bar back */
+    #yt-m-handle {
+        display: none;
+    }
+
+    body.yodayo-tavern.yt-m-bar-hidden #yt-m-handle {
+        display: block;
+        position: fixed;
+        left: 50%;
+        z-index: 3006;
+        width: 72px;
+        height: 22px;
+        margin-left: -36px;
+        padding: 0;
+        border: none;
+        background: none;
+        cursor: pointer;
+    }
+
+    body.yodayo-tavern.yt-m-bar-hidden #yt-m-handle::before {
+        content: '';
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        top: 9px;
+        height: 4px;
+        border-radius: 9999px;
+        background-color: rgb(240 240 240 / 0.55);
+        box-shadow: 0 0 6px rgb(0 0 0 / 0.5);
+    }
+
+    body.yodayo-tavern.yt-phone-nav-bottom #yt-m-handle {
+        bottom: calc(var(--yt-m-safe-bottom) + 2px);
+    }
+
+    body.yodayo-tavern.yt-phone-nav-top #yt-m-handle {
+        top: calc(var(--yt-m-safe-top) + 2px);
+    }
+
+    /* Menus: full-width sheets from the bar's edge, frosted like the Tavern window */
     body.yodayo-tavern .drawer-content,
     body.yodayo-tavern #left-nav-panel,
     body.yodayo-tavern #right-nav-panel {
-        top: var(--yt-m-bar) !important;
         left: 0 !important;
         right: 0 !important;
         width: 100dvw !important;
         min-width: 0 !important;
         max-width: 100dvw !important;
-        max-height: calc(100dvh - var(--yt-m-bar)) !important;
         margin: 0;
-        padding: 12px max(12px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+        padding: 12px max(12px, env(safe-area-inset-right, 0px)) 12px max(12px, env(safe-area-inset-left, 0px));
         background-color: var(--yt-glass) !important;
         backdrop-filter: var(--yt-backdrop);
         -webkit-backdrop-filter: var(--yt-backdrop);
         border: none;
-        border-radius: 0 0 20px 20px !important;
         box-sizing: border-box;
         overflow-x: hidden;
+    }
+
+    body.yodayo-tavern.yt-phone-nav-top :is(.drawer-content, #left-nav-panel, #right-nav-panel) {
+        top: var(--yt-m-bar-top) !important;
+        bottom: auto !important;
+        max-height: calc(100dvh - var(--yt-m-bar-top) - var(--yt-m-safe-bottom)) !important;
+        border-radius: 0 0 22px 22px !important;
+    }
+
+    body.yodayo-tavern.yt-phone-nav-bottom :is(.drawer-content, #left-nav-panel, #right-nav-panel) {
+        top: auto !important;
+        bottom: var(--yt-m-bar-bottom) !important;
+        max-height: calc(100dvh - var(--yt-m-bar-bottom) - var(--yt-m-safe-top) - 12px) !important;
+        border-radius: 22px 22px 0 0 !important;
+        box-shadow: 0 -12px 32px rgb(0 0 0 / 0.35);
+    }
+
+    /* the menus rise from the bottom bar instead of dropping from the top */
+    body.yodayo-tavern.yt-phone-nav-bottom .drawer-content.openDrawer {
+        --yt-sheet-from: 0 16px;
     }
 
     /* the close button sits inside the sheet: there's no side gutter on a phone */
@@ -100,11 +229,12 @@
         right: 0;
     }
 
-    /* Chat: starts below the bar; back and look buttons ride on a frosted strip */
+    /* Chat: fills the space the bar leaves; back and look buttons float over its top */
     body.yodayo-tavern:not(.yt-home-active) #sheld {
-        top: var(--yt-m-bar);
-        height: calc(100dvh - var(--yt-m-bar));
-        max-height: calc(100dvh - var(--yt-m-bar));
+        top: var(--yt-m-top);
+        height: calc(100dvh - var(--yt-m-top) - var(--yt-m-bottom));
+        max-height: calc(100dvh - var(--yt-m-top) - var(--yt-m-bottom));
+        transition: top var(--yt-slow) var(--yt-ease), height var(--yt-slow) var(--yt-ease);
     }
 
     body.yodayo-tavern:not(.yt-home-active) #chat {
@@ -117,6 +247,11 @@
         top: 8px;
     }
 
+    /* with the bar below, the home indicator is the bar's problem, not the message box's */
+    body.yodayo-tavern.yt-phone-nav-bottom:not(.yt-m-bar-hidden) #form_sheld {
+        padding-bottom: 8px;
+    }
+
     body.yodayo-tavern #chat .mes {
         max-width: 100%;
     }
@@ -126,13 +261,13 @@
         max-width: 100%;
     }
 
-    /* Tavern home: the window fits the screen below the bar */
+    /* Tavern home: the window fits the space the bar leaves */
     body.yodayo-tavern.yt-home-active #sheld {
-        top: calc(var(--yt-m-bar) + var(--yt-m-gap));
+        top: calc(var(--yt-m-top) + var(--yt-m-gap));
         left: var(--yt-m-gap);
         right: var(--yt-m-gap);
         width: auto;
-        height: calc(100dvh - var(--yt-m-bar) - var(--yt-m-gap) * 2 - env(safe-area-inset-bottom, 0px));
+        height: calc(100dvh - var(--yt-m-top) - var(--yt-m-bottom) - var(--yt-m-gap) * 2);
         max-height: none;
         margin: 0;
         border-radius: 20px;
@@ -226,8 +361,8 @@
         right: var(--yt-m-gap) !important;
         width: auto !important;
         max-width: none !important;
-        top: calc(var(--yt-m-bar) + var(--yt-m-gap)) !important;
-        max-height: calc(100dvh - var(--yt-m-bar) - var(--yt-m-gap) * 2 - env(safe-area-inset-bottom, 0px)) !important;
+        top: calc(var(--yt-m-top) + var(--yt-m-gap)) !important;
+        max-height: calc(100dvh - var(--yt-m-top) - var(--yt-m-bottom) - var(--yt-m-gap) * 2 - var(--yt-m-safe-bottom)) !important;
     }
 
     /* SillyTavern's popups: inside the screen with a margin */
