@@ -1,0 +1,455 @@
+/* Yodayo Tavern theme for SillyTavern
+   Dark charcoal surfaces, lime accent, rounded chat bubbles.
+   Edit this file, then run `node build.mjs` to regenerate the theme JSON. */
+
+:root {
+    --yt-bg: #1a1c1e;
+    --yt-surface: #232527;
+    --yt-surface-2: #2c2e30;
+    --yt-surface-3: #36393b;
+    --yt-line: rgba(230, 230, 230, 0.1);
+    --yt-line-strong: rgba(230, 230, 230, 0.18);
+    --yt-text: #f0f0f0;
+    --yt-muted: #a8a8a8;
+    --yt-accent: #e4f063;
+    --yt-accent-ink: #1a1a1a;
+    --yt-accent-soft: rgba(228, 240, 99, 0.12);
+    --yt-accent-line: rgba(228, 240, 99, 0.35);
+    --yt-radius: 6px;
+    --yt-radius-lg: 12px;
+    --yt-bubble-radius: 16px;
+
+    --mainFontFamily: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    --interactable-outline-color: var(--yt-accent);
+    accent-color: var(--yt-accent);
+}
+
+body {
+    background-color: var(--yt-bg);
+    font-family: var(--mainFontFamily);
+}
+
+::selection {
+    background: var(--yt-accent);
+    color: var(--yt-accent-ink);
+}
+
+/* Scrollbars */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--yt-surface-3) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--yt-surface-3);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Top bar and side drawers */
+#top-bar,
+#top-settings-holder {
+    background-color: var(--yt-bg);
+    box-shadow: none;
+    border-bottom: 1px solid var(--yt-line);
+}
+
+.drawer-icon {
+    color: var(--yt-muted);
+    transition: color 0.15s ease;
+}
+
+.drawer-icon:hover,
+.drawer-icon.openIcon {
+    color: var(--yt-accent);
+}
+
+.drawer-content,
+#left-nav-panel,
+#right-nav-panel {
+    background-color: var(--yt-bg);
+    border: 1px solid var(--yt-line);
+    border-radius: 0 0 var(--yt-radius-lg) var(--yt-radius-lg);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.inline-drawer-header,
+.standoutHeader {
+    border-radius: var(--yt-radius);
+}
+
+/* Chat column */
+#chat {
+    background-color: var(--yt-bg);
+    text-shadow: none;
+    padding: 8px 12px 0 12px;
+    gap: 2px;
+}
+
+#chat .mes {
+    background-color: transparent;
+    border: none;
+    padding: 10px 4px 4px 4px;
+    gap: 10px;
+}
+
+#chat .mes .mes_block {
+    padding-left: 0;
+    /* keeps the absolutely positioned swipe arrows clear of the bubble */
+    padding-right: 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Character bubble */
+#chat .mes .mes_text {
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line);
+    border-radius: 4px var(--yt-bubble-radius) var(--yt-bubble-radius) var(--yt-bubble-radius);
+    padding: 10px 14px;
+    max-width: min(100%, 720px);
+    width: fit-content;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+#chat .mes .mes_text p {
+    margin: 0.35em 0;
+}
+
+#chat .mes .mes_text p:first-child {
+    margin-top: 0;
+}
+
+#chat .mes .mes_text p:last-child {
+    margin-bottom: 0;
+}
+
+/* User messages sit on the right in a lime-tinted bubble */
+#chat .mes[is_user="true"] {
+    flex-direction: row-reverse;
+}
+
+#chat .mes[is_user="true"] .mes_block {
+    align-items: flex-end;
+}
+
+#chat .mes[is_user="true"] .mes_text {
+    background-color: var(--yt-accent-soft);
+    border-color: var(--yt-accent-line);
+    border-radius: var(--yt-bubble-radius) 4px var(--yt-bubble-radius) var(--yt-bubble-radius);
+}
+
+#chat .mes[is_user="true"] .ch_name {
+    flex-direction: row-reverse;
+}
+
+#chat .mes[is_user="true"] .ch_name > .flex-container {
+    flex-direction: row-reverse;
+}
+
+#chat .mes[is_user="true"] .mes_buttons {
+    flex-direction: row-reverse;
+}
+
+/* System / narrator messages */
+#chat .mes[is_system="true"] .mes_text {
+    background-color: transparent;
+    border-style: dashed;
+    color: var(--yt-muted);
+}
+
+/* Names, timestamps and message actions */
+#chat .mes .ch_name {
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+#chat .mes .name_text {
+    color: var(--yt-text);
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+#chat .mes:not([is_user="true"]) .name_text {
+    color: var(--yt-accent);
+}
+
+#chat .mes .timestamp,
+#chat .mes .mesIDDisplay,
+#chat .mes .mes_timer,
+#chat .mes .tokenCounterDisplay {
+    color: var(--yt-muted);
+    font-size: 0.75em;
+}
+
+#chat .mes .mes_buttons,
+#chat .mes .extraMesButtons {
+    color: var(--yt-muted);
+}
+
+#chat .mes .mes_button:hover,
+#chat .mes .extraMesButtonsHint:hover {
+    color: var(--yt-accent);
+    opacity: 1;
+}
+
+/* Avatars */
+#chat .mes .avatar img {
+    border: 2px solid var(--yt-surface-2);
+}
+
+#chat .mes:not([is_user="true"]) .avatar img {
+    border-color: var(--yt-accent-line);
+}
+
+/* Swipes */
+#chat .swipe_left,
+#chat .swipe_right {
+    color: var(--yt-muted);
+}
+
+#chat .swipe_left:hover,
+#chat .swipe_right:hover {
+    color: var(--yt-accent);
+}
+
+#chat .swipes-counter {
+    color: var(--yt-muted);
+    font-size: 0.75em;
+}
+
+/* Reasoning block */
+#chat .mes_reasoning_details {
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+    padding: 6px 12px;
+}
+
+/* Inline formatting */
+.mes_text q,
+.mes_text .quote {
+    color: var(--yt-accent);
+}
+
+.mes_text em,
+.mes_text i {
+    color: var(--yt-muted);
+}
+
+.mes_text code {
+    background-color: var(--yt-surface-2);
+    border-radius: 4px;
+    padding: 1px 5px;
+}
+
+.mes_text pre {
+    background-color: var(--yt-bg);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius);
+}
+
+.mes_text blockquote {
+    border-left: 3px solid var(--yt-accent);
+    margin-left: 0;
+    padding-left: 10px;
+    color: var(--yt-muted);
+}
+
+/* Composer: floating pill with a lime send button */
+#form_sheld {
+    padding: 8px 12px 10px 12px;
+    background-color: var(--yt-bg);
+}
+
+#send_form {
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: 9999px;
+    padding: 2px 6px;
+    backdrop-filter: none;
+    transition: border-color 0.15s ease;
+}
+
+#send_form:focus-within {
+    border-color: var(--yt-accent-line);
+}
+
+#send_textarea {
+    background-color: transparent;
+    color: var(--yt-text);
+    font-family: var(--mainFontFamily);
+    padding-top: 9px;
+}
+
+#send_textarea::placeholder {
+    color: var(--yt-muted);
+}
+
+#leftSendForm > div,
+#rightSendForm > div {
+    color: var(--yt-muted);
+}
+
+#leftSendForm > div:hover,
+#rightSendForm > div:hover {
+    color: var(--yt-text);
+}
+
+#send_but {
+    background-color: var(--yt-accent);
+    color: var(--yt-accent-ink) !important;
+    border-radius: 9999px;
+    width: calc(var(--bottomFormIconSize) * 1.15);
+    height: calc(var(--bottomFormIconSize) * 1.15);
+    font-size: calc(var(--bottomFormIconSize) * 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+}
+
+#send_but:hover {
+    filter: brightness(1.08);
+}
+
+#mes_stop {
+    color: var(--yt-accent);
+}
+
+/* Buttons */
+.menu_button {
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius);
+    color: var(--yt-text);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.menu_button:hover {
+    background-color: var(--yt-surface-2);
+    border-color: var(--yt-accent-line);
+}
+
+.menu_button.active,
+.menu_button.toggleEnabled,
+.menu_button_icon.active {
+    background-color: var(--yt-accent);
+    color: var(--yt-accent-ink);
+    border-color: var(--yt-accent);
+}
+
+.right_menu_button,
+.mes_edit_buttons .menu_button {
+    color: var(--yt-muted);
+}
+
+/* Form fields */
+.text_pole,
+textarea:not(#send_textarea),
+select,
+input[type="text"],
+input[type="search"],
+input[type="number"] {
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius);
+    color: var(--yt-text);
+}
+
+.text_pole:focus,
+textarea:not(#send_textarea):focus,
+select:focus,
+input[type="text"]:focus,
+input[type="search"]:focus,
+input[type="number"]:focus {
+    border-color: var(--yt-accent-line);
+    outline: none;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--yt-accent);
+}
+
+/* Character list: card-like rows */
+.character_select,
+.group_select,
+.bogus_folder_select {
+    border-radius: var(--yt-radius-lg);
+    border: 1px solid transparent;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.character_select:hover,
+.group_select:hover,
+.bogus_folder_select:hover {
+    background-color: var(--yt-surface);
+    border-color: var(--yt-line);
+}
+
+.character_select.is_fav .ch_name,
+.group_select.is_fav .ch_name {
+    color: var(--yt-accent);
+}
+
+/* Tags render as Yodayo-style chips */
+.tag {
+    border-radius: 9999px;
+    border: 1px solid var(--yt-line-strong);
+    background-color: var(--yt-surface-2);
+    color: var(--yt-text);
+    padding: 1px 10px;
+}
+
+.tag.selected {
+    background-color: var(--yt-accent);
+    color: var(--yt-accent-ink);
+    border-color: var(--yt-accent);
+}
+
+/* Popups and toasts */
+.popup,
+dialog.popup {
+    background-color: var(--yt-bg);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-lg);
+}
+
+#toast-container > div {
+    background-color: var(--yt-surface-2);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    opacity: 1;
+}
+
+#toast-container > .toast-success {
+    border-left: 3px solid var(--yt-accent);
+}
+
+/* Mobile: keep bubbles readable on narrow screens */
+@media screen and (max-width: 1000px) {
+    #chat {
+        padding: 4px 6px 0 6px;
+    }
+
+    #chat .mes .mes_text {
+        max-width: 100%;
+    }
+
+    #form_sheld {
+        padding: 6px 6px 8px 6px;
+    }
+}
