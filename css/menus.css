@@ -84,6 +84,9 @@ body.yodayo-tavern.yt-nav-rail .drawer-content .yt-sheet-close {
     align-items: center;
     justify-content: center;
     float: right;
+    /* float does nothing in sheets laid out as a flex column (Backgrounds) */
+    align-self: flex-end;
+    flex: 0 0 auto;
     width: 28px;
     height: 28px;
     /* sits in the sheet's right gutter (see nav.css); the negative bottom margin keeps it
