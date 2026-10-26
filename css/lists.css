@@ -216,3 +216,25 @@ body.yodayo-tavern .bg_example.selected-background {
     border-color: var(--yt-accent);
     box-shadow: 0 0 0 3px var(--yt-accent-soft);
 }
+
+/* Background thumbnails keep their size when the Backgrounds menu is resized; a wider
+   menu fits more columns instead. SillyTavern's zoom buttons pick a column count
+   (--bg-thumb-columns), which the theme turns into a thumbnail width measured at the
+   menu's default width (the grid is about 575px wide inside a 640px menu). */
+body.yodayo-tavern #Backgrounds {
+    --yt-bg-ref: 570px;
+    --yt-bg-gap: 5px;
+    --yt-bg-thumb: calc((var(--yt-bg-ref) - (var(--bg-thumb-columns, 5) - 1) * var(--yt-bg-gap)) / var(--bg-thumb-columns, 5));
+    --yt-bg-folder: calc((var(--yt-bg-ref) - (var(--bg-thumb-columns, 5) + 1) * var(--yt-bg-gap)) / (var(--bg-thumb-columns, 5) + 2));
+}
+
+body.yodayo-tavern #Backgrounds #bg_menu_content,
+body.yodayo-tavern #Backgrounds #bg_custom_content {
+    grid-template-columns: repeat(auto-fill, var(--yt-bg-thumb));
+    justify-content: start;
+}
+
+body.yodayo-tavern #Backgrounds .bg_folder_grid.bg_list {
+    grid-template-columns: repeat(auto-fill, var(--yt-bg-folder));
+    justify-content: start;
+}
