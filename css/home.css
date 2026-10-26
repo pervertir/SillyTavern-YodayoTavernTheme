@@ -873,3 +873,91 @@ body.yodayo-tavern .yt-home-about-link i {
     text-align: center;
     color: var(--yt-muted);
 }
+
+/* The welcome assistant (home.js) sits between the menu and the Tavern window: its picture
+   at 80% of the screen's height over SillyTavern's own message box. #sheld becomes a two
+   column grid, and the Tavern window's panel moves to its ::before so #chat can stay inset
+   inside it as before. Phones keep the home alone. */
+#yt-home-assistant {
+    display: none;
+}
+
+@media screen and (min-width: 1001px) {
+    body.yodayo-tavern.yt-home-active.yt-home-assistant {
+        --yt-assistant-width: clamp(260px, 26vw, 440px);
+    }
+
+    body.yodayo-tavern.yt-home-active.yt-home-assistant #sheld {
+        display: grid;
+        grid-template-columns: var(--yt-assistant-width) minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr) auto;
+        column-gap: var(--yt-space-4);
+        width: min(calc(1180px + var(--yt-assistant-width) + var(--yt-space-4)), calc(100vw - 96px));
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: none;
+        border-radius: 0;
+        overflow: visible;
+    }
+
+    body.yodayo-tavern.yt-home-active.yt-home-assistant #sheld::before {
+        content: '';
+        grid-column: 2;
+        grid-row: 1 / -1;
+        background-color: var(--yt-glass);
+        backdrop-filter: var(--yt-backdrop);
+        -webkit-backdrop-filter: var(--yt-backdrop);
+        border: 1px solid var(--yt-line);
+        border-radius: 24px;
+    }
+
+    body.yodayo-tavern.yt-home-active.yt-home-assistant #chat {
+        grid-column: 2;
+        grid-row: 1 / -1;
+        min-height: 0;
+    }
+
+    body.yodayo-tavern.yt-home-active.yt-home-assistant #yt-home-assistant {
+        grid-column: 1;
+        grid-row: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        min-height: 0;
+        gap: var(--yt-space-2);
+    }
+
+    body.yodayo-tavern #yt-home-assistant img {
+        height: 80dvh;
+        max-height: 100%;
+        max-width: 100%;
+        min-height: 0;
+        object-fit: contain;
+        object-position: center bottom;
+        filter: drop-shadow(0 12px 32px rgb(0 0 0 / 0.35));
+    }
+
+    body.yodayo-tavern .yt-home-assistant-name {
+        font-weight: 600;
+        color: var(--yt-text);
+        text-align: center;
+    }
+
+    body.yodayo-tavern.yt-home-active.yt-home-assistant #form_sheld {
+        display: block;
+        grid-column: 1;
+        grid-row: 2;
+        padding: var(--yt-space-2) 0 0;
+    }
+
+    body.yodayo-tavern.yt-home-active.yt-home-assistant #send_form {
+        width: 100%;
+        max-width: none;
+    }
+
+    body.yodayo-tavern.yt-home-active.yt-home-assistant #yt-position-toggle {
+        display: none;
+    }
+}

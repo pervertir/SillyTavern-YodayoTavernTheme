@@ -521,6 +521,53 @@ function render() {
     renderGrid(home);
 }
 
+const ASSISTANT_ID = 'yt-home-assistant';
+
+/** Full-size card image for the welcome assistant, read from the greeting SillyTavern adds. */
+function getAssistantInfo(chat) {
+    const message = chat.querySelector(':scope > .mes[type="assistant_message"]');
+    if (!message) {
+        return null;
+    }
+    const thumbnail = message.querySelector('.avatar img')?.getAttribute('src') ?? '';
+    const file = new URLSearchParams(thumbnail.split('?')[1] ?? '').get('file');
+    return {
+        name: message.getAttribute('ch_name') ?? '',
+        src: file ? `characters/${encodeURIComponent(file)}` : thumbnail,
+    };
+}
+
+/**
+ * The welcome assistant beside the home: its picture over SillyTavern's message box. Sending
+ * a message there makes SillyTavern open the assistant's chat, which closes the home.
+ */
+function syncAssistant(chat, show) {
+    const sheld = document.getElementById('sheld');
+    let aside = document.getElementById(ASSISTANT_ID);
+    const info = show ? getAssistantInfo(chat) : null;
+    document.body.classList.toggle('yt-home-assistant', Boolean(info));
+    if (!info || !sheld) {
+        aside?.remove();
+        return;
+    }
+    if (!aside) {
+        aside = el('aside');
+        aside.id = ASSISTANT_ID;
+        const img = el('img');
+        img.alt = '';
+        img.addEventListener('error', () => img.classList.add('displayNone'));
+        img.addEventListener('load', () => img.classList.remove('displayNone'));
+        aside.append(img, el('div', 'yt-home-assistant-name'));
+        sheld.prepend(aside);
+    }
+    const img = aside.querySelector('img');
+    if (img.getAttribute('src') !== info.src) {
+        img.setAttribute('src', info.src);
+    }
+    aside.querySelector('.yt-home-assistant-name').textContent = info.name;
+    img.alt = info.name;
+}
+
 /**
  * Shows the home above the welcome panel whenever SillyTavern draws one, and removes it
  * when a chat opens or the option is off.
@@ -539,6 +586,7 @@ export function initTavernHome(isEnabled) {
         const show = Boolean(panel) && isEnabled();
 
         document.body.classList.toggle(ACTIVE_CLASS, show);
+        syncAssistant(chat, show);
         if (!show) {
             existing?.remove();
             return;
