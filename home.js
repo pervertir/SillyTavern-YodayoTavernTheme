@@ -208,6 +208,25 @@ function renderGrid(home) {
     }
 }
 
+/** Fades whichever end of the chip row has more chips past it. */
+function updateChipFades(chips) {
+    const max = chips.scrollWidth - chips.clientWidth;
+    chips.classList.toggle('yt-fade-start', chips.scrollLeft > 1);
+    chips.classList.toggle('yt-fade-end', chips.scrollLeft < max - 1);
+}
+
+function initChipRow(chips) {
+    chips.addEventListener('scroll', () => updateChipFades(chips), { passive: true });
+    // a mouse wheel scrolls the row sideways
+    chips.addEventListener('wheel', (event) => {
+        if (Math.abs(event.deltaY) > Math.abs(event.deltaX) && chips.scrollWidth > chips.clientWidth) {
+            event.preventDefault();
+            chips.scrollLeft += event.deltaY;
+        }
+    }, { passive: false });
+    new ResizeObserver(() => updateChipFades(chips)).observe(chips);
+}
+
 function renderChips(home) {
     const chips = home.querySelector('.yt-home-chips');
     const tags = getUsedTags(getCharacterEntries());
@@ -228,6 +247,7 @@ function renderChips(home) {
     };
 
     chips.replaceChildren(makeChip('All characters', null), ...tags.map(tag => makeChip(tag.name, tag.id)));
+    updateChipFades(chips);
 }
 
 function buildHome() {
@@ -310,7 +330,9 @@ function buildHome() {
         renderGrid(home);
     });
     sortLabel.append(el('i', 'fa-solid fa-arrow-down-wide-short'), sortSelect);
-    filterBar.append(el('div', 'yt-home-chips'), sortLabel);
+    const chipRow = el('div', 'yt-home-chips');
+    initChipRow(chipRow);
+    filterBar.append(chipRow, sortLabel);
 
     home.append(header, recentDivider, el('div', 'yt-home-recent'), divider, filterBar, el('div', 'yt-home-grid'));
     return home;

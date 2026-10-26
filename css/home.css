@@ -710,3 +710,20 @@ body.yodayo-tavern .yt-home-sort option {
         flex-basis: 100%;
     }
 }
+
+/* Chips that run past either end of the row fade out instead of being cut off */
+body.yodayo-tavern .yt-home-chips {
+    --yt-fade: 48px;
+}
+
+body.yodayo-tavern .yt-home-chips.yt-fade-end {
+    mask-image: linear-gradient(to right, #000 calc(100% - var(--yt-fade)), transparent);
+}
+
+body.yodayo-tavern .yt-home-chips.yt-fade-start {
+    mask-image: linear-gradient(to right, transparent, #000 var(--yt-fade));
+}
+
+body.yodayo-tavern .yt-home-chips.yt-fade-start.yt-fade-end {
+    mask-image: linear-gradient(to right, transparent, #000 var(--yt-fade), #000 calc(100% - var(--yt-fade)), transparent);
+}
