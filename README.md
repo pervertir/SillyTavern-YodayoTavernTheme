@@ -46,11 +46,21 @@ or drag.
 
 ### Menus
 
-SillyTavern's menus open as frosted side sheets beside the menu bar, and each one remembers
+SillyTavern's menus open as frosted acrylic side sheets beside the menu bar, like the Tavern window, and each one remembers
 its width. The character list shows portrait cards in grid view, and every avatar is
 pre-scaled to its on-screen size so it stays sharp.
 
 ![Character management menu](.github/characters.jpg)
+
+### Phones
+
+On phones the menu bar is a single frosted row across the top that clears the notch, with
+the open menu's icon highlighted. Menus open full width beneath it, the Tavern window fits
+the screen with two cards across, and nothing runs off the side.
+
+| Home | Chat | Character menu |
+| --- | --- | --- |
+| ![Tavern home on a phone](.github/mobile-home.jpg) | ![Chat on a phone](.github/mobile-chat.jpg) | ![Character menu on a phone](.github/mobile-characters.jpg) |
 
 Also: switch toggles, modern sliders and fields, popover menus, focus rings and readable
 contrast throughout; readable find-in-page highlights; and dragging an image already on the
