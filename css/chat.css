@@ -517,3 +517,45 @@ body.yodayo-tavern #chat .mes #curEditTextarea {
         margin-left: 18px;
     }
 }
+
+/* Chat colors from the Colors section. Bubble colors keep the Bubble opacity setting. */
+body.yodayo-tavern #chat .mes .mes_block {
+    background-color: color-mix(in srgb, var(--yt-char-bubble) calc(var(--yt-panel-alpha) * 100%), transparent);
+}
+
+body.yodayo-tavern #chat .mes[is_user="true"] .mes_block {
+    background-color: color-mix(in srgb, var(--yt-user-bubble) calc(var(--yt-panel-alpha) * 100%), transparent);
+}
+
+body.yodayo-tavern #chat .mes:not([is_user="true"]) .name_text {
+    color: var(--yt-char-name);
+}
+
+body.yodayo-tavern #chat .mes[is_user="true"] .name_text {
+    color: var(--yt-user-name);
+}
+
+body.yodayo-tavern #chat .mes:not([is_user="true"]) .mes_text {
+    color: var(--yt-char-text);
+}
+
+body.yodayo-tavern #chat .mes:not([is_user="true"]) .mes_text q,
+body.yodayo-tavern #chat .mes:not([is_user="true"]) .mes_text .quote {
+    color: var(--yt-char-quote);
+}
+
+body.yodayo-tavern #chat .mes:not([is_user="true"]) .mes_text em,
+body.yodayo-tavern #chat .mes:not([is_user="true"]) .mes_text i {
+    color: var(--yt-char-em);
+}
+
+body.yodayo-tavern #chat .mes[is_user="true"] .mes_text,
+body.yodayo-tavern #chat .mes[is_user="true"] .mes_text q,
+body.yodayo-tavern #chat .mes[is_user="true"] .mes_text .quote {
+    color: var(--yt-user-text);
+}
+
+body.yodayo-tavern #chat .mes[is_user="true"] .mes_text em,
+body.yodayo-tavern #chat .mes[is_user="true"] .mes_text i {
+    color: color-mix(in srgb, var(--yt-user-text) 70%, transparent);
+}

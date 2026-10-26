@@ -78,6 +78,44 @@
                 <span>Hide chat background image (flat Yodayo look)</span>
             </label>
 
+            <h4 class="yt-section-title">Colors</h4>
+
+            <div class="yt-setting-row">
+                <label for="yt_color_scope">Apply to</label>
+                <select id="yt_color_scope" class="text_pole">
+                    <option value="all">All characters</option>
+                    <option value="character">Only this character</option>
+                </select>
+            </div>
+
+            <div id="yt_color_rows"></div>
+
+            <div id="yt_char_image_row" class="yt-setting-row displayNone">
+                <label for="yt_char_image">Character image</label>
+                <input id="yt_char_image" class="text_pole" type="url" placeholder="Image URL (blank uses the card)" />
+            </div>
+
+            <div class="yt-setting-row">
+                <div id="yt_colors_reset" class="menu_button menu_button_icon">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>Reset these colors</span>
+                </div>
+            </div>
+
+            <h4 class="yt-section-title">Backup</h4>
+
+            <div class="yt-setting-row">
+                <div id="yt_export" class="menu_button menu_button_icon">
+                    <i class="fa-solid fa-file-export"></i>
+                    <span>Export</span>
+                </div>
+                <div id="yt_import" class="menu_button menu_button_icon">
+                    <i class="fa-solid fa-file-import"></i>
+                    <span>Import</span>
+                </div>
+                <input id="yt_import_file" type="file" accept="application/json,.json" hidden />
+            </div>
+
             <small id="yt_conflict_note" class="yt-muted displayNone">
                 Moonlit Echoes is enabled and overrides the chat layout. Disable it in Manage Extensions for the full Yodayo look.
             </small>

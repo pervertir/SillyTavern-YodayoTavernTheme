@@ -24,6 +24,16 @@ body.yodayo-tavern {
     --yt-panel-surface: rgb(35 37 39 / var(--yt-panel-alpha));
     --yt-panel-blur: 12px;
 
+    /* Chat colors; the Colors section in the extension panel overrides these on <body> */
+    --yt-char-name: var(--yt-accent);
+    --yt-char-text: var(--yt-text);
+    --yt-char-quote: var(--yt-accent);
+    --yt-char-em: var(--yt-muted);
+    --yt-char-bubble: var(--yt-surface);
+    --yt-user-name: var(--yt-text);
+    --yt-user-text: var(--yt-text);
+    --yt-user-bubble: color-mix(in srgb, var(--yt-accent) 14%, var(--yt-surface));
+
     /* Spacing scale */
     --yt-space-1: 4px;
     --yt-space-2: 8px;

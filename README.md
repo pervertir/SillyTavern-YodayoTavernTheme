@@ -37,6 +37,9 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Bubble opacity | How see-through chat bubbles and the message box are (default 80%). |
 | Tavern home page | Turns the welcome screen into a Yodayo-style character browser: search, tag chips and a grid of portrait cards. Click a card to chat. |
 | Navigation | Left rail opened by a SillyTavern-logo button in the top-left corner (default), left rail always shown, or SillyTavern's top bar. The rail is desktop only; phones keep the top bar. |
+| Colors | Character name, text, dialogue ("quotes"), narration (*actions*) and bubble, plus your name, text and bubble. Set them for all characters, or for only the open character to override. |
+| Character image | With "Only this character" selected, an image URL to show instead of the card art on the free side. |
+| Export / Import | Save all theme settings, including per-character colors, to a JSON file and load them back. |
 | Chat position | Dock the chat window on the left, in the middle, or on the right. |
 | Show character image | With the chat on the left or right, shows the character's image on the free side. |
 | Hide chat background image | Hides your background for a flat Yodayo look. |
@@ -81,6 +84,7 @@ layout, and on phones the chat always fills the screen.
 - `index.js`: settings panel and the body classes / CSS variables it controls
 - `settings.html`: the settings panel markup
 - `home.js`: the Tavern home page on the welcome screen
+- `colors.js`: chat colors (all characters or per character), character image and export/import
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,
   composer, lists, overlays, layout). Every rule is scoped under `body.yodayo-tavern`.
 

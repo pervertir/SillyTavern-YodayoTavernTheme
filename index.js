@@ -1,6 +1,7 @@
 // Yodayo Tavern Theme: toggles the scoped styles in style.css and exposes a small settings panel.
 
 import { initTavernHome } from './home.js';
+import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
 /** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
@@ -22,9 +23,14 @@ const defaultSettings = Object.freeze({
     panelOpacity: 80,
     navMode: 'rail-toggle',
     tavernHome: true,
+    /** Colors for all characters, keyed by the fields in colors.js */
+    colors: {},
+    /** Per-character overrides: { [avatar file]: { colors: {}, image: '' } } */
+    characterThemes: {},
 });
 
 let syncTavernHome = () => {};
+let refreshColorControls = () => {};
 
 const RAIL_TOGGLE_ID = 'yt-rail-toggle';
 
@@ -47,7 +53,7 @@ function getSettings() {
     }
     for (const key of Object.keys(defaultSettings)) {
         if (!Object.hasOwn(settings, key)) {
-            settings[key] = defaultSettings[key];
+            settings[key] = structuredClone(defaultSettings[key]);
         }
     }
     return settings;
@@ -74,8 +80,12 @@ function isMoonlitEnabled() {
     return Boolean(moonlit?.enabled) && folderLoaded;
 }
 
-/** Full-size card image of the character in the open solo chat, or null. */
+/** Image for the open solo chat's character: a custom image if set, else the card. */
 function getCharacterImageUrl() {
+    const override = getCharacterImageOverride(getSettings());
+    if (override) {
+        return override;
+    }
     const { characters, characterId, groupId } = SillyTavern.getContext();
     if (groupId || characterId === undefined) {
         return null;
@@ -136,6 +146,7 @@ function applySettings() {
     }
 
     $('#yt_conflict_note').toggleClass('displayNone', !(settings.enabled && isMoonlitEnabled()));
+    applyColors(settings);
     updateCharacterArt();
     syncTavernHome();
 }
@@ -207,6 +218,22 @@ function bindSettingsUI() {
     });
 }
 
+/** Copies the recognised settings from an exported file and applies them. */
+function importSettings(data) {
+    const settings = getSettings();
+    for (const [key, fallback] of Object.entries(defaultSettings)) {
+        const value = data[key];
+        const sameType = typeof value === typeof fallback && Array.isArray(value) === Array.isArray(fallback);
+        if (value !== undefined && value !== null && sameType) {
+            settings[key] = structuredClone(value);
+        }
+    }
+    applySettings();
+    syncSettingsUI();
+    refreshColorControls();
+    saveSettings();
+}
+
 function setRailOpen(open) {
     document.body.classList.toggle('yt-rail-open', open);
     document.getElementById(RAIL_TOGGLE_ID)?.setAttribute('aria-expanded', String(open));
@@ -257,13 +284,24 @@ async function init() {
 
     syncSettingsUI();
     bindSettingsUI();
+    refreshColorControls = initColorControls({
+        getSettings,
+        onChange: () => {
+            applySettings();
+            saveSettings();
+        },
+    });
+    initBackupControls({ getSettings, onImport: importSettings });
     syncTavernHome = initTavernHome(() => getSettings().enabled && getSettings().tavernHome);
     applySettings();
 
     initRailToggle();
 
     const { eventSource, eventTypes } = SillyTavern.getContext();
-    eventSource.on(eventTypes.CHAT_CHANGED, updateCharacterArt);
+    eventSource.on(eventTypes.CHAT_CHANGED, () => {
+        applySettings();
+        refreshColorControls();
+    });
     eventSource.on(eventTypes.CHARACTER_EDITED, updateCharacterArt);
 
     if (getSettings().enabled && isMoonlitEnabled()) {
