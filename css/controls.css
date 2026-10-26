@@ -167,16 +167,16 @@ body.yodayo-tavern .select2-dropdown {
     overflow: hidden;
 }
 
-body.yodayo-tavern .select2-results__option--highlighted {
-    background-color: var(--yt-accent-soft) !important;
-    color: var(--yt-text) !important;
+body.yodayo-tavern .select2-container .select2-results__option.select2-results__option--highlighted {
+    background-color: var(--yt-accent-soft);
+    color: var(--yt-text);
 }
 
-body.yodayo-tavern .select2-selection__choice {
-    background-color: var(--yt-surface-3) !important;
-    border: 1px solid var(--yt-line) !important;
-    border-radius: 9999px !important;
-    color: var(--yt-text) !important;
+body.yodayo-tavern .select2-container .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--yt-surface-3);
+    border: 1px solid var(--yt-line);
+    border-radius: 9999px;
+    color: var(--yt-text);
 }
 
 /* Checkboxes inside labelled settings become switches; list checkboxes stay boxes */
@@ -251,16 +251,25 @@ body.yodayo-tavern input[type="radio"] {
 
 /* Sliders: SillyTavern sizes the track's background image to show the fill,
    so the image is the accent fill and the background color is the empty track */
-body.yodayo-tavern input[type="range"],
+body.yodayo-tavern input[type="range"] {
+    height: 4px;
+    border-radius: 9999px;
+    background-color: var(--yt-surface-3);
+    background-image: linear-gradient(var(--yt-accent), var(--yt-accent));
+    background-repeat: no-repeat;
+    box-shadow: none;
+    filter: none;
+    cursor: pointer;
+}
+
+/* Zen sliders: SillyTavern styles these with !important, so matching it is the only way */
 body.yodayo-tavern .neo-range-slider {
     height: 4px !important;
     border-radius: 9999px !important;
     background-color: var(--yt-surface-3) !important;
     background-image: linear-gradient(var(--yt-accent), var(--yt-accent)) !important;
-    background-repeat: no-repeat !important;
     box-shadow: none !important;
     filter: none !important;
-    cursor: pointer;
 }
 
 body.yodayo-tavern input[type="range"]::-webkit-slider-thumb {
@@ -289,7 +298,7 @@ body.yodayo-tavern input[type="range"]:active::-webkit-slider-thumb {
 
 body.yodayo-tavern input[type="range"]:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 4px var(--yt-accent-soft) !important;
+    box-shadow: 0 0 0 4px var(--yt-accent-soft);
 }
 
 /* The number box beside a slider becomes a small chip */

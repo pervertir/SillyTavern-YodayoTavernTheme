@@ -94,7 +94,12 @@ body.yodayo-tavern .yt-home-search input {
     padding: 0;
     border: none;
     background: transparent;
-    box-shadow: none !important;
+    box-shadow: none;
+}
+
+body.yodayo-tavern .yt-home-search input[type="search"]:focus {
+    border: none;
+    box-shadow: none;
 }
 
 body.yodayo-tavern .yt-home-action {

@@ -3,6 +3,10 @@
 import { initTavernHome } from './home.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
+/** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
+const EXTENSION_FOLDER = new URL('.', import.meta.url).pathname
+    .replace(/^.*\/scripts\/extensions\//, '')
+    .replace(/\/$/, '');
 const BODY_CLASS = 'yodayo-tavern';
 const DEFAULT_ACCENT = '#e4f063';
 
@@ -200,9 +204,15 @@ function bindSettingsUI() {
     });
 }
 
-jQuery(async () => {
-    const html = await fetch(new URL('./settings.html', import.meta.url)).then(response => response.text());
-    $('#extensions_settings2').append(html);
+async function init() {
+    const { renderExtensionTemplateAsync } = SillyTavern.getContext();
+    const container = document.getElementById('extensions_settings2');
+    if (container) {
+        const html = await renderExtensionTemplateAsync(EXTENSION_FOLDER, 'settings');
+        $(container).append(html);
+    } else {
+        console.warn('[Yodayo Tavern] Extensions panel not found; the theme still applies, settings stay hidden.');
+    }
 
     syncSettingsUI();
     bindSettingsUI();
@@ -219,4 +229,8 @@ jQuery(async () => {
     if (getSettings().enabled && isMoonlitEnabled()) {
         toastr.warning('Moonlit Echoes is also enabled and will override parts of the Yodayo Tavern look.', 'Yodayo Tavern Theme');
     }
-});
+}
+
+// Start once SillyTavern has finished loading; APP_READY re-fires for late listeners.
+const { eventSource: readySource, eventTypes: readyTypes } = SillyTavern.getContext();
+readySource.once(readyTypes.APP_READY, init);

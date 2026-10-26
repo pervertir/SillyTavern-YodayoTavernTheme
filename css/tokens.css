@@ -159,7 +159,14 @@ body.yodayo-tavern ::-webkit-scrollbar-track {
     background: transparent;
 }
 
-/* Respect reduced motion */
+/* Respect reduced motion, from the OS or SillyTavern's own Reduced Motion setting */
+body.yodayo-tavern.reduced-motion *,
+body.yodayo-tavern.reduced-motion *::before,
+body.yodayo-tavern.reduced-motion *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
     body.yodayo-tavern *,
     body.yodayo-tavern *::before,
