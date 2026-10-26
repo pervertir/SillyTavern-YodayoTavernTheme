@@ -216,3 +216,32 @@ body.yodayo-tavern.yt-nav-rail #left-nav-panel.openDrawer > .scrollableInner {
     height: auto;
     overflow-y: auto;
 }
+
+/* Opening a sheet: SillyTavern grows each drawer's height from 0 with a scrollbar-hiding
+   trick that the theme's thin scrollbars defeat, so every open flashed a scrollbar and a
+   collapsed sliver of the menu. Sheets now fade and slide in from the bar instead, with no
+   height animation. The fill mode is "backwards" so no transform stays on the sheet
+   afterwards (a transform would trap SillyTavern's fixed popups inside it). */
+body.yodayo-tavern.yt-nav-rail .drawer-content {
+    transition: none;
+}
+
+body.yodayo-tavern.yt-nav-rail .drawer-content.openDrawer {
+    animation: yt-sheet-in 180ms var(--yt-ease) backwards;
+}
+
+body.yodayo-tavern.yt-nav-rail.yt-nav-left { --yt-sheet-from: -12px 0; }
+body.yodayo-tavern.yt-nav-rail.yt-nav-right { --yt-sheet-from: 12px 0; }
+body.yodayo-tavern.yt-nav-rail.yt-nav-top { --yt-sheet-from: 0 -12px; }
+body.yodayo-tavern.yt-nav-rail.yt-nav-bottom { --yt-sheet-from: 0 12px; }
+
+@keyframes yt-sheet-in {
+    from {
+        opacity: 0;
+        translate: var(--yt-sheet-from, -12px 0);
+    }
+}
+
+body.yodayo-tavern.yt-adv-noRailAnimation .drawer-content.openDrawer {
+    animation: none;
+}
