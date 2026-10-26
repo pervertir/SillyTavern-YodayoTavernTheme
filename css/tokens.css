@@ -14,7 +14,7 @@ body.yodayo-tavern {
     --yt-danger: #f87171;
     --yt-success: #4ade80;
     --yt-warning: #fbbf24;
-    --yt-accent: #e4f063;
+    --yt-accent: #f597e8;
     --yt-accent-ink: #1a1a1a;
     --yt-accent-soft: color-mix(in srgb, var(--yt-accent) 12%, transparent);
     --yt-accent-line: color-mix(in srgb, var(--yt-accent) 35%, transparent);

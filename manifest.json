@@ -1,6 +1,6 @@
 {
     "display_name": "Yodayo Tavern Theme",
-    "description": "A Yodayo / Moescape Tavern look for SillyTavern: charcoal surfaces, a lime accent and rounded chat bubbles.",
+    "description": "A Yodayo / Moescape Tavern look for SillyTavern: charcoal surfaces, a pink accent and rounded chat bubbles.",
     "loading_order": 10,
     "minimum_client_version": "1.19.0",
     "js": "index.js",

@@ -16,7 +16,7 @@ const EXTENSION_FOLDER = new URL('.', import.meta.url).pathname
     .replace(/^.*\/scripts\/extensions\//, '')
     .replace(/\/$/, '');
 const BODY_CLASS = 'yodayo-tavern';
-const DEFAULT_ACCENT = '#e4f063';
+const DEFAULT_ACCENT = '#f597e8';
 
 const defaultSettings = Object.freeze({
     enabled: true,

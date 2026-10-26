@@ -1,7 +1,7 @@
 # Yodayo Tavern Theme for SillyTavern
 
 A SillyTavern extension that restyles the whole UI after the Yodayo / Moescape Tavern
-chat: frosted chat bubbles straight on your background, a lime accent, Inter type, a
+chat: frosted chat bubbles straight on your background, a Yodayo-pink accent, Inter type, a
 navigation rail on the left (opened from a SillyTavern-logo button) with drawers as side sheets, switch toggles,
 modern sliders and fields, and popover menus.
 
@@ -30,7 +30,7 @@ Open **Extensions → Yodayo Tavern Theme**:
 | Setting | What it does |
 | --- | --- |
 | Enable theme | Turns the whole look on or off without uninstalling. |
-| Accent color | Recolors the send button, names, quotes and highlights. Reset returns to Yodayo lime. |
+| Accent color | Recolors the send button, names, quotes and highlights. Reset returns to Yodayo pink. |
 | Your messages | Put your bubbles on the right (Yodayo style) or the left. |
 | Font | Inter (falls back to the system font), the system UI font, or SillyTavern's default. |
 | Bubble max width | How wide a chat bubble may grow on desktop. |
@@ -81,7 +81,7 @@ remembered.
 | Raised surface  | `#2c2e30`                   |
 | Text            | `#f0f0f0`                   |
 | Muted text      | `#a8a8a8`                   |
-| Accent          | `#e4f063`                   |
+| Accent          | `#f597e8` (Yodayo pink)     |
 | Hairline border | `rgba(230, 230, 230, 0.1)`  |
 
 ## Notes

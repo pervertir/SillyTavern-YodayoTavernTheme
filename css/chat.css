@@ -52,7 +52,7 @@ body.yodayo-tavern #chat .mes .mes_text p:last-child {
     margin-bottom: 0;
 }
 
-/* User bubble: lime-tinted, on the right unless "On the left" is chosen */
+/* User bubble: accent-tinted, on the right unless "On the left" is chosen */
 body.yodayo-tavern #chat .mes[is_user="true"] .mes_text {
     background-color: color-mix(in srgb, var(--yt-accent) 14%, var(--yt-panel-surface));
     border-color: var(--yt-accent-line);
