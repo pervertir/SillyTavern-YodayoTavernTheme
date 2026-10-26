@@ -35,8 +35,8 @@ body.yodayo-tavern.documentstyle #chat {
     margin: var(--yt-space-2) 0;
     padding: var(--yt-space-5) clamp(16px, 5%, 48px);
     background-color: color-mix(in srgb, var(--yt-char-bubble) calc(var(--yt-panel-alpha) * 100%), transparent);
-    backdrop-filter: blur(var(--yt-panel-blur));
-    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line);
     border-radius: var(--yt-radius-xl);
 }

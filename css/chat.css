@@ -29,8 +29,8 @@ body.yodayo-tavern #chat .mes .mes_block {
 /* Character bubble: see-through with a backdrop blur so text stays readable on any image */
 body.yodayo-tavern #chat .mes .mes_text {
     background-color: var(--yt-panel-surface);
-    backdrop-filter: blur(var(--yt-panel-blur));
-    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line);
     border-radius: 4px var(--yt-bubble-radius) var(--yt-bubble-radius) var(--yt-bubble-radius);
     padding: 10px 14px;
@@ -256,8 +256,8 @@ body.yodayo-tavern #chat .swipes-counter {
 body.yodayo-tavern #chat .mes .edit_textarea,
 body.yodayo-tavern #chat .mes #curEditTextarea {
     background-color: var(--yt-panel-surface);
-    backdrop-filter: blur(var(--yt-panel-blur));
-    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-accent);
     border-radius: var(--yt-bubble-radius);
     box-shadow: 0 0 0 3px var(--yt-accent-soft);
@@ -374,8 +374,8 @@ body.yodayo-tavern .welcomePanel {
     padding: var(--yt-space-4);
     gap: var(--yt-space-3);
     background-color: var(--yt-panel-surface);
-    backdrop-filter: blur(var(--yt-panel-blur));
-    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line);
     border-radius: var(--yt-radius-xl);
 }
@@ -433,8 +433,8 @@ body.yodayo-tavern #chat .mes .mes_block {
     margin-right: 26px;
     padding: 8px 14px 10px;
     background-color: var(--yt-panel-surface);
-    backdrop-filter: blur(var(--yt-panel-blur));
-    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line);
     border-radius: 4px var(--yt-bubble-radius) var(--yt-bubble-radius) var(--yt-bubble-radius);
 }
@@ -594,8 +594,8 @@ body.yodayo-tavern #chat [data-type="assistant_note"] {
     gap: var(--yt-space-2);
     padding: 6px 8px 6px 16px;
     background-color: color-mix(in srgb, var(--yt-surface-2) calc(var(--yt-panel-alpha) * 100%), transparent);
-    backdrop-filter: blur(var(--yt-panel-blur));
-    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line-strong);
     border-radius: 9999px;
     color: var(--yt-muted);
@@ -637,8 +637,8 @@ body.yodayo-tavern:not(:has(#chat .welcomePanel)) #yt-back-home {
     height: 36px;
     padding: 0;
     background-color: color-mix(in srgb, var(--yt-surface-2) calc(var(--yt-panel-alpha) * 100%), transparent);
-    backdrop-filter: blur(var(--yt-panel-blur));
-    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line-strong);
     border-radius: 9999px;
     color: var(--yt-text);

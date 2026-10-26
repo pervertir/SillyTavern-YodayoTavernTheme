@@ -43,8 +43,8 @@ body.yodayo-tavern .drawer-content {
     border-radius: var(--yt-radius-xl);
     box-shadow: var(--yt-shadow);
     padding: var(--yt-space-3);
-    backdrop-filter: blur(var(--yt-glass-blur)) saturate(1.2);
-    -webkit-backdrop-filter: blur(var(--yt-glass-blur)) saturate(1.2);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
 }
 
 body.yodayo-tavern .drawer-content h3,
@@ -105,8 +105,8 @@ body.yodayo-tavern .drawer-content h4 {
         background-color: rgb(35 37 39 / var(--yt-rail-alpha, 0.6));
         border: 1px solid var(--yt-line-strong);
         border-radius: inherit;
-        backdrop-filter: blur(var(--yt-panel-blur));
-        -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+        backdrop-filter: var(--yt-backdrop);
+        -webkit-backdrop-filter: var(--yt-backdrop);
         pointer-events: none;
     }
 
@@ -219,6 +219,8 @@ body.yodayo-tavern #yt-rail-toggle {
     justify-content: center;
     padding: 0;
     background-color: rgb(35 37 39 / var(--yt-rail-alpha, 0.6));
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line-strong);
     border-radius: var(--yt-radius-xl);
     box-shadow: var(--yt-shadow-sm);

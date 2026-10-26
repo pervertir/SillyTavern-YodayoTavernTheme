@@ -22,10 +22,11 @@ body.yodayo-tavern {
     /* Bubble and message box see-through level; index.js sets it from the slider */
     --yt-panel-alpha: 0.8;
     --yt-panel-surface: rgb(35 37 39 / var(--yt-panel-alpha));
-    --yt-panel-blur: 12px;
-    /* frosted glass for the menus and the home page, like Yodayo's */
+    /* frosted glass, like Yodayo's: every see-through surface blurs what's behind it */
+    --yt-panel-blur: 24px;
+    --yt-backdrop: blur(var(--yt-panel-blur)) saturate(1.2);
     --yt-glass: rgb(26 28 30 / 0.72);
-    --yt-glass-blur: 24px;
+    --yt-glass-raised: rgb(44 46 48 / 0.78);
 
     /* Chat colors; the Colors section in the extension panel overrides these on <body> */
     --yt-char-name: var(--yt-accent);

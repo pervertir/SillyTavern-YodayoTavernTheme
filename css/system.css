@@ -22,8 +22,8 @@ body.yodayo-tavern #chat .mes[is_system="true"]:not(:has([data-type="assistant_n
     margin: 0 auto;
     padding: var(--yt-space-4) var(--yt-space-5);
     background-color: color-mix(in srgb, var(--yt-surface-2) calc(var(--yt-panel-alpha) * 100%), transparent);
-    backdrop-filter: blur(var(--yt-panel-blur));
-    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line-strong);
     border-style: solid;
     border-radius: var(--yt-radius-xl);

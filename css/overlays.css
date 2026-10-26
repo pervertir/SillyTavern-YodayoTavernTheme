@@ -3,13 +3,13 @@
 /* Popups: centered sheets over a dimmed, blurred backdrop */
 body.yodayo-tavern .popup,
 body.yodayo-tavern dialog.popup {
-    background-color: var(--yt-bg);
+    background-color: var(--yt-glass);
     border: 1px solid var(--yt-line-strong);
     border-radius: var(--yt-radius-xl);
     box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
     padding: var(--yt-space-4) var(--yt-space-5);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
 }
 
 body.yodayo-tavern .popup::backdrop,
@@ -54,7 +54,9 @@ body.yodayo-tavern .popup .popup-button-close {
 
 /* Toasts: compact cards with a stripe for their type */
 body.yodayo-tavern #toast-container > div {
-    background-color: var(--yt-surface-2);
+    background-color: var(--yt-glass-raised);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     background-image: none;
     color: var(--yt-text);
     border: 1px solid var(--yt-line);

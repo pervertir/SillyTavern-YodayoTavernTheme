@@ -21,8 +21,8 @@ body.yodayo-tavern.yt-home-active #sheld {
     height: calc(100dvh - var(--yt-space-2) * 2);
     max-height: calc(100dvh - var(--yt-space-2) * 2);
     background-color: var(--yt-glass);
-    backdrop-filter: blur(var(--yt-glass-blur)) saturate(1.2);
-    -webkit-backdrop-filter: blur(var(--yt-glass-blur)) saturate(1.2);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line);
     border-radius: 24px;
     overflow: hidden;
@@ -223,7 +223,9 @@ body.yodayo-tavern .yt-home .welcomeRecent .recentChat .recentChatInfo {
     flex-direction: column;
     justify-content: center;
     gap: 4px;
-    background-color: var(--yt-surface-2);
+    background-color: var(--yt-glass-raised);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line-strong);
     border-radius: 40px;
     box-shadow: var(--yt-shadow);

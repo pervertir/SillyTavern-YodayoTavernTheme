@@ -160,7 +160,9 @@ body.yodayo-tavern .select2-container--open .select2-selection {
 }
 
 body.yodayo-tavern .select2-dropdown {
-    background-color: var(--yt-surface-2);
+    background-color: var(--yt-glass-raised);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line-strong);
     border-radius: var(--yt-radius-md);
     box-shadow: var(--yt-shadow);
