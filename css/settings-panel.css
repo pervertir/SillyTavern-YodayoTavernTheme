@@ -1,0 +1,21 @@
+/* Settings panel (always styled, even when the theme is off) */
+.yodayo-tavern-settings .yt-setting-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0;
+}
+
+.yodayo-tavern-settings .yt-setting-row > label {
+    flex: 0 0 110px;
+}
+
+.yodayo-tavern-settings .yt-setting-row select,
+.yodayo-tavern-settings .yt-setting-row input[type="range"] {
+    flex: 1;
+    margin: 0;
+}
+
+.yodayo-tavern-settings .yt-muted {
+    opacity: 0.7;
+}

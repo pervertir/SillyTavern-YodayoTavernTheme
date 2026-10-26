@@ -1,0 +1,31 @@
+/* Top bar and side drawers */
+body.yodayo-tavern #top-bar,
+body.yodayo-tavern #top-settings-holder {
+    background-color: var(--yt-bg);
+    box-shadow: none;
+    border-bottom: 1px solid var(--yt-line);
+}
+
+body.yodayo-tavern .drawer-icon {
+    color: var(--yt-muted);
+    transition: color 0.15s ease;
+}
+
+body.yodayo-tavern .drawer-icon:hover,
+body.yodayo-tavern .drawer-icon.openIcon {
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern .drawer-content,
+body.yodayo-tavern #left-nav-panel,
+body.yodayo-tavern #right-nav-panel {
+    background-color: var(--yt-bg);
+    border: 1px solid var(--yt-line);
+    border-radius: 0 0 var(--yt-radius-lg) var(--yt-radius-lg);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+body.yodayo-tavern .inline-drawer-header,
+body.yodayo-tavern .standoutHeader {
+    border-radius: var(--yt-radius);
+}

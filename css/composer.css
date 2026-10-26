@@ -1,0 +1,107 @@
+/* Composer: floating pill with small ghost icons and a round send button */
+body.yodayo-tavern #form_sheld {
+    padding: 8px 12px 12px 12px;
+    background-color: transparent;
+}
+
+/* !important beats SillyTavern's no-blur mode, which forces a solid color here */
+body.yodayo-tavern #send_form {
+    background-color: var(--yt-panel-surface) !important;
+    backdrop-filter: blur(var(--yt-panel-blur));
+    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    border: 1px solid var(--yt-line-strong);
+    border-radius: 24px;
+    padding: 5px 6px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+body.yodayo-tavern #send_form:focus-within {
+    border-color: var(--yt-accent-line);
+    box-shadow: 0 0 0 3px var(--yt-accent-soft);
+}
+
+body.yodayo-tavern #nonQRFormItems {
+    align-items: center;
+    column-gap: 4px;
+    font-size: 16px;
+}
+
+body.yodayo-tavern #leftSendForm,
+body.yodayo-tavern #rightSendForm {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+body.yodayo-tavern #leftSendForm > div,
+body.yodayo-tavern #rightSendForm > div:not(#send_but) {
+    width: 32px;
+    height: 32px;
+    border-radius: 9999px;
+    font-size: 16px;
+    align-items: center;
+    justify-content: center;
+    color: var(--yt-muted);
+    opacity: 1;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+body.yodayo-tavern #leftSendForm > div:hover,
+body.yodayo-tavern #rightSendForm > div:not(#send_but):hover {
+    background-color: var(--yt-surface-2);
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern #send_textarea {
+    background-color: transparent;
+    color: var(--yt-text);
+    font-family: var(--yt-font);
+    font-size: 15px;
+    line-height: 22px;
+    min-height: 32px;
+    padding: 5px 4px;
+    margin: 0;
+    resize: none;
+    border-top-width: 0;
+    align-self: center;
+}
+
+body.yodayo-tavern #send_textarea::placeholder {
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern #send_but {
+    width: 34px;
+    height: 34px;
+    border-radius: 9999px;
+    background-color: var(--yt-accent);
+    color: var(--yt-accent-ink) !important;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    flex-shrink: 0;
+    transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+/* the paper-plane glyph sits off its optical center */
+body.yodayo-tavern #send_but::before {
+    transform: translate(-1px, 1px);
+}
+
+body.yodayo-tavern #send_but.displayNone {
+    display: none;
+}
+
+body.yodayo-tavern #send_but:hover {
+    filter: brightness(1.08);
+}
+
+body.yodayo-tavern #send_but:active {
+    transform: scale(0.94);
+}
+
+body.yodayo-tavern #mes_stop {
+    color: var(--yt-accent);
+}

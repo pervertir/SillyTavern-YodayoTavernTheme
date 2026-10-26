@@ -1,0 +1,170 @@
+/* Design tokens, SillyTavern's own theme variables, and global styles */
+
+body.yodayo-tavern {
+    /* Palette (from Moescape / Yodayo Tavern) */
+    --yt-bg: #1a1c1e;
+    --yt-surface: #232527;
+    --yt-surface-2: #2c2e30;
+    --yt-surface-3: #36393b;
+    --yt-line: rgba(230, 230, 230, 0.1);
+    --yt-line-strong: rgba(230, 230, 230, 0.18);
+    --yt-text: #f0f0f0;
+    --yt-muted: #a8a8a8;
+    --yt-faint: #6f7276;
+    --yt-danger: #f87171;
+    --yt-success: #4ade80;
+    --yt-warning: #fbbf24;
+    --yt-accent: #e4f063;
+    --yt-accent-ink: #1a1a1a;
+    --yt-accent-soft: color-mix(in srgb, var(--yt-accent) 12%, transparent);
+    --yt-accent-line: color-mix(in srgb, var(--yt-accent) 35%, transparent);
+
+    /* Bubble and message box see-through level; index.js sets it from the slider */
+    --yt-panel-alpha: 0.8;
+    --yt-panel-surface: rgb(35 37 39 / var(--yt-panel-alpha));
+    --yt-panel-blur: 12px;
+
+    /* Spacing scale */
+    --yt-space-1: 4px;
+    --yt-space-2: 8px;
+    --yt-space-3: 12px;
+    --yt-space-4: 16px;
+    --yt-space-5: 24px;
+
+    /* Shape, size, depth and motion */
+    --yt-radius-sm: 4px;
+    --yt-radius: 6px;
+    --yt-radius-md: 8px;
+    --yt-radius-lg: 12px;
+    --yt-radius-xl: 16px;
+    --yt-bubble-radius: 16px;
+    --yt-bubble-max: 720px;
+    --yt-control-h: 34px;
+    --yt-icon-btn: 32px;
+    --yt-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+    --yt-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    --yt-ease: cubic-bezier(0.2, 0, 0, 1);
+    --yt-fast: 150ms;
+    --yt-slow: 250ms;
+    --yt-focus-ring: 0 0 0 2px var(--yt-bg), 0 0 0 4px var(--yt-accent);
+
+    /* Type */
+    --yt-font: var(--mainFontFamily);
+    --yt-text-xs: 12px;
+    --yt-text-sm: 13px;
+    --yt-text-md: 14px;
+
+    /* SillyTavern's theme variables, so core UI follows the palette */
+    --SmartThemeBodyColor: var(--yt-text);
+    --SmartThemeEmColor: var(--yt-muted);
+    --SmartThemeUnderlineColor: var(--yt-accent);
+    --SmartThemeQuoteColor: var(--yt-accent);
+    --SmartThemeBlurTintColor: var(--yt-bg);
+    --SmartThemeChatTintColor: var(--yt-bg);
+    --SmartThemeUserMesBlurTintColor: var(--yt-accent-soft);
+    --SmartThemeBotMesBlurTintColor: var(--yt-surface);
+    --SmartThemeShadowColor: transparent;
+    --SmartThemeBorderColor: var(--yt-line);
+    --SmartThemeBlurStrength: 0px;
+    --interactable-outline-color: var(--yt-accent);
+    --interactable-outline-color-faint: var(--yt-accent-line);
+
+    accent-color: var(--yt-accent);
+    background-color: var(--yt-bg);
+    font-family: var(--yt-font);
+    color: var(--yt-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+body.yodayo-tavern ::selection {
+    background: var(--yt-accent);
+    color: var(--yt-accent-ink);
+}
+
+/* One focus ring for everything that can take keyboard focus */
+body.yodayo-tavern :focus-visible {
+    outline: none;
+    box-shadow: var(--yt-focus-ring);
+}
+
+body.yodayo-tavern .interactable:focus-visible,
+body.yodayo-tavern [tabindex]:focus-visible {
+    outline: none;
+    box-shadow: var(--yt-focus-ring);
+}
+
+/* Headings and small print */
+body.yodayo-tavern h1,
+body.yodayo-tavern h2,
+body.yodayo-tavern h3,
+body.yodayo-tavern h4 {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern small,
+body.yodayo-tavern .notes-link,
+body.yodayo-tavern .text_muted {
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern a {
+    color: var(--yt-accent);
+    text-decoration-color: var(--yt-accent-line);
+    text-underline-offset: 2px;
+}
+
+body.yodayo-tavern hr,
+body.yodayo-tavern .sysHR {
+    border: none;
+    border-top: 1px solid var(--yt-line);
+    background: none;
+    margin: var(--yt-space-3) 0;
+}
+
+/* Optional flat background */
+body.yodayo-tavern.yt-flat-bg #bg1,
+body.yodayo-tavern.yt-flat-bg #bg_custom {
+    display: none;
+}
+
+/* Scrollbars */
+body.yodayo-tavern * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--yt-surface-3) transparent;
+}
+
+body.yodayo-tavern ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+body.yodayo-tavern ::-webkit-scrollbar-thumb,
+body.yodayo-tavern ::-webkit-scrollbar-thumb:vertical {
+    background-color: var(--yt-surface-3);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    box-shadow: none;
+}
+
+body.yodayo-tavern ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--yt-faint);
+}
+
+body.yodayo-tavern ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    body.yodayo-tavern *,
+    body.yodayo-tavern *::before,
+    body.yodayo-tavern *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

@@ -1,0 +1,182 @@
+/* Chat column: no panel of its own, bubbles float straight on the background */
+body.yodayo-tavern #sheld {
+    background-color: transparent;
+}
+
+body.yodayo-tavern #chat {
+    background-color: transparent;
+    text-shadow: none;
+    padding: 8px 12px 0 12px;
+    gap: 2px;
+}
+
+body.yodayo-tavern #chat .mes {
+    background-color: transparent;
+    border: none;
+    padding: 10px 4px 4px 4px;
+    gap: 10px;
+}
+
+body.yodayo-tavern #chat .mes .mes_block {
+    padding-left: 0;
+    /* keeps the absolutely positioned swipe arrows clear of the bubble */
+    padding-right: 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Character bubble: see-through with a backdrop blur so text stays readable on any image */
+body.yodayo-tavern #chat .mes .mes_text {
+    background-color: var(--yt-panel-surface);
+    backdrop-filter: blur(var(--yt-panel-blur));
+    -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+    border: 1px solid var(--yt-line);
+    border-radius: 4px var(--yt-bubble-radius) var(--yt-bubble-radius) var(--yt-bubble-radius);
+    padding: 10px 14px;
+    max-width: min(100%, var(--yt-bubble-max));
+    width: fit-content;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+body.yodayo-tavern #chat .mes .mes_text p {
+    margin: 0.35em 0;
+}
+
+body.yodayo-tavern #chat .mes .mes_text p:first-child {
+    margin-top: 0;
+}
+
+body.yodayo-tavern #chat .mes .mes_text p:last-child {
+    margin-bottom: 0;
+}
+
+/* User bubble: lime-tinted, on the right unless "On the left" is chosen */
+body.yodayo-tavern #chat .mes[is_user="true"] .mes_text {
+    background-color: color-mix(in srgb, var(--yt-accent) 14%, var(--yt-panel-surface));
+    border-color: var(--yt-accent-line);
+}
+
+body.yodayo-tavern:not(.yt-user-left) #chat .mes[is_user="true"] {
+    flex-direction: row-reverse;
+}
+
+body.yodayo-tavern:not(.yt-user-left) #chat .mes[is_user="true"] .mes_block {
+    align-items: flex-end;
+}
+
+body.yodayo-tavern:not(.yt-user-left) #chat .mes[is_user="true"] .mes_text {
+    border-radius: var(--yt-bubble-radius) 4px var(--yt-bubble-radius) var(--yt-bubble-radius);
+}
+
+body.yodayo-tavern:not(.yt-user-left) #chat .mes[is_user="true"] .ch_name,
+body.yodayo-tavern:not(.yt-user-left) #chat .mes[is_user="true"] .ch_name > .flex-container,
+body.yodayo-tavern:not(.yt-user-left) #chat .mes[is_user="true"] .mes_buttons {
+    flex-direction: row-reverse;
+}
+
+/* System / narrator messages */
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_text {
+    background-color: transparent;
+    border-style: dashed;
+    color: var(--yt-muted);
+}
+
+/* Names, timestamps and message actions */
+body.yodayo-tavern #chat .mes .ch_name {
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+body.yodayo-tavern #chat .mes .name_text {
+    color: var(--yt-text);
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+body.yodayo-tavern #chat .mes:not([is_user="true"]) .name_text {
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern #chat .mes .timestamp,
+body.yodayo-tavern #chat .mes .mesIDDisplay,
+body.yodayo-tavern #chat .mes .mes_timer,
+body.yodayo-tavern #chat .mes .tokenCounterDisplay {
+    color: var(--yt-muted);
+    font-size: 0.75em;
+}
+
+body.yodayo-tavern #chat .mes .mes_buttons,
+body.yodayo-tavern #chat .mes .extraMesButtons {
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern #chat .mes .mes_button:hover,
+body.yodayo-tavern #chat .mes .extraMesButtonsHint:hover {
+    color: var(--yt-accent);
+    opacity: 1;
+}
+
+/* Avatars */
+body.yodayo-tavern #chat .mes .avatar img {
+    border: 2px solid var(--yt-surface-2);
+}
+
+body.yodayo-tavern #chat .mes:not([is_user="true"]) .avatar img {
+    border-color: var(--yt-accent-line);
+}
+
+/* Swipes */
+body.yodayo-tavern #chat .swipe_left,
+body.yodayo-tavern #chat .swipe_right,
+body.yodayo-tavern #chat .swipes-counter {
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern #chat .swipe_left:hover,
+body.yodayo-tavern #chat .swipe_right:hover {
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern #chat .swipes-counter {
+    font-size: 0.75em;
+}
+
+/* Reasoning block */
+body.yodayo-tavern #chat .mes_reasoning_details {
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+    padding: 6px 12px;
+}
+
+/* Inline formatting */
+body.yodayo-tavern .mes_text q,
+body.yodayo-tavern .mes_text .quote {
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern .mes_text em,
+body.yodayo-tavern .mes_text i {
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern .mes_text code {
+    background-color: var(--yt-surface-2);
+    border-radius: 4px;
+    padding: 1px 5px;
+}
+
+body.yodayo-tavern .mes_text pre {
+    background-color: var(--yt-bg);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius);
+}
+
+body.yodayo-tavern .mes_text blockquote {
+    border-left: 3px solid var(--yt-accent);
+    margin-left: 0;
+    padding-left: 10px;
+    color: var(--yt-muted);
+}

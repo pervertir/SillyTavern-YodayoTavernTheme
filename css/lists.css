@@ -1,0 +1,35 @@
+/* Character list: card-like rows */
+body.yodayo-tavern .character_select,
+body.yodayo-tavern .group_select,
+body.yodayo-tavern .bogus_folder_select {
+    border-radius: var(--yt-radius-lg);
+    border: 1px solid transparent;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+body.yodayo-tavern .character_select:hover,
+body.yodayo-tavern .group_select:hover,
+body.yodayo-tavern .bogus_folder_select:hover {
+    background-color: var(--yt-surface);
+    border-color: var(--yt-line);
+}
+
+body.yodayo-tavern .character_select.is_fav .ch_name,
+body.yodayo-tavern .group_select.is_fav .ch_name {
+    color: var(--yt-accent);
+}
+
+/* Tags render as Yodayo-style chips */
+body.yodayo-tavern .tag {
+    border-radius: 9999px;
+    border: 1px solid var(--yt-line-strong);
+    background-color: var(--yt-surface-2);
+    color: var(--yt-text);
+    padding: 1px 10px;
+}
+
+body.yodayo-tavern .tag.selected {
+    background-color: var(--yt-accent);
+    color: var(--yt-accent-ink);
+    border-color: var(--yt-accent);
+}
