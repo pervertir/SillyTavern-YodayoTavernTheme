@@ -336,3 +336,47 @@ body.yodayo-tavern #yt-chat-settings-cog:hover {
     order: 3;
     flex: 1 1 100%;
 }
+
+/* The picker's dropdown sits inside a blurred window, where a second backdrop blur can't
+   see past the window, so it showed the window's own content through it. Solid instead.
+   The options are single-choice, so no checkbox square either. */
+#yt-chat-settings-window .select2-dropdown {
+    background-color: var(--yt-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-md);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+}
+
+#yt-chat-settings-window .select2-results__option--selectable {
+    padding: 5px 10px;
+}
+
+#yt-chat-settings-window .select2-results__option--selectable::before {
+    display: none;
+}
+
+#yt-chat-settings-window .select2-results__option--selectable.select2-results__option--highlighted {
+    background-color: var(--yt-surface-3);
+}
+
+#yt-chat-settings-window .select2-results__option--selected {
+    background-color: var(--yt-accent-soft);
+}
+
+#yt-chat-settings-window .select2-search--dropdown {
+    padding: 8px;
+    border-bottom: 1px solid var(--yt-line);
+}
+
+#yt-chat-settings-window .select2-dropdown--above .select2-search--dropdown {
+    border-top: 1px solid var(--yt-line);
+    border-bottom: none;
+}
+
+#yt-chat-settings-window .select2-search__field {
+    border-radius: 9999px;
+    padding-left: var(--yt-space-3);
+}
