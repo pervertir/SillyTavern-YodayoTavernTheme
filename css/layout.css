@@ -9,7 +9,7 @@ body.yodayo-tavern {
 body.yodayo-tavern.yt-pos-left #sheld,
 body.yodayo-tavern.yt-pos-left #top-bar {
     margin: 0;
-    left: var(--yt-dock-gap);
+    left: var(--yt-dock-gap-left, var(--yt-dock-gap));
     right: auto;
 }
 
@@ -20,11 +20,11 @@ body.yodayo-tavern.yt-pos-right #top-bar {
     right: var(--yt-dock-gap);
 }
 
-body.yodayo-tavern.yt-pos-left #top-settings-holder {
+body.yodayo-tavern.yt-pos-left:not(.yt-nav-rail) #top-settings-holder {
     margin: 0 auto 0 var(--yt-dock-gap);
 }
 
-body.yodayo-tavern.yt-pos-right #top-settings-holder {
+body.yodayo-tavern.yt-pos-right:not(.yt-nav-rail) #top-settings-holder {
     margin: 0 var(--yt-dock-gap) 0 auto;
 }
 

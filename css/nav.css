@@ -1,31 +1,193 @@
-/* Top bar and side drawers */
-body.yodayo-tavern #top-bar,
-body.yodayo-tavern #top-settings-holder {
+/* Navigation: SillyTavern's top bar and its drawers.
+   Default look applies to the top bar; body.yt-nav-rail turns the bar into a
+   vertical rail on the left (desktop only) and opens drawers as side sheets. */
+
+/* Top bar (also the mobile look) */
+body.yodayo-tavern #top-bar {
     background-color: var(--yt-bg);
     box-shadow: none;
     border-bottom: 1px solid var(--yt-line);
 }
 
+body.yodayo-tavern #top-settings-holder {
+    background-color: transparent;
+    box-shadow: none;
+    gap: var(--yt-space-1);
+}
+
 body.yodayo-tavern .drawer-icon {
     color: var(--yt-muted);
-    transition: color 0.15s ease;
+    opacity: 1;
+    border-radius: var(--yt-radius-lg);
+    transition: color var(--yt-fast) var(--yt-ease), background-color var(--yt-fast) var(--yt-ease);
 }
 
-body.yodayo-tavern .drawer-icon:hover,
+body.yodayo-tavern .drawer-icon.closedIcon {
+    opacity: 1;
+}
+
+body.yodayo-tavern .drawer-icon:hover {
+    color: var(--yt-text);
+    background-color: var(--yt-surface-2);
+}
+
 body.yodayo-tavern .drawer-icon.openIcon {
     color: var(--yt-accent);
+    background-color: var(--yt-accent-soft);
 }
 
-body.yodayo-tavern .drawer-content,
-body.yodayo-tavern #left-nav-panel,
-body.yodayo-tavern #right-nav-panel {
+/* Drawer sheets */
+body.yodayo-tavern .drawer-content {
     background-color: var(--yt-bg);
-    border: 1px solid var(--yt-line);
-    border-radius: 0 0 var(--yt-radius-lg) var(--yt-radius-lg);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-xl);
+    box-shadow: var(--yt-shadow);
+    padding: var(--yt-space-3);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
-body.yodayo-tavern .inline-drawer-header,
-body.yodayo-tavern .standoutHeader {
-    border-radius: var(--yt-radius);
+body.yodayo-tavern .drawer-content h3,
+body.yodayo-tavern .drawer-content h4 {
+    margin: var(--yt-space-2) 0;
+}
+
+/* Vertical rail (desktop). index.js adds yt-nav-rail, plus yt-rail-pinned to keep it
+   shown and yt-rail-peek for a moment after load. The rail moves with `left`, never
+   `transform`, because a transform would trap the fixed drawer sheets inside it. */
+@media screen and (min-width: 1001px) {
+    body.yodayo-tavern.yt-nav-rail {
+        --yt-rail-w: 52px;
+        --yt-rail-gap: 8px;
+        --yt-sheet-left: calc(var(--yt-rail-gap) * 2 + var(--yt-rail-w));
+        --yt-sheet-w: min(460px, calc(100vw - var(--yt-sheet-left) - var(--yt-rail-gap)));
+        /* the chat now starts at the top of the window */
+        --topBarBlockSize: var(--yt-rail-gap);
+    }
+
+    body.yodayo-tavern.yt-nav-rail #top-bar {
+        display: none;
+    }
+
+    body.yodayo-tavern.yt-nav-rail #top-settings-holder {
+        position: fixed;
+        top: var(--yt-rail-gap);
+        bottom: var(--yt-rail-gap);
+        left: calc(-1 * var(--yt-rail-w) - var(--yt-rail-gap));
+        width: var(--yt-rail-w);
+        height: auto;
+        margin: 0;
+        padding: var(--yt-space-2) 0;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: var(--yt-space-1);
+        background-color: rgb(35 37 39 / 0.92);
+        border: 1px solid var(--yt-line-strong);
+        border-radius: var(--yt-radius-xl);
+        box-shadow: var(--yt-shadow);
+        backdrop-filter: blur(var(--yt-panel-blur));
+        -webkit-backdrop-filter: blur(var(--yt-panel-blur));
+        transition: left var(--yt-slow) var(--yt-ease);
+        z-index: 3005;
+    }
+
+    /* invisible hot zone along the window's left edge that brings the rail back */
+    body.yodayo-tavern.yt-nav-rail #top-settings-holder::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: -24px;
+        width: 24px;
+    }
+
+    body.yodayo-tavern.yt-nav-rail #top-settings-holder:hover,
+    body.yodayo-tavern.yt-nav-rail #top-settings-holder:focus-within,
+    body.yodayo-tavern.yt-nav-rail #top-settings-holder:has(.drawer-content.openDrawer),
+    body.yodayo-tavern.yt-nav-rail.yt-rail-pinned #top-settings-holder,
+    body.yodayo-tavern.yt-nav-rail.yt-rail-peek #top-settings-holder {
+        left: var(--yt-rail-gap);
+    }
+
+    /* once shown, the hot zone would block clicks on the chat beside it */
+    body.yodayo-tavern.yt-nav-rail.yt-rail-pinned #top-settings-holder::after,
+    body.yodayo-tavern.yt-nav-rail #top-settings-holder:has(.drawer-content.openDrawer)::after {
+        display: none;
+    }
+
+    body.yodayo-tavern.yt-nav-rail #top-settings-holder > .drawer {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 auto;
+    }
+
+    body.yodayo-tavern.yt-nav-rail #top-settings-holder > .drawer > .drawer-toggle {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    body.yodayo-tavern.yt-nav-rail .drawer-icon {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* the character panel button sits apart at the bottom */
+    body.yodayo-tavern.yt-nav-rail #rightNavHolder {
+        margin-top: var(--yt-space-2);
+        position: relative;
+    }
+
+    body.yodayo-tavern.yt-nav-rail #rightNavHolder::before {
+        content: '';
+        position: absolute;
+        top: calc(-1 * var(--yt-space-2) / 2 - 1px);
+        left: 8px;
+        right: 8px;
+        border-top: 1px solid var(--yt-line);
+    }
+
+    /* every drawer opens as a sheet beside the rail */
+    body.yodayo-tavern.yt-nav-rail .drawer-content:not(.fillRight) {
+        position: fixed;
+        top: var(--yt-rail-gap);
+        left: var(--yt-sheet-left);
+        right: auto;
+        margin: 0;
+        width: var(--yt-sheet-w);
+        min-width: 0;
+        max-height: calc(100dvh - var(--yt-rail-gap) * 2);
+    }
+
+    body.yodayo-tavern.yt-nav-rail .drawer-content.fillLeft.openDrawer {
+        height: calc(100dvh - var(--yt-rail-gap) * 2);
+    }
+
+    /* the character panel slides in from the right edge */
+    body.yodayo-tavern.yt-nav-rail .drawer-content.fillRight {
+        position: fixed;
+        top: var(--yt-rail-gap);
+        right: var(--yt-rail-gap);
+        left: auto;
+        margin: 0;
+        width: var(--yt-sheet-w);
+        max-height: calc(100dvh - var(--yt-rail-gap) * 2);
+    }
+
+    body.yodayo-tavern.yt-nav-rail .drawer-content.fillRight.openDrawer {
+        height: calc(100dvh - var(--yt-rail-gap) * 2);
+    }
+
+    /* a pinned rail keeps the left-docked chat clear of it */
+    body.yodayo-tavern.yt-nav-rail.yt-rail-pinned {
+        --yt-dock-gap-left: calc(var(--yt-rail-w) + var(--yt-rail-gap) * 3);
+    }
 }

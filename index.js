@@ -14,7 +14,11 @@ const defaultSettings = Object.freeze({
     chatPosition: 'middle',
     characterArt: true,
     panelOpacity: 80,
+    navMode: 'rail-auto',
 });
+
+/** How long the auto-hiding rail stays visible after the page loads, so it can be found. */
+const RAIL_PEEK_MS = 1500;
 
 const ART_ID = 'yt-character-art';
 
@@ -105,6 +109,8 @@ function applySettings() {
     body.classList.toggle('yt-flat-bg', settings.flatBackground);
     body.classList.toggle('yt-pos-left', settings.chatPosition === 'left');
     body.classList.toggle('yt-pos-right', settings.chatPosition === 'right');
+    body.classList.toggle('yt-nav-rail', settings.navMode !== 'top');
+    body.classList.toggle('yt-rail-pinned', settings.navMode === 'rail');
 
     body.style.setProperty('--yt-accent', settings.accent);
     body.style.setProperty('--yt-accent-ink', getAccentInk(settings.accent));
@@ -132,6 +138,7 @@ function syncSettingsUI() {
     $('#yt_flat_bg').prop('checked', settings.flatBackground);
     $('#yt_chat_position').val(settings.chatPosition);
     $('#yt_character_art').prop('checked', settings.characterArt);
+    $('#yt_nav_mode').val(settings.navMode);
     $('#yt_panel_opacity').val(settings.panelOpacity);
     $('#yt_panel_opacity_value').text(`${settings.panelOpacity}%`);
 }
@@ -173,6 +180,9 @@ function bindSettingsUI() {
     $('#yt_character_art').on('change', function () {
         update('characterArt', $(this).prop('checked'));
     });
+    $('#yt_nav_mode').on('change', function () {
+        update('navMode', String($(this).val()));
+    });
     $('#yt_panel_opacity').on('input', function () {
         const opacity = Number($(this).val());
         $('#yt_panel_opacity_value').text(`${opacity}%`);
@@ -187,6 +197,9 @@ jQuery(async () => {
     syncSettingsUI();
     bindSettingsUI();
     applySettings();
+
+    document.body.classList.add('yt-rail-peek');
+    setTimeout(() => document.body.classList.remove('yt-rail-peek'), RAIL_PEEK_MS);
 
     const { eventSource, eventTypes } = SillyTavern.getContext();
     eventSource.on(eventTypes.CHAT_CHANGED, updateCharacterArt);
