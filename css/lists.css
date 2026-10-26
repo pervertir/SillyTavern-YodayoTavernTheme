@@ -71,10 +71,18 @@ body.yodayo-tavern .group_select.selected {
     border-color: var(--yt-accent-line);
 }
 
+/* Bigger avatars in the list: 64px rows */
+body.yodayo-tavern:not(.charListGrid) #rm_print_characters_block .character_select .avatar,
+body.yodayo-tavern:not(.charListGrid) #rm_print_characters_block .character_select .avatar img {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+}
+
 /* Grid mode: portrait cards */
 body.yodayo-tavern.charListGrid #rm_print_characters_block {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: var(--yt-space-2);
     padding: var(--yt-space-2) 0;
 }
@@ -84,6 +92,8 @@ body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select,
 body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select,
 body.yodayo-tavern.charListGrid #rm_print_characters_block .bogus_folder_select {
     width: auto;
+    /* SillyTavern caps grid items at 100px; the theme's grid sets the size */
+    max-width: none;
     padding: var(--yt-space-1);
     background-color: transparent;
     border-color: transparent;
@@ -101,6 +111,20 @@ body.yodayo-tavern.charListGrid #rm_print_characters_block .bogus_folder_select:
 body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select .avatar img,
 body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select .avatar img {
     transition: box-shadow var(--yt-fast) var(--yt-ease);
+}
+
+/* each character's portrait fills its column at 3:4, like the home's cards */
+body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select .avatar {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    flex: none;
+}
+
+body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select .avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--yt-radius-lg);
 }
 
 body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select:hover .avatar img,
@@ -318,4 +342,12 @@ body.yodayo-tavern #rm_button_bar #bulkSelectedCount:empty {
 /* The character panel's way back to the character list reads as a back arrow, not a list */
 body.yodayo-tavern #rm_button_characters::before {
     content: '\f060';
+}
+
+/* the name block under the portrait spans the card (SillyTavern caps it at 100px) */
+body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select .character_select_container,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select .character_name_block,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select .ch_name {
+    width: 100%;
+    max-width: none;
 }
