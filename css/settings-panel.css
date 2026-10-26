@@ -85,3 +85,42 @@
 .yodayo-tavern-settings #yt_advanced .inline-drawer {
     margin-bottom: 6px;
 }
+
+/* Color pickers: a round swatch with a hairline ring instead of the browser's white frame */
+.yodayo-tavern-settings input[type="color"],
+body.yodayo-tavern input[type="color"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    padding: 0;
+    border: none;
+    border-radius: 9999px;
+    background: none;
+    box-shadow: 0 0 0 1px rgba(230, 230, 230, 0.18);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.yodayo-tavern-settings input[type="color"]::-webkit-color-swatch-wrapper,
+body.yodayo-tavern input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.yodayo-tavern-settings input[type="color"]::-webkit-color-swatch,
+body.yodayo-tavern input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 9999px;
+}
+
+.yodayo-tavern-settings input[type="color"]::-moz-color-swatch,
+body.yodayo-tavern input[type="color"]::-moz-color-swatch {
+    border: none;
+    border-radius: 9999px;
+}
+
+.yodayo-tavern-settings input[type="color"]:hover,
+body.yodayo-tavern input[type="color"]:hover {
+    box-shadow: 0 0 0 2px rgba(230, 230, 230, 0.35);
+}
