@@ -20,14 +20,13 @@ const defaultSettings = Object.freeze({
     chatPosition: 'middle',
     characterArt: true,
     panelOpacity: 80,
-    navMode: 'rail-auto',
+    navMode: 'rail-toggle',
     tavernHome: true,
 });
 
 let syncTavernHome = () => {};
 
-/** How long the auto-hiding rail stays visible after the page loads, so it can be found. */
-const RAIL_PEEK_MS = 1500;
+const RAIL_TOGGLE_ID = 'yt-rail-toggle';
 
 const ART_ID = 'yt-character-art';
 
@@ -42,6 +41,10 @@ function getSettings() {
         extensionSettings[MODULE_NAME] = structuredClone(defaultSettings);
     }
     const settings = extensionSettings[MODULE_NAME];
+    // the auto-hiding rail was replaced by the hamburger button
+    if (settings.navMode === 'rail-auto') {
+        settings.navMode = 'rail-toggle';
+    }
     for (const key of Object.keys(defaultSettings)) {
         if (!Object.hasOwn(settings, key)) {
             settings[key] = defaultSettings[key];
@@ -204,6 +207,41 @@ function bindSettingsUI() {
     });
 }
 
+function setRailOpen(open) {
+    document.body.classList.toggle('yt-rail-open', open);
+    document.getElementById(RAIL_TOGGLE_ID)?.setAttribute('aria-expanded', String(open));
+}
+
+/** Hamburger button that opens the rail; Escape or a click elsewhere closes it again. */
+function initRailToggle() {
+    const button = document.createElement('button');
+    button.id = RAIL_TOGGLE_ID;
+    button.type = 'button';
+    button.className = 'fa-solid fa-bars';
+    button.title = 'Menu';
+    button.setAttribute('aria-label', 'Menu');
+    button.setAttribute('aria-controls', 'top-settings-holder');
+    button.setAttribute('aria-expanded', 'false');
+    button.addEventListener('click', () => setRailOpen(!document.body.classList.contains('yt-rail-open')));
+    document.body.append(button);
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !document.querySelector('.drawer-content.openDrawer')) {
+            setRailOpen(false);
+        }
+    });
+
+    document.addEventListener('pointerdown', (event) => {
+        if (!document.body.classList.contains('yt-rail-open') || !(event.target instanceof Element)) {
+            return;
+        }
+        const insideRail = event.target.closest(`#top-settings-holder, #${RAIL_TOGGLE_ID}, .popup, #toast-container`);
+        if (!insideRail) {
+            setRailOpen(false);
+        }
+    });
+}
+
 async function init() {
     const { renderExtensionTemplateAsync } = SillyTavern.getContext();
     const container = document.getElementById('extensions_settings2');
@@ -219,8 +257,7 @@ async function init() {
     syncTavernHome = initTavernHome(() => getSettings().enabled && getSettings().tavernHome);
     applySettings();
 
-    document.body.classList.add('yt-rail-peek');
-    setTimeout(() => document.body.classList.remove('yt-rail-peek'), RAIL_PEEK_MS);
+    initRailToggle();
 
     const { eventSource, eventTypes } = SillyTavern.getContext();
     eventSource.on(eventTypes.CHAT_CHANGED, updateCharacterArt);

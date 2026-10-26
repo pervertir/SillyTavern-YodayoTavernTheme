@@ -53,8 +53,9 @@ body.yodayo-tavern .drawer-content h4 {
 }
 
 /* Vertical rail (desktop). index.js adds yt-nav-rail, plus yt-rail-pinned to keep it
-   shown and yt-rail-peek for a moment after load. The rail moves with `left`, never
-   `transform`, because a transform would trap the fixed drawer sheets inside it. */
+   shown, or a hamburger button (#yt-rail-toggle) that toggles yt-rail-open. The rail
+   moves with `left`, never `transform`, because a transform would trap the fixed
+   drawer sheets inside it. */
 @media screen and (min-width: 1001px) {
     body.yodayo-tavern.yt-nav-rail {
         --yt-rail-w: 52px;
@@ -71,7 +72,7 @@ body.yodayo-tavern .drawer-content h4 {
 
     body.yodayo-tavern.yt-nav-rail #top-settings-holder {
         position: fixed;
-        top: var(--yt-rail-gap);
+        top: var(--yt-rail-top, var(--yt-rail-gap));
         bottom: var(--yt-rail-gap);
         left: calc(-1 * var(--yt-rail-w) - var(--yt-rail-gap));
         width: var(--yt-rail-w);
@@ -92,28 +93,20 @@ body.yodayo-tavern .drawer-content h4 {
         z-index: 3005;
     }
 
-    /* invisible hot zone along the window's left edge that brings the rail back */
-    body.yodayo-tavern.yt-nav-rail #top-settings-holder::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: -24px;
-        width: 24px;
-    }
-
-    body.yodayo-tavern.yt-nav-rail #top-settings-holder:hover,
-    body.yodayo-tavern.yt-nav-rail #top-settings-holder:focus-within,
-    body.yodayo-tavern.yt-nav-rail #top-settings-holder:has(.drawer-content.openDrawer),
+    body.yodayo-tavern.yt-nav-rail.yt-rail-open #top-settings-holder,
     body.yodayo-tavern.yt-nav-rail.yt-rail-pinned #top-settings-holder,
-    body.yodayo-tavern.yt-nav-rail.yt-rail-peek #top-settings-holder {
+    body.yodayo-tavern.yt-nav-rail #top-settings-holder:has(.drawer-content.openDrawer) {
         left: var(--yt-rail-gap);
     }
 
-    /* once shown, the hot zone would block clicks on the chat beside it */
-    body.yodayo-tavern.yt-nav-rail.yt-rail-pinned #top-settings-holder::after,
-    body.yodayo-tavern.yt-nav-rail #top-settings-holder:has(.drawer-content.openDrawer)::after {
-        display: none;
+    /* Hamburger mode: a round button in the top-left corner opens the rail below it */
+    body.yodayo-tavern.yt-nav-rail:not(.yt-rail-pinned) {
+        --yt-rail-top: calc(var(--yt-rail-gap) * 2 + 40px);
+        --yt-dock-gap-left: calc(var(--yt-rail-gap) * 2 + 40px);
+    }
+
+    body.yodayo-tavern.yt-nav-rail:not(.yt-rail-pinned) #yt-rail-toggle {
+        display: flex;
     }
 
     body.yodayo-tavern.yt-nav-rail #top-settings-holder > .drawer {
@@ -190,4 +183,37 @@ body.yodayo-tavern .drawer-content h4 {
     body.yodayo-tavern.yt-nav-rail.yt-rail-pinned {
         --yt-dock-gap-left: calc(var(--yt-rail-w) + var(--yt-rail-gap) * 3);
     }
+}
+
+/* Hamburger button; only shown in hamburger mode on desktop (rule above) */
+#yt-rail-toggle {
+    display: none;
+}
+
+body.yodayo-tavern #yt-rail-toggle {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background-color: rgb(35 37 39 / 0.92);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-lg);
+    box-shadow: var(--yt-shadow-sm);
+    color: var(--yt-text);
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 3006;
+    transition: background-color var(--yt-fast) var(--yt-ease), color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern #yt-rail-toggle:hover {
+    background-color: var(--yt-surface-3);
+}
+
+body.yodayo-tavern.yt-rail-open #yt-rail-toggle {
+    color: var(--yt-accent);
 }
