@@ -1,6 +1,10 @@
 // Tavern home: replaces the top of SillyTavern's welcome screen with a Yodayo-style
 // character browser (header, tag chips and a grid of portrait cards).
 
+import { deleteCharacter } from '../../../../script.js';
+import { renderTemplateAsync } from '../../../templates.js';
+import { openWelcomeScreen } from '../../../welcome-screen.js';
+
 const HOME_ID = 'yt-home';
 const ACTIVE_CLASS = 'yt-home-active';
 const MAX_TAG_CHIPS = 24;
@@ -106,6 +110,19 @@ function openRightPanel() {
     }
 }
 
+/** SillyTavern's own delete confirmation, with its "also delete the chats" checkbox. */
+async function confirmDelete(character) {
+    const { Popup } = SillyTavern.getContext();
+    let deleteChats = false;
+    const confirmed = await Popup.show.confirm(`Delete ${character.name}?`, await renderTemplateAsync('deleteConfirm'), {
+        onClose: () => { deleteChats = Boolean(document.getElementById('del_char_checkbox')?.checked); },
+    });
+    // SillyTavern leaves a "you deleted a character" notice; come back to the home instead
+    if (confirmed && await deleteCharacter(character.avatar, { deleteChats })) {
+        await openWelcomeScreen({ force: true });
+    }
+}
+
 function renderCard({ character, index }) {
     const card = el('button', 'yt-card');
     card.type = 'button';
@@ -117,11 +134,32 @@ function renderCard({ character, index }) {
     img.loading = 'lazy';
     img.alt = '';
     img.src = `characters/${encodeURIComponent(character.avatar)}`;
+    img.draggable = false;
     media.append(img);
 
     const stat = el('span', 'yt-card-stat');
     stat.append(el('i', 'fa-regular fa-comment'), el('span', '', getLastChatLabel(character)));
     media.append(stat);
+
+    // a span, since a button can't sit inside the card's button
+    const remove = el('span', 'yt-card-delete');
+    remove.setAttribute('role', 'button');
+    remove.tabIndex = 0;
+    remove.title = `Delete ${character.name}`;
+    remove.setAttribute('aria-label', remove.title);
+    remove.append(el('i', 'fa-solid fa-trash-can'));
+    const onDelete = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        confirmDelete(character);
+    };
+    remove.addEventListener('click', onDelete);
+    remove.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            onDelete(event);
+        }
+    });
+    media.append(remove);
 
     if (character.fav === true || character.fav === 'true') {
         const fav = el('span', 'yt-card-fav');

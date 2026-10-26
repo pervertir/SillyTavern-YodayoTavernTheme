@@ -980,3 +980,38 @@ body.yodayo-tavern .yt-home-about-link i {
         display: none;
     }
 }
+
+/* Delete button on a character card, top left, shown on hover or keyboard focus */
+body.yodayo-tavern .yt-card-delete {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(0 0 0 / 0.55);
+    border-radius: 9999px;
+    color: var(--yt-text);
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity var(--yt-fast) var(--yt-ease), background-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .yt-card:hover .yt-card-delete,
+body.yodayo-tavern .yt-card:focus-within .yt-card-delete,
+body.yodayo-tavern .yt-card-delete:focus-visible {
+    opacity: 1;
+}
+
+body.yodayo-tavern .yt-card-delete:hover {
+    background-color: #d9534f;
+    color: #fff;
+}
+
+@media (hover: none) {
+    body.yodayo-tavern .yt-card-delete {
+        opacity: 1;
+    }
+}

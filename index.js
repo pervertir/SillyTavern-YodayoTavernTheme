@@ -534,6 +534,34 @@ function initPositionToggle() {
 }
 
 /** Arrow at the top of a chat that closes it and returns to the home page. */
+/**
+ * SillyTavern imports any image file dropped on the page as a character, and an image
+ * dragged from the page itself (a card, an avatar) counts too, which made copies of
+ * characters. Drags that start on the page are dropped before SillyTavern sees them; files
+ * dragged in from outside still import as before.
+ */
+function initDragGuard() {
+    let dragFromPage = false;
+    document.addEventListener('dragstart', () => { dragFromPage = true; }, true);
+    document.addEventListener('dragend', () => { dragFromPage = false; }, true);
+    for (const type of ['dragenter', 'dragover', 'drop']) {
+        document.addEventListener(type, (event) => {
+            if (!dragFromPage || !getSettings().enabled) {
+                return;
+            }
+            // a plain text field still takes a dragged selection
+            if (event.target instanceof HTMLElement && event.target.closest('textarea, input, [contenteditable="true"]')) {
+                return;
+            }
+            event.stopImmediatePropagation();
+            if (type === 'drop') {
+                event.preventDefault();
+                dragFromPage = false;
+            }
+        }, true);
+    }
+}
+
 function initBackButton() {
     const sheld = document.getElementById('sheld');
     if (!sheld) {
@@ -623,6 +651,7 @@ async function init() {
 
     initRailToggle();
     initBackButton();
+    initDragGuard();
     initPositionToggle();
     applyRecentChatsDefaults();
     initSheetResizers({ getSettings, saveSettings });
