@@ -533,12 +533,14 @@ function getAssistantInfo(chat) {
     const file = new URLSearchParams(thumbnail.split('?')[1] ?? '').get('file');
     return {
         name: message.getAttribute('ch_name') ?? '',
+        // SillyTavern's own rendered (and sanitized) greeting
+        greeting: message.querySelector('.mes_text')?.innerHTML ?? '',
         src: file ? `characters/${encodeURIComponent(file)}` : thumbnail,
     };
 }
 
 /**
- * The welcome assistant beside the home: its picture over SillyTavern's message box. Sending
+ * The welcome assistant beside the home: its picture and greeting over SillyTavern's message box. Sending
  * a message there makes SillyTavern open the assistant's chat, which closes the home.
  */
 function syncAssistant(chat, show) {
@@ -557,7 +559,9 @@ function syncAssistant(chat, show) {
         img.alt = '';
         img.addEventListener('error', () => img.classList.add('displayNone'));
         img.addEventListener('load', () => img.classList.remove('displayNone'));
-        aside.append(img, el('div', 'yt-home-assistant-name'));
+        const bubble = el('div', 'yt-home-assistant-bubble');
+        bubble.append(el('div', 'yt-home-assistant-name'), el('div', 'yt-home-assistant-greeting mes_text'));
+        aside.append(img, bubble);
         sheld.prepend(aside);
     }
     const img = aside.querySelector('img');
@@ -565,6 +569,10 @@ function syncAssistant(chat, show) {
         img.setAttribute('src', info.src);
     }
     aside.querySelector('.yt-home-assistant-name').textContent = info.name;
+    const greeting = aside.querySelector('.yt-home-assistant-greeting');
+    if (greeting.innerHTML !== info.greeting) {
+        greeting.innerHTML = info.greeting;
+    }
     img.alt = info.name;
 }
 

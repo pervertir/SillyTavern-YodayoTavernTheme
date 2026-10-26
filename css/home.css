@@ -875,7 +875,8 @@ body.yodayo-tavern .yt-home-about-link i {
 }
 
 /* The welcome assistant (home.js) sits between the menu and the Tavern window: its picture
-   at 80% of the screen's height over SillyTavern's own message box. #sheld becomes a two
+   fills the column's height, with its greeting over the picture's foot and SillyTavern's
+   own message box below. #sheld becomes a two
    column grid, and the Tavern window's panel moves to its ::before so #chat can stay inset
    inside it as before. Phones keep the home alone. */
 #yt-home-assistant {
@@ -884,7 +885,7 @@ body.yodayo-tavern .yt-home-about-link i {
 
 @media screen and (min-width: 1001px) {
     body.yodayo-tavern.yt-home-active.yt-home-assistant {
-        --yt-assistant-width: clamp(260px, 26vw, 440px);
+        --yt-assistant-width: clamp(320px, 32vw, 520px);
     }
 
     body.yodayo-tavern.yt-home-active.yt-home-assistant #sheld {
@@ -921,28 +922,46 @@ body.yodayo-tavern .yt-home-about-link i {
     body.yodayo-tavern.yt-home-active.yt-home-assistant #yt-home-assistant {
         grid-column: 1;
         grid-row: 1;
+        position: relative;
         display: flex;
         flex-direction: column;
-        align-items: center;
         justify-content: flex-end;
         min-height: 0;
-        gap: var(--yt-space-2);
     }
 
+    /* the picture takes the whole column; the greeting floats over its lower part */
     body.yodayo-tavern #yt-home-assistant img {
-        height: 80dvh;
-        max-height: 100%;
-        max-width: 100%;
-        min-height: 0;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
         object-fit: contain;
         object-position: center bottom;
         filter: drop-shadow(0 12px 32px rgb(0 0 0 / 0.35));
     }
 
+    body.yodayo-tavern .yt-home-assistant-bubble {
+        position: relative;
+        max-height: 45%;
+        overflow-y: auto;
+        padding: var(--yt-space-3) var(--yt-space-4);
+        background-color: var(--yt-panel-surface) !important;
+        backdrop-filter: var(--yt-backdrop);
+        -webkit-backdrop-filter: var(--yt-backdrop);
+        border: 1px solid var(--yt-line);
+        border-radius: 20px;
+    }
+
     body.yodayo-tavern .yt-home-assistant-name {
         font-weight: 600;
+        color: var(--yt-accent);
+        margin-bottom: var(--yt-space-1);
+    }
+
+    body.yodayo-tavern .yt-home-assistant-greeting {
         color: var(--yt-text);
-        text-align: center;
+        font-size: var(--yt-text-sm);
+        line-height: 1.5;
     }
 
     body.yodayo-tavern.yt-home-active.yt-home-assistant #form_sheld {
