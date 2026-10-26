@@ -1,0 +1,52 @@
+<div class="yodayo-tavern-settings">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b>Yodayo Tavern Theme</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+            <label class="checkbox_label" for="yt_enabled">
+                <input id="yt_enabled" type="checkbox" />
+                <span>Enable theme</span>
+            </label>
+
+            <div class="yt-setting-row">
+                <label for="yt_accent">Accent color</label>
+                <input id="yt_accent" type="color" />
+                <div id="yt_accent_reset" class="menu_button menu_button_icon fa-solid fa-rotate-left" title="Reset to Yodayo lime"></div>
+            </div>
+
+            <div class="yt-setting-row">
+                <label for="yt_user_side">Your messages</label>
+                <select id="yt_user_side" class="text_pole">
+                    <option value="right">On the right</option>
+                    <option value="left">On the left</option>
+                </select>
+            </div>
+
+            <div class="yt-setting-row">
+                <label for="yt_font">Font</label>
+                <select id="yt_font" class="text_pole">
+                    <option value="inter">Inter (falls back to system)</option>
+                    <option value="system">System UI</option>
+                    <option value="default">SillyTavern default</option>
+                </select>
+            </div>
+
+            <div class="yt-setting-row">
+                <label for="yt_bubble_width">Bubble max width</label>
+                <input id="yt_bubble_width" type="range" min="480" max="1200" step="20" />
+                <span id="yt_bubble_width_value" class="yt-muted"></span>
+            </div>
+
+            <label class="checkbox_label" for="yt_flat_bg">
+                <input id="yt_flat_bg" type="checkbox" />
+                <span>Hide chat background image (flat Yodayo look)</span>
+            </label>
+
+            <small id="yt_conflict_note" class="yt-muted displayNone">
+                Moonlit Echoes is enabled and overrides the chat layout. Disable it in Manage Extensions for the full Yodayo look.
+            </small>
+        </div>
+    </div>
+</div>

@@ -1,8 +1,8 @@
-# Yodayo Tavern theme for SillyTavern
+# Yodayo Tavern Theme for SillyTavern
 
-A SillyTavern UI theme modelled on the Yodayo / Moescape Tavern chat: flat charcoal
-surfaces, a lime accent, Inter type, rounded chat bubbles with your messages on the
-right, and a pill-shaped message box with a round lime send button.
+A SillyTavern extension that gives the UI the look of the Yodayo / Moescape Tavern chat:
+flat charcoal surfaces, a lime accent, Inter type, rounded chat bubbles with your
+messages on the right, and a pill-shaped message box with a round send button.
 
 ![Chat preview](screenshots/chat.jpg)
 
@@ -10,17 +10,30 @@ Built and tested against **SillyTavern 1.19.0**.
 
 ## Install
 
-**Import from the UI (recommended)**
+1. In SillyTavern open **Extensions** (the stacked-cubes icon in the top bar).
+2. Click **Install extension** and paste:
+   ```
+   https://github.com/pervertir/SillyTavern-YodayoTavernTheme
+   ```
+3. Reload the page. The theme turns on straight away.
 
-1. Download `Yodayo Tavern.json` from this repo.
-2. In SillyTavern open **User Settings** (the person-with-gear icon in the top bar).
-3. Under **Theme**, click the import button and pick the file.
-4. Choose **Yodayo Tavern** from the theme dropdown.
+To install by hand, clone this repo into
+`SillyTavern/public/scripts/extensions/third-party/` and reload.
 
-**Copy the file**
+## Settings
 
-Copy `Yodayo Tavern.json` into `SillyTavern/data/<your-user>/themes/`
-(usually `data/default-user/themes/`), then reload SillyTavern and pick the theme.
+Open **Extensions → Yodayo Tavern Theme**:
+
+![Settings panel](screenshots/settings.jpg)
+
+| Setting | What it does |
+| --- | --- |
+| Enable theme | Turns the whole look on or off without uninstalling. |
+| Accent color | Recolors the send button, names, quotes and highlights. Reset returns to Yodayo lime. |
+| Your messages | Put your bubbles on the right (Yodayo style) or the left. |
+| Font | Inter (falls back to the system font), the system UI font, or SillyTavern's default. |
+| Bubble max width | How wide a chat bubble may grow on desktop. |
+| Hide chat background image | Hides your background for a flat Yodayo look. |
 
 ## Palette
 
@@ -34,34 +47,26 @@ Copy `Yodayo Tavern.json` into `SillyTavern/data/<your-user>/themes/`
 | Accent          | `#e4f063`                   |
 | Hairline border | `rgba(230, 230, 230, 0.1)`  |
 
-All of these are CSS variables (`--yt-*`) at the top of `src/theme.css`, so the
-whole theme can be recolored by changing a few lines.
-
 ## Notes
 
-- **Font:** the theme asks for Inter and falls back to the system UI font. It does
-  not load a web font, so SillyTavern won't show its `@import` warning on import.
-  Install Inter locally if you want an exact match.
-- **Theme extensions:** extensions that restyle the whole UI (for example Moonlit
-  Echoes) override the chat layout with `!important` rules. Disable them while
-  using this theme.
-- **Background:** your chat background image stays visible outside the chat column.
-  Pick a dark or plain background for the flattest Yodayo look.
+- **Other theme extensions:** Moonlit Echoes and similar extensions restyle the same
+  elements with `!important` rules, so the two will fight. Disable the other one in
+  **Manage extensions** while using this theme. The settings panel warns you when
+  Moonlit Echoes is active.
+- **Theme presets:** the extension overrides SillyTavern's theme colors while it is
+  enabled, so any built-in theme preset works underneath it.
+- **Font:** Inter isn't bundled. Install it locally for an exact match, otherwise
+  the system UI font is used.
 
 ## Development
 
-The theme lives in two source files:
+- `manifest.json`: extension metadata
+- `index.js`: settings panel and the body classes / CSS variables it controls
+- `settings.html`: the settings panel markup
+- `style.css`: the theme, every rule scoped under `body.yodayo-tavern`
 
-- `src/theme.base.json`: SillyTavern's color pickers and UI toggles
-- `src/theme.css`: the custom CSS
-
-`build.mjs` merges them into the importable `Yodayo Tavern.json`. It needs only Node:
-
-```bash
-node build.mjs
-```
-
-Commit the regenerated `Yodayo Tavern.json` together with the source changes.
+To work on it live, clone the repo straight into
+`SillyTavern/public/scripts/extensions/third-party/` and reload SillyTavern after edits.
 
 ## License
 
