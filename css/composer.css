@@ -292,3 +292,15 @@ body.yodayo-tavern #yt-position-toggle .yt-position-option.active {
 body.yodayo-tavern.yt-home-active #yt-position-toggle {
     display: none;
 }
+
+/* Chrome sometimes paints these frosted, rounded controls as plain squares with nothing in
+   them (after a menu opens over them, or on the welcome page) until a hover or focus nearby
+   repaints them. Their own compositing layer keeps them painted. backdrop-filter already
+   makes them containing blocks, so this changes no layout. */
+body.yodayo-tavern #send_form,
+body.yodayo-tavern #yt-position-toggle .yt-position-button,
+body.yodayo-tavern #yt-position-toggle .yt-position-menu,
+body.yodayo-tavern #yt-chat-settings-window,
+body.yodayo-tavern .yt-home-assistant-bubble {
+    will-change: transform;
+}

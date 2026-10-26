@@ -974,6 +974,12 @@ body.yodayo-tavern .yt-home-about-link i {
         margin-bottom: var(--yt-space-1);
     }
 
+    /* SillyTavern keeps the greeting's own quote marks and blanks <q>'s, but only inside .mes */
+    body.yodayo-tavern .yt-home-assistant-greeting q::before,
+    body.yodayo-tavern .yt-home-assistant-greeting q::after {
+        content: '';
+    }
+
     body.yodayo-tavern .yt-home-assistant-greeting {
         color: var(--yt-text);
         font-size: var(--yt-text-sm);
