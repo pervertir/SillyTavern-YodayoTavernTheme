@@ -125,9 +125,35 @@ body.yodayo-tavern .tags_inline .tag {
     font-size: var(--yt-text-xs);
 }
 
+/* Filter chips cycle through three states, like SillyTavern itself: off, "only these"
+   (accent fill) and "hide these" (red ring with a small × badge instead of SillyTavern's
+   large red cross over the icon) */
 body.yodayo-tavern .tag.excluded {
-    opacity: 0.6;
-    text-decoration: line-through;
+    position: relative;
+    opacity: 1 !important;
+    filter: none !important;
+    background-color: color-mix(in srgb, var(--yt-danger) 14%, var(--yt-surface-2));
+    border-color: color-mix(in srgb, var(--yt-danger) 60%, transparent);
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern .tag.excluded::after {
+    content: "\d7";
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    left: auto;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: var(--yt-danger);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+    text-shadow: none;
 }
 
 /* Search box above the list */
