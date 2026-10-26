@@ -43,6 +43,7 @@ export const ADVANCED_GROUPS = Object.freeze([
             { key: 'bgBlur', type: 'number', unit: 'px', min: 0, max: 40, label: 'Background blur', cssVar: '--yt-bg-blur', def: 0 },
             { key: 'bgOpacity', type: 'number', step: 0.05, min: 0, max: 1, label: 'Background image opacity', cssVar: '--yt-bg-opacity', def: 1 },
             { key: 'chatFieldBlur', type: 'number', unit: 'px', min: 0, max: 40, label: 'Chat field blur', cssVar: '--yt-chat-field-backdrop', wrap: 'blur', def: 0 },
+            { key: 'chatFieldFeather', type: 'number', unit: 'px', min: 0, max: 300, label: 'Chat field blur feather (spill past the edges)', cssVar: '--yt-chat-field-feather', def: 48 },
             { key: 'mobileChatFieldBlur', type: 'number', unit: 'px', min: 0, max: 40, label: 'Chat field blur on phones', cssVar: '--yt-chat-field-backdrop-mobile', wrap: 'blur', def: 0 },
         ],
     },

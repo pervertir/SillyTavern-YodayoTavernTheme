@@ -17,12 +17,36 @@ body.yodayo-tavern .drawer-icon:not(.openIcon):not(:hover) {
     color: var(--yt-icon, var(--yt-muted));
 }
 
-/* the blur is only set when chosen: any backdrop-filter, even 0px, would change how
-   SillyTavern positions things inside the chat column */
 body.yodayo-tavern:not(.yt-home-active) #sheld {
     background-color: var(--yt-chat-field-bg, transparent);
+    anchor-name: --yt-sheld;
+}
+
+/* Chat field blur: a layer under the chat that follows it (anchor positioning) and spills
+   past its edges by the feather width, fading out there. It isn't on #sheld itself, which
+   clips its overflow, and any backdrop-filter there would trap SillyTavern's fixed popups. */
+#yt-chat-blur {
+    display: none;
+}
+
+body.yodayo-tavern:not(.yt-home-active) #yt-chat-blur {
+    --yt-feather: var(--yt-chat-field-feather, 48px);
+    display: block;
+    position: fixed;
+    position-anchor: --yt-sheld;
+    top: calc(anchor(top) - var(--yt-feather));
+    bottom: calc(anchor(bottom) - var(--yt-feather));
+    left: calc(anchor(left) - var(--yt-feather));
+    right: calc(anchor(right) - var(--yt-feather));
+    z-index: 29;
+    pointer-events: none;
     backdrop-filter: var(--yt-chat-field-backdrop, none);
     -webkit-backdrop-filter: var(--yt-chat-field-backdrop, none);
+    mask-image:
+        linear-gradient(to right, transparent, #000 calc(var(--yt-feather) * 2), #000 calc(100% - var(--yt-feather) * 2), transparent),
+        linear-gradient(to bottom, transparent, #000 calc(var(--yt-feather) * 2), #000 calc(100% - var(--yt-feather) * 2), transparent);
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
 }
 
 body.yodayo-tavern * {
@@ -72,7 +96,7 @@ body.yodayo-tavern #bg_custom {
 }
 
 @media screen and (max-width: 1000px) {
-    body.yodayo-tavern:not(.yt-home-active) #sheld {
+    body.yodayo-tavern:not(.yt-home-active) #yt-chat-blur {
         backdrop-filter: var(--yt-chat-field-backdrop-mobile, none);
         -webkit-backdrop-filter: var(--yt-chat-field-backdrop-mobile, none);
     }

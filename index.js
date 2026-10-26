@@ -565,6 +565,14 @@ async function init() {
         },
     });
     initSettingsPopout();
+    // the chat field blur lives on its own layer: #sheld clips its overflow, so a blur
+    // that spills past the chat's edges can't be part of it
+    if (!document.getElementById('yt-chat-blur')) {
+        const blur = document.createElement('div');
+        blur.id = 'yt-chat-blur';
+        document.body.append(blur);
+    }
+
     refreshCharacterSettings = initCharacterSettings({
         getSettings,
         onChange: () => {
