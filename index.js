@@ -251,6 +251,25 @@ function bindSettingsUI() {
     });
 }
 
+/** Puts every theme setting back to its default, after the user confirms. */
+async function resetAllSettings() {
+    const { callGenericPopup, POPUP_TYPE, extensionSettings } = SillyTavern.getContext();
+    const confirmed = await callGenericPopup(
+        'Reset every Yodayo Tavern Theme setting to its default? This includes colors, per-character colors, menu widths and Advanced settings. Export first if you might want them back.',
+        POPUP_TYPE.CONFIRM,
+    );
+    if (!confirmed) {
+        return;
+    }
+    extensionSettings[MODULE_NAME] = { ...structuredClone(defaultSettings), recentChatsDefaultsApplied: true };
+    applySettings();
+    syncSettingsUI();
+    refreshColorControls();
+    refreshAdvancedControls();
+    saveSettings();
+    toastr.success('All theme settings are back to their defaults.', 'Yodayo Tavern Theme');
+}
+
 /** Copies the recognised settings from an exported file and applies them. */
 function importSettings(data) {
     const settings = getSettings();
@@ -377,6 +396,7 @@ async function init() {
         },
     });
     initSettingsPopout();
+    document.getElementById('yt_reset_all')?.addEventListener('click', resetAllSettings);
     syncTavernHome = initTavernHome(() => getSettings().enabled && getSettings().tavernHome);
     applySettings();
 
