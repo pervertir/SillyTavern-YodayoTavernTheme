@@ -1,11 +1,13 @@
 // Removes the background from character images shown beside the chat. The model runs on
-// this machine in the theme's SillyTavern server plugin (server-plugin/, installed as
-// plugins/yodayo-bgremove); each cutout is saved to SillyTavern's user images and
-// remembered in the settings, so every image is only processed once.
+// this machine in the Background Removal server plugin (a separate, optional install:
+// github.com/pervertir/SillyTavern-BackgroundRemoval); each cutout is saved to
+// SillyTavern's user images and remembered in the settings, so every image is only
+// processed once.
 
 import { uploadImage } from './charsettings.js';
 
-const PLUGIN_URL = '/api/plugins/yodayo-bgremove';
+const PLUGIN_URL = '/api/plugins/background-removal';
+const PLUGIN_REPO = 'https://github.com/pervertir/SillyTavern-BackgroundRemoval';
 
 /** source image URL → Promise of the cutout's path (in flight) */
 const jobs = new Map();
@@ -16,6 +18,31 @@ let getSettings = () => ({});
 let saveSettings = () => {};
 
 class PluginMissingError extends Error {}
+
+let installHelpShown = false;
+
+/** How to install the server plugin, once per session. */
+function showInstallHelp() {
+    if (installHelpShown) {
+        return;
+    }
+    installHelpShown = true;
+    const { callGenericPopup, POPUP_TYPE } = SillyTavern.getContext();
+    const html = `
+        <h3>Remove background needs a server plugin</h3>
+        <div class="justifyLeft">
+            <p>SillyTavern extensions can't run code on your machine, so background removal runs in
+            the <a href="${PLUGIN_REPO}" target="_blank" rel="noopener">Background Removal</a> server plugin.</p>
+            <ol>
+                <li>Set <code>enableServerPlugins: true</code> in SillyTavern's <code>config.yaml</code>.</li>
+                <li>In SillyTavern's <code>plugins</code> folder run<br>
+                    <code>git clone ${PLUGIN_REPO}</code><br>
+                    then <code>npm install</code> inside the new folder.</li>
+                <li>Restart SillyTavern and reload this page.</li>
+            </ol>
+        </div>`;
+    callGenericPopup(html, POPUP_TYPE.TEXT, '', { allowVerticalScrolling: true });
+}
 
 /** Shows the plugin's model download progress while a cutout is being made. */
 function watchProgress() {
@@ -69,7 +96,7 @@ async function cutOut(src) {
             body: JSON.stringify({ image }),
         });
         if (response.status === 404) {
-            throw new PluginMissingError('The background removal server plugin is not installed');
+            throw new PluginMissingError('The Background Removal server plugin is not installed');
         }
         const data = await response.json().catch(() => ({}));
         if (!response.ok || !data.image) {
@@ -119,7 +146,7 @@ export function getCutout(src, onReady) {
                 failed.add(src);
                 console.error('[Yodayo Tavern Theme] background removal failed', error);
                 if (error instanceof PluginMissingError) {
-                    toastr.warning('Removing backgrounds needs the theme\'s server plugin. Copy the theme\'s server-plugin folder into SillyTavern\'s plugins folder, run npm install in it, set enableServerPlugins: true in config.yaml and restart SillyTavern.', 'Yodayo Tavern Theme', { timeOut: 15000 });
+                    showInstallHelp();
                 } else {
                     toastr.warning('Could not remove the background from the character image; showing it as is.', 'Yodayo Tavern Theme');
                 }

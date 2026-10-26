@@ -25,18 +25,23 @@ To install by hand, clone this repo into
 
 The **Remove background** button in the chat look editor cuts the character image out of
 its background with [ToonOut](https://huggingface.co/joelseytre/toonout) (BiRefNet
-fine-tuned for anime, MIT). It runs on your machine through a SillyTavern server plugin in
-`server-plugin/`, since extensions can't run code outside the browser:
+fine-tuned for anime). Extensions can't run code outside the browser, so this runs on your
+machine in a separate server plugin,
+[Background Removal](https://github.com/pervertir/SillyTavern-BackgroundRemoval). The rest
+of the theme works without it.
 
-1. Copy (or symlink) `server-plugin` to `SillyTavern/plugins/yodayo-bgremove`.
-2. In that folder run `npm install`.
-3. Set `enableServerPlugins: true` in SillyTavern's `config.yaml` and restart SillyTavern.
+1. Set `enableServerPlugins: true` in SillyTavern's `config.yaml`.
+2. In SillyTavern's `plugins` folder:
+   ```
+   git clone https://github.com/pervertir/SillyTavern-BackgroundRemoval
+   cd SillyTavern-BackgroundRemoval
+   npm install
+   ```
+3. Restart SillyTavern.
 
-The first cutout downloads the model (974 MB) into the plugin's `models` folder. The plugin
-uses the fastest backend it finds: CUDA on Linux with an NVIDIA GPU (CUDA 12), DirectML on
-Windows (any GPU), WebGPU through Metal on macOS or Vulkan on Linux (AMD and Intel GPUs),
-and the CPU otherwise. Set `YODAYO_BGREMOVE_BACKEND` (`cuda`, `dml`, `webgpu`, `coreml` or
-`cpu`) to force one. The model is unloaded after 10 minutes unused, since it holds several GB.
+The plugin runs on NVIDIA (CUDA), any GPU on Windows (DirectML), Apple silicon (Metal) and
+AMD or Intel on Linux (Vulkan), and falls back to the CPU. The first cutout downloads its
+974 MB model. Without the plugin, the button shows these steps.
 
 ## Settings
 
