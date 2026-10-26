@@ -4,6 +4,10 @@
 const HOME_ID = 'yt-home';
 const ACTIVE_CLASS = 'yt-home-active';
 const MAX_TAG_CHIPS = 24;
+/** Width of a recent chat's hover card, used to open it leftward near the right edge. */
+const RECENT_CARD_WIDTH = 360;
+/** SillyTavern's automatic chat file names, e.g. "Ino - 2026-10-25@23h33m30s707ms". */
+const DEFAULT_CHAT_NAME = /^(?:.* - )?\d{4}-\d{1,2}-\d{1,2} ?@\d{1,2}h ?\d{1,2}m ?\d{1,2}s ?\d{1,3} ?ms$/;
 
 let activeTagId = null;
 let searchText = '';
@@ -183,8 +187,40 @@ function buildHome() {
     const divider = el('div', 'yt-home-divider');
     divider.append(el('span', '', 'Characters'));
 
-    home.append(header, divider, el('div', 'yt-home-chips'), el('div', 'yt-home-grid'));
+    home.append(header, el('div', 'yt-home-recent'), divider, el('div', 'yt-home-chips'), el('div', 'yt-home-grid'));
     return home;
+}
+
+/** Label under a recent chat's circle: the chat's own name if the user renamed it. */
+function getRecentChatLabel(item) {
+    const file = item.getAttribute('data-file') ?? '';
+    const characterName = item.querySelector('.characterName')?.textContent?.trim() ?? '';
+    return file && !DEFAULT_CHAT_NAME.test(file) ? file : characterName || file;
+}
+
+/** Moves SillyTavern's welcome panel (recent chats) into the home, above the characters. */
+function adoptRecentChats(home) {
+    const chat = document.getElementById('chat');
+    const slot = home.querySelector('.yt-home-recent');
+    const panel = chat?.querySelector(':scope > .welcomePanel');
+    if (!slot || !panel) {
+        return;
+    }
+    slot.replaceChildren(panel);
+
+    for (const item of panel.querySelectorAll('.recentChat')) {
+        if (item.querySelector('.yt-recent-label')) {
+            continue;
+        }
+        const label = el('div', 'yt-recent-label', getRecentChatLabel(item));
+        item.querySelector('.avatar')?.after(label);
+        // near the right edge the hover card opens leftward so it stays on screen
+        item.addEventListener('mouseenter', () => {
+            const bounds = slot.getBoundingClientRect();
+            const left = item.getBoundingClientRect().left;
+            item.classList.toggle('yt-flip', left + RECENT_CARD_WIDTH > bounds.right);
+        });
+    }
 }
 
 function render() {
@@ -218,11 +254,13 @@ export function initTavernHome(isEnabled) {
             existing?.remove();
             return;
         }
+        const home = existing ?? buildHome();
         if (!existing) {
-            chat.prepend(buildHome());
+            chat.prepend(home);
             render();
             chat.scrollTop = 0;
         }
+        adoptRecentChats(home);
     };
 
     new MutationObserver(sync).observe(chat, { childList: true });
