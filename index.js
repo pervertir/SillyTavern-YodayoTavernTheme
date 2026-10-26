@@ -8,6 +8,7 @@ import { initSliderFills } from './sliders.js';
 import { initSwipeCounters } from './swipes.js';
 import { applyAdvanced, initAdvancedControls } from './advanced.js';
 import { initSettingsPopout } from './popout.js';
+import { placePagination } from './pagination.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
 /** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
@@ -178,6 +179,7 @@ function applySettings() {
     $('#yt_conflict_note').toggleClass('displayNone', !(settings.enabled && isMoonlitEnabled()));
     applyColors(settings);
     applyAdvanced(settings);
+    placePagination(settings.enabled);
     applySheetWidths(settings);
     applyVnHeight(settings);
     updateCharacterArt();

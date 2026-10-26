@@ -271,3 +271,41 @@ body.yodayo-tavern #Backgrounds .bg_folder_grid.bg_list {
     grid-template-columns: repeat(auto-fill, var(--yt-bg-folder));
     justify-content: start;
 }
+
+/* Page controls sit under their list (pagination.js), on a bar that stays visible at the
+   bottom while the list scrolls */
+body.yodayo-tavern .yt-pagination-bottom {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--yt-space-1);
+    margin-top: var(--yt-space-2);
+    padding: 6px var(--yt-space-2);
+    background-color: var(--yt-glass-raised);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern .yt-pagination-bottom:empty {
+    display: none;
+}
+
+/* in a flex column the bar is pushed to the bottom even when the list is short; some
+   containers carry SillyTavern's flex1 grow class, which would stretch the bar */
+body.yodayo-tavern .yt-pagination-bottom {
+    flex: 0 0 auto;
+    margin-top: auto;
+}
+
+body.yodayo-tavern #PersonaManagement .persona_management_left_column {
+    display: flex;
+    flex-direction: column;
+    /* SillyTavern's overflow:hidden here would stop the bar sticking to the menu's bottom */
+    overflow: visible;
+}

@@ -107,6 +107,7 @@ remembered.
 - `swipes.js`: marks single-swipe messages so their counter can hide
 - `advanced.js`: the Advanced settings and how each one is applied
 - `popout.js`: the floating settings window
+- `pagination.js`: moves page controls below their lists
 - `colors.js`: chat colors (all characters or per character), character image and export/import
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,
   composer, lists, overlays, layout). Every rule is scoped under `body.yodayo-tavern`.
