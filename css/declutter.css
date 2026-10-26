@@ -97,3 +97,15 @@ body.yodayo-tavern .extension_token_counter {
     font-size: var(--yt-text-xs);
     color: var(--yt-faint);
 }
+
+/* Character panel: the strip holding the current character's name is plain, not a boxed
+   bar (with no character open it was an empty dark bar under the list icon) */
+body.yodayo-tavern #right-nav-panel-tabs {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+body.yodayo-tavern #rm_button_selected_ch:has(> h2:empty) {
+    display: none;
+}

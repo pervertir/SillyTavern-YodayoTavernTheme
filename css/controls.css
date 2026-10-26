@@ -450,8 +450,7 @@ body.yodayo-tavern .settingsSectionWrap {
 }
 
 /* Tabs and segmented toggles */
-body.yodayo-tavern .tabs,
-body.yodayo-tavern #right-nav-panel-tabs {
+body.yodayo-tavern .tabs {
     gap: 2px;
     padding: 3px;
     background-color: var(--yt-surface);
