@@ -311,7 +311,7 @@ function buildHome() {
     divider.append(el('span', '', 'Characters'));
 
     const recentDivider = el('div', 'yt-home-divider yt-home-divider-recent');
-    recentDivider.append(el('span', '', 'Recent chats'));
+    recentDivider.append(el('span', '', 'Recent chats'), el('div', 'yt-home-divider-tools'));
 
     // tag chips, with the sort order on the right
     const filterBar = el('div', 'yt-home-filterbar');
@@ -334,7 +334,7 @@ function buildHome() {
     initChipRow(chipRow);
     filterBar.append(chipRow, sortLabel);
 
-    home.append(header, recentDivider, el('div', 'yt-home-recent'), divider, filterBar, el('div', 'yt-home-grid'));
+    home.append(header, recentDivider, el('div', 'yt-home-recent'), divider, filterBar, el('div', 'yt-home-grid'), buildAbout());
     return home;
 }
 
@@ -376,6 +376,116 @@ function addRecentArrows(slot, list) {
     update();
 }
 
+/** SillyTavern's version and links, behind an (i) button pinned to the bottom right. */
+function buildAbout() {
+    const about = el('div', 'yt-home-about');
+    const button = el('button', 'yt-home-info fa-solid fa-circle-info');
+    button.type = 'button';
+    button.title = 'About SillyTavern';
+    button.setAttribute('aria-label', button.title);
+    button.setAttribute('aria-expanded', 'false');
+
+    const card = el('div', 'yt-home-about-card');
+    card.hidden = true;
+    const head = el('div', 'yt-home-about-head');
+    const logo = el('img', 'yt-home-about-logo');
+    logo.src = 'img/logo.png';
+    logo.alt = '';
+    const text = el('div');
+    text.append(el('div', 'yt-home-about-name', 'SillyTavern'), el('div', 'yt-home-about-version', ''));
+    head.append(logo, text);
+
+    const links = el('div', 'yt-home-about-links');
+    for (const [label, icon, href] of [
+        ['Docs', 'fa-solid fa-book', 'https://docs.sillytavern.app/'],
+        ['GitHub', 'fa-brands fa-github', 'https://github.com/SillyTavern/SillyTavern'],
+        ['Discord', 'fa-brands fa-discord', 'https://discord.gg/sillytavern'],
+    ]) {
+        const link = el('a', 'yt-home-about-link');
+        link.href = href;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.append(el('i', icon), el('span', '', label));
+        links.append(link);
+    }
+    card.append(head, links);
+
+    const setOpen = (open) => {
+        card.hidden = !open;
+        button.setAttribute('aria-expanded', String(open));
+        about.classList.toggle('open', open);
+    };
+    button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        setOpen(card.hidden);
+    });
+    document.addEventListener('click', (event) => {
+        if (!card.hidden && !about.contains(/** @type {Node} */ (event.target))) {
+            setOpen(false);
+        }
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !card.hidden) {
+            setOpen(false);
+        }
+    });
+
+    about.append(card, button);
+    return about;
+}
+
+/** Recent chats settings and show/hide, next to the "Recent chats" heading; they press the
+ * welcome panel's own buttons, whose header the home hides. */
+function addRecentTools(home, panel) {
+    const tools = home.querySelector('.yt-home-divider-tools');
+    if (!tools || tools.dataset.panelBound === 'true' && tools.ytPanel === panel) {
+        return;
+    }
+    tools.dataset.panelBound = 'true';
+    tools.ytPanel = panel;
+    const proxy = (selector, icon, title) => {
+        const button = el('button', `yt-divider-tool fa-solid ${icon}`);
+        button.type = 'button';
+        button.title = title;
+        button.setAttribute('aria-label', title);
+        button.addEventListener('click', () => panel.querySelector(selector)?.click());
+        return button;
+    };
+    const settings = proxy('.recentChatsSettings', 'fa-gear', 'Recent chats settings');
+    const toggle = el('button', 'yt-divider-tool fa-solid fa-chevron-up');
+    toggle.type = 'button';
+    toggle.addEventListener('click', () => {
+        const hidden = panel.classList.contains('recentHidden');
+        panel.querySelector(hidden ? '.showRecentChats' : '.hideRecentChats')?.click();
+    });
+    const update = () => {
+        const hidden = panel.classList.contains('recentHidden');
+        toggle.classList.toggle('fa-chevron-up', !hidden);
+        toggle.classList.toggle('fa-chevron-down', hidden);
+        toggle.title = hidden ? 'Show recent chats' : 'Hide recent chats';
+        toggle.setAttribute('aria-label', toggle.title);
+        home.classList.toggle('yt-recent-collapsed', hidden);
+    };
+    // the theme used to keep the row visible even when SillyTavern had it hidden; respect
+    // the switch from now on, but start from what the user has been seeing
+    const { accountStorage } = SillyTavern.getContext();
+    if (accountStorage && accountStorage.getItem('yodayoTavernRecentShown') !== 'true') {
+        accountStorage.setItem('yodayoTavernRecentShown', 'true');
+        if (panel.classList.contains('recentHidden')) {
+            panel.querySelector('.showRecentChats')?.click();
+        }
+    }
+    new MutationObserver(update).observe(panel, { attributes: true, attributeFilter: ['class'] });
+    tools.replaceChildren(settings, toggle);
+    update();
+
+    const version = panel.querySelector('.welcomeHeaderVersionDisplay')?.textContent?.trim();
+    const versionNode = home.querySelector('.yt-home-about-version');
+    if (versionNode && version) {
+        versionNode.textContent = version.replace(/^SillyTavern\s*/i, '');
+    }
+}
+
 function adoptRecentChats(home) {
     const chat = document.getElementById('chat');
     const slot = home.querySelector('.yt-home-recent');
@@ -385,6 +495,7 @@ function adoptRecentChats(home) {
     }
     slot.replaceChildren(panel);
     addRecentArrows(slot, panel.querySelector('.recentChatList'));
+    addRecentTools(home, panel);
 
     for (const item of panel.querySelectorAll('.recentChat')) {
         if (item.querySelector('.yt-recent-label')) {
