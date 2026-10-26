@@ -1,5 +1,6 @@
 // Phone menu bar (mobile.css): which edge it sits on, and in a chat it slips away while you
-// scroll down to read and comes back when you scroll up, open a menu, or tap its handle.
+// scroll down to read and comes back when you scroll up, swipe in from its edge, open a menu,
+// or tap its handle.
 
 const PHONE_QUERY = window.matchMedia('(max-width: 1000px)');
 const HIDDEN_CLASS = 'yt-m-bar-hidden';
@@ -38,6 +39,51 @@ export function applyPhoneNav() {
     if (!canHide()) {
         setHidden(false);
     }
+}
+
+/** How far from the bar's edge a swipe may start, and how far it must travel */
+const SWIPE_ZONE = 96;
+const SWIPE_DISTANCE = 36;
+
+/**
+ * Swipe in from the bar's edge (up from the bottom, down from the top) to bring the bar back,
+ * and swipe it back toward its edge to tuck it away. Starts a little inside the edge, since
+ * the phone itself owns the last few pixels (the home indicator, the status bar).
+ */
+function initSwipe() {
+    let start = null;
+    document.addEventListener('touchstart', (event) => {
+        start = null;
+        if (!PHONE_QUERY.matches || event.touches.length !== 1 || !getSettings().enabled) {
+            return;
+        }
+        const touch = event.touches[0];
+        const top = getSettings().phoneNav === 'top';
+        const fromEdge = top ? touch.clientY : window.innerHeight - touch.clientY;
+        if (fromEdge <= SWIPE_ZONE) {
+            start = { x: touch.clientX, y: touch.clientY, top };
+        }
+    }, { passive: true });
+    document.addEventListener('touchend', (event) => {
+        const touch = event.changedTouches[0];
+        if (!start || !touch) {
+            return;
+        }
+        const dy = touch.clientY - start.y;
+        const dx = touch.clientX - start.x;
+        const fromTop = start.top;
+        start = null;
+        // mostly vertical, and far enough
+        if (Math.abs(dy) < SWIPE_DISTANCE || Math.abs(dy) < Math.abs(dx) * 1.5) {
+            return;
+        }
+        const inward = fromTop ? dy > 0 : dy < 0;
+        if (inward) {
+            setHidden(false);
+        } else if (canHide()) {
+            setHidden(true);
+        }
+    }, { passive: true });
 }
 
 /** @param {() => object} settingsGetter */
@@ -81,6 +127,8 @@ export function initPhoneNav(settingsGetter) {
             anchor = top;
         }
     }, { passive: true });
+
+    initSwipe();
 
     // a menu opening always brings the bar back (its sheet hangs off the bar)
     document.getElementById('top-settings-holder')?.addEventListener('click', () => setHidden(false), true);

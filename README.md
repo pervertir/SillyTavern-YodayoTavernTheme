@@ -57,7 +57,7 @@ pre-scaled to its on-screen size so it stays sharp.
 On phones the theme works like an app: the menu bar is a frosted tab bar along the bottom
 (or the top, in the settings), clear of the notch and the home indicator, with the open
 menu's icon highlighted. Menus rise from it as sheets. In a chat the bar slips away while you
-scroll down to read and comes back when you scroll up or tap the handle at the edge. The
+scroll down to read and comes back when you scroll up, swipe in from its edge (up from the bottom, down from the top) or tap the handle. The
 Tavern window fits the screen with two cards across, and nothing runs off the side.
 
 | Home | Chat | Character menu |
