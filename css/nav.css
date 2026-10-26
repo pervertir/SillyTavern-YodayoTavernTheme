@@ -165,8 +165,8 @@ body.yodayo-tavern .drawer-content h4 {
         border-top: 1px solid var(--yt-line);
     }
 
-    /* every drawer opens as a sheet beside the rail */
-    body.yodayo-tavern.yt-nav-rail .drawer-content:not(.fillRight) {
+    /* every drawer, the character panel included, opens as a sheet beside the rail */
+    body.yodayo-tavern.yt-nav-rail .drawer-content {
         position: fixed;
         top: var(--yt-rail-gap);
         left: var(--yt-sheet-left);
@@ -190,21 +190,7 @@ body.yodayo-tavern .drawer-content h4 {
     body.yodayo-tavern.yt-nav-rail #PersonaManagement { --yt-sheet-default: 800px; }
     body.yodayo-tavern.yt-nav-rail #right-nav-panel { --yt-sheet-default: 480px; }
 
-    body.yodayo-tavern.yt-nav-rail .drawer-content.fillLeft.openDrawer {
-        height: calc(100dvh - var(--yt-rail-gap) * 2);
-    }
-
-    /* the character panel slides in from the right edge */
-    body.yodayo-tavern.yt-nav-rail .drawer-content.fillRight {
-        position: fixed;
-        top: var(--yt-rail-gap);
-        right: var(--yt-rail-gap);
-        left: auto;
-        margin: 0;
-        width: min(var(--yt-sheet-user, var(--yt-sheet-default, 480px)), calc(100vw - var(--yt-rail-gap) - var(--yt-sheet-room)));
-        max-height: calc(100dvh - var(--yt-rail-gap) * 2);
-    }
-
+    body.yodayo-tavern.yt-nav-rail .drawer-content.fillLeft.openDrawer,
     body.yodayo-tavern.yt-nav-rail .drawer-content.fillRight.openDrawer {
         height: calc(100dvh - var(--yt-rail-gap) * 2);
     }
