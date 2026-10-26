@@ -269,7 +269,7 @@ body.yodayo-tavern .drawer-content h4 {
            sheet when its edge is dragged. A right-hand gutter holds the close button. */
         --yt-close-gutter: 36px;
         --yt-sheet-max: calc(100vw - var(--yt-sheet-offset) - var(--yt-sheet-room));
-        --yt-sheet-w: min(calc(var(--yt-sheet-user, var(--yt-sheet-default, 560px)) + var(--yt-close-gutter)), var(--yt-sheet-max));
+        --yt-sheet-w: min(calc(var(--yt-sheet-user, var(--yt-sheet-default, 596px)) + var(--yt-close-gutter)), var(--yt-sheet-max));
         width: var(--yt-sheet-w);
         padding-right: calc(var(--yt-space-3) + var(--yt-close-gutter));
         min-width: 0;
@@ -314,16 +314,17 @@ body.yodayo-tavern .drawer-content h4 {
         top: var(--yt-rail-gap);
     }
 
-    /* Default widths, from how much shorter each sheet gets as it widens */
-    body.yodayo-tavern.yt-nav-rail #left-nav-panel { --yt-sheet-default: 440px; }
-    body.yodayo-tavern.yt-nav-rail #rm_api_block { --yt-sheet-default: 480px; }
-    body.yodayo-tavern.yt-nav-rail #AdvancedFormatting { --yt-sheet-default: 860px; }
-    body.yodayo-tavern.yt-nav-rail #WorldInfo { --yt-sheet-default: 720px; }
-    body.yodayo-tavern.yt-nav-rail #user-settings-block { --yt-sheet-default: 820px; }
-    body.yodayo-tavern.yt-nav-rail #Backgrounds { --yt-sheet-default: 640px; }
-    body.yodayo-tavern.yt-nav-rail #rm_extensions_block { --yt-sheet-default: 640px; }
-    body.yodayo-tavern.yt-nav-rail #PersonaManagement { --yt-sheet-default: 800px; }
-    body.yodayo-tavern.yt-nav-rail #right-nav-panel { --yt-sheet-default: 480px; }
+    /* Default widths, from how much shorter each sheet gets as it widens, plus room for the
+       close button's gutter */
+    body.yodayo-tavern.yt-nav-rail #left-nav-panel { --yt-sheet-default: 476px; }
+    body.yodayo-tavern.yt-nav-rail #rm_api_block { --yt-sheet-default: 516px; }
+    body.yodayo-tavern.yt-nav-rail #AdvancedFormatting { --yt-sheet-default: 896px; }
+    body.yodayo-tavern.yt-nav-rail #WorldInfo { --yt-sheet-default: 756px; }
+    body.yodayo-tavern.yt-nav-rail #user-settings-block { --yt-sheet-default: 856px; }
+    body.yodayo-tavern.yt-nav-rail #Backgrounds { --yt-sheet-default: 676px; }
+    body.yodayo-tavern.yt-nav-rail #rm_extensions_block { --yt-sheet-default: 676px; }
+    body.yodayo-tavern.yt-nav-rail #PersonaManagement { --yt-sheet-default: 836px; }
+    body.yodayo-tavern.yt-nav-rail #right-nav-panel { --yt-sheet-default: 516px; }
 
     /* Keep the chat clear of a bar that's always shown, or of the menu button's corner */
     body.yodayo-tavern.yt-nav-rail.yt-nav-left:is(.yt-nav-always, .yt-nav-menu) {
