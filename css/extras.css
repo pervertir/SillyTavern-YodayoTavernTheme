@@ -1,0 +1,592 @@
+/* Everything else: the remaining SillyTavern windows, lists and widgets that had only
+   inherited the theme's colors and controls. Grouped by where they appear. */
+
+/* ---------- Shared: glass windows ---------- */
+body.yodayo-tavern #select_chat_popup,
+body.yodayo-tavern #character_popup,
+body.yodayo-tavern #rawPromptPopup {
+    background-color: var(--yt-glass);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-xl);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    color: var(--yt-text);
+}
+
+/* round ghost icon buttons used across these windows */
+body.yodayo-tavern :is(#select_chat_cross, #character_cross, .select_chat_actions > div, .renameChatButton, .attachmentListItem .right_menu_button, .mes_file_container .right_menu_button, .dataMaidDeleteAll) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 9999px;
+    color: var(--yt-muted);
+    opacity: 1;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color var(--yt-fast) var(--yt-ease), color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern :is(#select_chat_cross, #character_cross, .select_chat_actions > div, .renameChatButton, .attachmentListItem .right_menu_button, .mes_file_container .right_menu_button, .dataMaidDeleteAll):hover {
+    background-color: var(--yt-surface-3);
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern :is(#select_chat_cross, #character_cross)::before {
+    content: "\f00d";
+}
+
+body.yodayo-tavern .select_chat_actions > .PastChat_cross:hover,
+body.yodayo-tavern .attachmentListItem .deleteAttachmentButton:hover,
+body.yodayo-tavern .mes_file_container .mes_file_delete:hover {
+    color: var(--yt-danger);
+}
+
+/* ---------- Chat manager (past chats) ---------- */
+body.yodayo-tavern #shadow_select_chat_popup {
+    background-color: rgba(0, 0, 0, 0.45);
+}
+
+body.yodayo-tavern #select_chat_popup {
+    width: min(760px, calc(100vw - 32px));
+    max-width: min(760px, calc(100vw - 32px));
+    max-height: calc(100dvh - 48px);
+    padding: var(--yt-space-4);
+    gap: var(--yt-space-3);
+}
+
+body.yodayo-tavern #select_chat_popup [name="selectChatPopupHeader"] {
+    flex-wrap: wrap;
+    gap: var(--yt-space-2);
+}
+
+body.yodayo-tavern #selectChatPopupHeaderText {
+    font-size: var(--yt-text-md);
+    font-weight: 600;
+    text-align: left;
+}
+
+body.yodayo-tavern #select_chat_search {
+    border-radius: 9999px;
+    padding-left: var(--yt-space-4);
+    min-width: 160px;
+}
+
+body.yodayo-tavern #select_chat_div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 4px;
+}
+
+body.yodayo-tavern #select_chat_div hr {
+    display: none;
+}
+
+body.yodayo-tavern :is(.select_chat_block, .swipe_picker_block) {
+    margin-top: 0;
+    padding: 10px 12px;
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+    transition: background-color var(--yt-fast) var(--yt-ease), border-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern :is(.select_chat_block, .swipe_picker_block):hover {
+    background-color: var(--yt-surface-2);
+    border-color: var(--yt-line-strong);
+}
+
+body.yodayo-tavern :is(.select_chat_block, .swipe_picker_block)[highlight] {
+    background-color: var(--yt-accent-soft);
+    border-color: var(--yt-accent-line);
+}
+
+body.yodayo-tavern .select_chat_block_filename {
+    color: var(--yt-text);
+    font-weight: 600;
+    opacity: 1;
+}
+
+body.yodayo-tavern .select_chat_info .select_chat_block_filename_item {
+    color: var(--yt-muted);
+    font-size: var(--yt-text-xs);
+    opacity: 1;
+}
+
+body.yodayo-tavern .select_chat_info {
+    gap: var(--yt-space-2);
+}
+
+body.yodayo-tavern .select_chat_actions {
+    gap: 0;
+}
+
+body.yodayo-tavern .select_chat_block_mes {
+    margin-top: 4px;
+    color: var(--yt-muted);
+    font-size: var(--yt-text-sm);
+    line-height: 1.5;
+}
+
+/* ---------- Character editor ---------- */
+/* Advanced Definitions: a full-height glass window instead of a tab hanging off the top */
+body.yodayo-tavern #character_popup {
+    top: var(--yt-space-3);
+    height: calc(100dvh - 32px);
+    min-height: calc(100dvh - 32px);
+    max-height: calc(100dvh - 32px);
+    width: min(820px, calc(100vw - 32px));
+    max-width: min(820px, calc(100vw - 32px));
+    padding: var(--yt-space-4) var(--yt-space-5) var(--yt-space-4) var(--yt-space-4);
+}
+
+body.yodayo-tavern #character_popup_text {
+    font-size: var(--yt-text-md);
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern #character_popup_text h3 {
+    display: inline;
+    color: var(--yt-text);
+    font-weight: 600;
+}
+
+body.yodayo-tavern #character_popup > hr {
+    border: none;
+    border-top: 1px solid var(--yt-line);
+}
+
+body.yodayo-tavern #character_cross {
+    top: var(--yt-space-3);
+    right: var(--yt-space-3);
+    z-index: 2;
+}
+
+body.yodayo-tavern #character_popup .inline-drawer {
+    margin-bottom: var(--yt-space-2);
+    padding: var(--yt-space-2) var(--yt-space-3);
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern #character_popup .editor_maximize {
+    filter: none;
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern #character_popup .editor_maximize:hover {
+    color: var(--yt-accent);
+}
+
+/* creation form: the avatar picker is a rounded portrait with a ring on hover */
+body.yodayo-tavern #avatar_div_div {
+    border-radius: var(--yt-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 0 0 1px var(--yt-line);
+    transition: box-shadow var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern #avatar_div_div:hover {
+    box-shadow: 0 0 0 2px var(--yt-accent);
+}
+
+body.yodayo-tavern #avatar_load_preview {
+    border-radius: var(--yt-radius-lg);
+    object-fit: cover;
+    object-position: top;
+}
+
+body.yodayo-tavern #form_create .form_create_bottom_buttons_block {
+    gap: var(--yt-space-1);
+}
+
+/* ---------- Message images, video and files ---------- */
+body.yodayo-tavern .mes :is(.mes_img_container, .mes_video_container) {
+    border-radius: var(--yt-radius-lg);
+    border: 1px solid var(--yt-line);
+    box-shadow: var(--yt-shadow-sm);
+}
+
+body.yodayo-tavern :is(.mes_img_controls, .mes_video_controls, .mes_img_swipes) {
+    padding: 8px;
+    background: linear-gradient(rgba(0, 0, 0, 0.55), transparent);
+}
+
+body.yodayo-tavern .mes_img_swipes {
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.55));
+}
+
+body.yodayo-tavern :is(.mes_img_controls, .mes_video_controls, .mes_img_swipes) .right_menu_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 9999px;
+    font-size: 13px;
+    color: #fff;
+    background-color: rgba(20, 20, 24, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    text-shadow: none !important;
+    filter: none;
+}
+
+body.yodayo-tavern :is(.mes_img_controls, .mes_video_controls, .mes_img_swipes) .right_menu_button:hover {
+    background-color: var(--yt-accent);
+    color: var(--yt-accent-ink);
+}
+
+body.yodayo-tavern .mes_img_swipe_counter {
+    padding: 2px 8px;
+    border-radius: 9999px;
+    background-color: rgba(20, 20, 24, 0.45);
+    color: #fff;
+    font-size: var(--yt-text-xs);
+}
+
+body.yodayo-tavern .mes_file_container {
+    display: flex;
+    align-items: center;
+    gap: var(--yt-space-2);
+    width: fit-content;
+    max-width: 100%;
+    padding: 6px 6px 6px 12px;
+    background-color: var(--yt-panel-surface);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern .mes_file_icon {
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern .mes_file_name {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.yodayo-tavern .mes_file_size {
+    color: var(--yt-muted);
+    font-size: var(--yt-text-xs);
+}
+
+/* checkpoint flag on messages that have one */
+body.yodayo-tavern .mes_bookmark {
+    color: var(--yt-accent);
+}
+
+/* ---------- Zoomed avatar window ---------- */
+body.yodayo-tavern .zoomed_avatar img {
+    border-radius: var(--yt-radius-xl);
+    border: 1px solid var(--yt-line-strong);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+body.yodayo-tavern .zoomed_avatar .panelControlBar {
+    top: 10px;
+    right: 10px;
+    padding: 2px;
+    border-radius: 9999px;
+    background-color: var(--yt-glass-raised);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
+    border: 1px solid var(--yt-line);
+}
+
+/* ---------- Code blocks: syntax colors from the theme ---------- */
+body.yodayo-tavern .hljs {
+    background: transparent;
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern :is(.hljs-comment, .hljs-quote) {
+    color: var(--yt-faint);
+    font-style: italic;
+}
+
+body.yodayo-tavern :is(.hljs-keyword, .hljs-selector-tag, .hljs-built_in, .hljs-doctag, .hljs-meta .hljs-keyword) {
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern :is(.hljs-string, .hljs-regexp, .hljs-addition, .hljs-meta .hljs-string) {
+    color: var(--yt-success);
+}
+
+body.yodayo-tavern :is(.hljs-number, .hljs-literal, .hljs-symbol, .hljs-bullet, .hljs-variable, .hljs-template-variable) {
+    color: var(--yt-warning);
+}
+
+body.yodayo-tavern :is(.hljs-title, .hljs-title.function_, .hljs-section, .hljs-name, .hljs-selector-id, .hljs-selector-class) {
+    color: #8ab4f8;
+}
+
+body.yodayo-tavern :is(.hljs-attr, .hljs-attribute, .hljs-property, .hljs-params, .hljs-type, .hljs-class .hljs-title) {
+    color: color-mix(in srgb, var(--yt-accent) 55%, #ffffff);
+}
+
+body.yodayo-tavern :is(.hljs-deletion) {
+    color: var(--yt-danger);
+}
+
+body.yodayo-tavern :is(.hljs-meta, .hljs-punctuation, .hljs-tag) {
+    color: var(--yt-muted);
+}
+
+/* ---------- Data Bank (attachments) ---------- */
+body.yodayo-tavern .attachmentsList {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+body.yodayo-tavern .attachmentListItem {
+    padding: 6px 6px 6px 10px;
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-md);
+    transition: border-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .attachmentListItem:hover {
+    border-color: var(--yt-line-strong);
+}
+
+body.yodayo-tavern .attachmentListItem.disabled {
+    opacity: 0.55;
+}
+
+body.yodayo-tavern .attachmentFileIcon {
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern .attachmentListItemName {
+    font-weight: 500;
+}
+
+body.yodayo-tavern :is(.attachmentListItemSize, .attachmentListItemCreated) {
+    color: var(--yt-muted);
+    font-size: var(--yt-text-xs);
+}
+
+body.yodayo-tavern .attachmentSearch {
+    border-radius: 9999px;
+    padding-left: var(--yt-space-4);
+}
+
+body.yodayo-tavern :is(.characterAttachmentsTitle, .chatAttachmentsTitle, .globalAttachmentsTitle) {
+    font-size: var(--yt-text-md);
+    font-weight: 600;
+}
+
+/* ---------- Prompt itemization and raw prompt ---------- */
+body.yodayo-tavern .tokenItemizingMaintext {
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern .tokenItemizingSubclass {
+    color: var(--yt-muted);
+    font-size: var(--yt-text-sm);
+    padding-left: var(--yt-space-3);
+    border-left: 2px solid var(--yt-line);
+}
+
+body.yodayo-tavern #rawPromptPopup {
+    padding: var(--yt-space-4);
+}
+
+body.yodayo-tavern #rawPromptWrapper {
+    padding: var(--yt-space-3);
+    background-color: color-mix(in srgb, var(--yt-bg) 60%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-md);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: var(--yt-text-sm);
+    line-height: 1.55;
+}
+
+/* ---------- Regex scripts ---------- */
+body.yodayo-tavern .regex-script-label {
+    align-items: center;
+    gap: var(--yt-space-2);
+    margin-bottom: 4px;
+    padding: 4px 4px 4px 10px;
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-md);
+    transition: border-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .regex-script-label:hover {
+    border-color: var(--yt-line-strong);
+}
+
+body.yodayo-tavern .regex-script-label .regex_script_name {
+    font-weight: 500;
+}
+
+body.yodayo-tavern .regex-script-label:has(.disable_regex:checked) .regex_script_name {
+    color: var(--yt-muted);
+    text-decoration: line-through;
+}
+
+body.yodayo-tavern .regex-script-label .drag-handle {
+    color: var(--yt-faint);
+    cursor: grab;
+}
+
+body.yodayo-tavern .regex-script-label .regex-toggle-on {
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern .regex-script-label .menu_button {
+    width: 28px;
+    height: 28px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 9999px;
+    background-color: transparent;
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern .regex-script-label .menu_button:hover {
+    background-color: var(--yt-surface-3);
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern .regex-script-label .delete_regex:hover {
+    color: var(--yt-danger);
+}
+
+body.yodayo-tavern .regex_editor .info-block {
+    border-radius: var(--yt-radius-md);
+}
+
+/* ---------- Group members ---------- */
+body.yodayo-tavern .group_member .avatar img {
+    border-radius: 9999px;
+    object-fit: cover;
+    object-position: top;
+}
+
+body.yodayo-tavern .group_member.disabled {
+    opacity: 0.55;
+}
+
+body.yodayo-tavern .group_member .group_member_icon .right_menu_button {
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern .group_member .group_member_icon .right_menu_button:hover {
+    color: var(--yt-text);
+}
+
+/* ---------- Extension panels: TTS voice map, Translate, Token Counter ---------- */
+body.yodayo-tavern .tts_block {
+    gap: var(--yt-space-2);
+    align-items: center;
+}
+
+body.yodayo-tavern .tts-button,
+body.yodayo-tavern .mes_narrate {
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern .tts_voicemap_block_char {
+    padding: 6px 10px;
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-md);
+}
+
+body.yodayo-tavern #token_counter_textarea,
+body.yodayo-tavern .tokenizer_textarea {
+    border-radius: var(--yt-radius-md);
+}
+
+body.yodayo-tavern :is(#tokenized_chunks_display, #token_counter_ids) {
+    padding: var(--yt-space-2);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-md);
+    background-color: color-mix(in srgb, var(--yt-bg) 50%, transparent);
+}
+
+/* ---------- Account: user profile, Data Cleanup, secret keys ---------- */
+body.yodayo-tavern .userName {
+    font-weight: 600;
+}
+
+body.yodayo-tavern :is(.userHandle, .userCreated) {
+    color: var(--yt-muted);
+    font-size: var(--yt-text-sm);
+}
+
+body.yodayo-tavern .userRole {
+    display: inline-block;
+    padding: 1px 10px;
+    border-radius: 9999px;
+    background-color: var(--yt-accent-soft);
+    color: var(--yt-accent);
+    font-size: var(--yt-text-xs);
+    font-weight: 600;
+}
+
+body.yodayo-tavern .dataMaidCategory {
+    margin-bottom: var(--yt-space-2);
+    padding: var(--yt-space-2) var(--yt-space-3);
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern .dataMaidCategoryName {
+    font-weight: 600;
+}
+
+body.yodayo-tavern :is(.dataMaidCategoryDetails, .dataMaidItemInfo) {
+    color: var(--yt-muted);
+    font-size: var(--yt-text-xs);
+}
+
+body.yodayo-tavern .dataMaidItem {
+    padding: 6px 0;
+    border-top: 1px solid var(--yt-line);
+}
+
+body.yodayo-tavern .dataMaidItemName {
+    font-weight: 500;
+}
+
+body.yodayo-tavern .secretKeyManagerItem {
+    margin-bottom: var(--yt-space-2);
+    padding: var(--yt-space-2) var(--yt-space-3);
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern .secretKeyManagerItem.active {
+    border-color: var(--yt-accent-line);
+    background-color: var(--yt-accent-soft);
+}
+
+body.yodayo-tavern .secretKeyManagerItemId {
+    color: var(--yt-muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: var(--yt-text-xs);
+}
+
+body.yodayo-tavern .secretKeyManagerItemSubtitle {
+    color: var(--yt-muted);
+    font-size: var(--yt-text-sm);
+}
