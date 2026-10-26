@@ -33,3 +33,162 @@ body.yodayo-tavern .tag.selected {
     color: var(--yt-accent-ink);
     border-color: var(--yt-accent);
 }
+
+/* Character list rows */
+body.yodayo-tavern #rm_print_characters_block {
+    gap: 2px;
+    padding: var(--yt-space-1) 0;
+}
+
+body.yodayo-tavern .character_select,
+body.yodayo-tavern .group_select,
+body.yodayo-tavern .bogus_folder_select {
+    padding: var(--yt-space-2);
+    gap: var(--yt-space-3);
+}
+
+body.yodayo-tavern .character_select .avatar img,
+body.yodayo-tavern .group_select .avatar img {
+    border: none;
+    box-shadow: 0 0 0 1px var(--yt-line);
+}
+
+body.yodayo-tavern .character_select .ch_name,
+body.yodayo-tavern .group_select .ch_name {
+    font-weight: 600;
+}
+
+body.yodayo-tavern .character_select .ch_description,
+body.yodayo-tavern .ch_add_placeholder,
+body.yodayo-tavern .character_version {
+    color: var(--yt-muted);
+    font-size: var(--yt-text-sm);
+}
+
+body.yodayo-tavern .character_select.selected,
+body.yodayo-tavern .group_select.selected {
+    background-color: var(--yt-accent-soft);
+    border-color: var(--yt-accent-line);
+}
+
+/* Grid mode: portrait cards */
+body.yodayo-tavern.charListGrid #rm_print_characters_block {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: var(--yt-space-2);
+    padding: var(--yt-space-2) 0;
+}
+
+body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .bogus_folder_select {
+    width: auto;
+    padding: var(--yt-space-2);
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line);
+    transition: transform var(--yt-fast) var(--yt-ease), border-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select:hover,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select:hover {
+    transform: translateY(-2px);
+    border-color: var(--yt-accent-line);
+}
+
+/* Tag filters */
+body.yodayo-tavern .rm_tag_filter .tag,
+body.yodayo-tavern .tags_inline .tag {
+    font-size: var(--yt-text-xs);
+}
+
+body.yodayo-tavern .tag.excluded {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+/* Search box above the list */
+body.yodayo-tavern #character_search_bar {
+    border-radius: 9999px;
+    padding-left: var(--yt-space-4);
+}
+
+/* Pagination: round page chips */
+body.yodayo-tavern .paginationjs-pages ul li a {
+    min-width: 28px;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 6px;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern .paginationjs-pages ul li a:hover {
+    background-color: var(--yt-surface-2);
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern .paginationjs-pages ul li.active a {
+    background-color: var(--yt-accent);
+    color: var(--yt-accent-ink);
+}
+
+body.yodayo-tavern .paginationjs-nav {
+    color: var(--yt-muted);
+    font-size: var(--yt-text-sm);
+}
+
+/* World Info entries */
+body.yodayo-tavern .world_entry {
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+    padding: var(--yt-space-2) var(--yt-space-3);
+    margin-bottom: var(--yt-space-2);
+}
+
+body.yodayo-tavern .world_entry:hover {
+    border-color: var(--yt-line-strong);
+}
+
+body.yodayo-tavern .world_entry .inline-drawer-header {
+    padding: var(--yt-space-1) 0;
+}
+
+/* Persona cards */
+body.yodayo-tavern #user_avatar_block .avatar-container {
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+    background-color: var(--yt-surface);
+    padding: var(--yt-space-2);
+    transition: border-color var(--yt-fast) var(--yt-ease), transform var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern #user_avatar_block .avatar-container:hover {
+    border-color: var(--yt-line-strong);
+    transform: translateY(-1px);
+}
+
+body.yodayo-tavern #user_avatar_block .avatar-container.selected {
+    border-color: var(--yt-accent);
+    box-shadow: 0 0 0 3px var(--yt-accent-soft);
+}
+
+/* Background thumbnails */
+body.yodayo-tavern .bg_example {
+    border-radius: var(--yt-radius-lg);
+    border: 1px solid var(--yt-line);
+    overflow: hidden;
+    transition: transform var(--yt-fast) var(--yt-ease), box-shadow var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .bg_example:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--yt-shadow-sm);
+}
+
+body.yodayo-tavern .bg_example.selected-background {
+    border-color: var(--yt-accent);
+    box-shadow: 0 0 0 3px var(--yt-accent-soft);
+}

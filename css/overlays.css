@@ -1,19 +1,102 @@
-/* Popups and toasts */
+/* Overlays: popups, toasts and the loading screen */
+
+/* Popups: centered sheets over a dimmed, blurred backdrop */
 body.yodayo-tavern .popup,
 body.yodayo-tavern dialog.popup {
     background-color: var(--yt-bg);
     border: 1px solid var(--yt-line-strong);
-    border-radius: var(--yt-radius-lg);
+    border-radius: var(--yt-radius-xl);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+    padding: var(--yt-space-4) var(--yt-space-5);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
+body.yodayo-tavern .popup::backdrop,
+body.yodayo-tavern dialog.popup::backdrop {
+    background-color: rgba(10, 11, 12, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+body.yodayo-tavern .popup .popup-content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: var(--yt-space-2);
+}
+
+body.yodayo-tavern .popup .popup-controls {
+    gap: var(--yt-space-2);
+    justify-content: flex-end;
+    padding-top: var(--yt-space-3);
+}
+
+body.yodayo-tavern .popup .popup-controls .menu_button {
+    min-width: 88px;
+    margin: 0;
+}
+
+/* the confirming action is the primary button */
+body.yodayo-tavern .popup .popup-button-ok {
+    background-color: var(--yt-accent);
+    border-color: var(--yt-accent);
+    color: var(--yt-accent-ink);
+}
+
+body.yodayo-tavern .popup .popup-button-ok:hover {
+    background-color: var(--yt-accent) !important;
+    filter: brightness(1.08);
+}
+
+body.yodayo-tavern .popup .popup-button-close {
+    color: var(--yt-muted);
+}
+
+/* Toasts: compact cards with a stripe for their type */
 body.yodayo-tavern #toast-container > div {
     background-color: var(--yt-surface-2);
+    background-image: none;
+    color: var(--yt-text);
     border: 1px solid var(--yt-line);
+    border-left: 3px solid var(--yt-muted);
     border-radius: var(--yt-radius-lg);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--yt-shadow);
+    /* toastr draws the type icon in the left padding */
+    padding: var(--yt-space-3) var(--yt-space-4) var(--yt-space-3) 44px;
     opacity: 1;
 }
 
 body.yodayo-tavern #toast-container > .toast-success {
-    border-left: 3px solid var(--yt-accent);
+    border-left-color: var(--yt-success);
+}
+
+body.yodayo-tavern #toast-container > .toast-error {
+    border-left-color: var(--yt-danger);
+}
+
+body.yodayo-tavern #toast-container > .toast-warning {
+    border-left-color: var(--yt-warning);
+}
+
+body.yodayo-tavern #toast-container > .toast-info {
+    border-left-color: var(--yt-accent);
+}
+
+body.yodayo-tavern #toast-container .toast-title {
+    font-weight: 600;
+}
+
+body.yodayo-tavern #toast-container .toast-message {
+    color: var(--yt-muted);
+    font-size: var(--yt-text-sm);
+}
+
+/* Loading screen */
+body.yodayo-tavern #preloader {
+    background-color: var(--yt-bg);
+    backdrop-filter: none;
+}
+
+body.yodayo-tavern #load-spinner {
+    color: var(--yt-accent);
 }
