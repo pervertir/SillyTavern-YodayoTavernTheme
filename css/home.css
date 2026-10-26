@@ -496,6 +496,8 @@ body.yodayo-tavern .yt-home-grid {
 }
 
 body.yodayo-tavern .yt-card {
+    min-width: 0;
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -518,13 +520,19 @@ body.yodayo-tavern .yt-card:hover {
 
 body.yodayo-tavern .yt-card-media {
     position: relative;
+    width: 100%;
     aspect-ratio: 1;
+    /* the picture never sizes the box: Safari let a card's full-size image stretch it to the
+       picture's own height (inside a <button>), which blew each card up to fill the screen */
+    contain: size layout;
     background-color: var(--yt-surface-2);
     border-radius: var(--yt-radius);
     overflow: hidden;
 }
 
 body.yodayo-tavern .yt-card-media img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -621,8 +629,8 @@ body.yodayo-tavern .yt-home-empty {
 /* Group cards show up to four members side by side */
 body.yodayo-tavern .yt-card-group .yt-card-media {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
     gap: 2px;
 }
 
@@ -640,6 +648,8 @@ body.yodayo-tavern .yt-card-group .yt-card-collage-3 img:first-child {
 }
 
 body.yodayo-tavern .yt-card-group .yt-card-media img {
+    position: static;
+    min-width: 0;
     min-height: 0;
 }
 
