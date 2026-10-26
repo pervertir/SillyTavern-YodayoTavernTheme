@@ -129,3 +129,143 @@ body.yodayo-tavern .ui-state-highlight {
     border: 1px dashed var(--yt-accent-line);
     border-radius: var(--yt-radius-md);
 }
+
+/* Tag manager (Characters panel → tag filter → manage tags) */
+body.yodayo-tavern dialog.popup:has(#tag_view_list) {
+    width: min(720px, calc(100vw - 32px));
+    max-width: none;
+}
+
+body.yodayo-tavern #tag_view_list > .title_restorable {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--yt-space-2) var(--yt-space-3);
+    margin-bottom: var(--yt-space-2);
+}
+
+body.yodayo-tavern #tag_view_list > .title_restorable h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+body.yodayo-tavern #tag_view_list > .title_restorable > .flex-container {
+    gap: var(--yt-space-1);
+}
+
+body.yodayo-tavern #tag_view_list > .title_restorable .menu_button {
+    margin: 0;
+    min-height: 30px;
+    border-radius: 9999px;
+    font-size: var(--yt-text-sm);
+}
+
+body.yodayo-tavern #tag_view_list .tag_view_create {
+    background-color: var(--yt-accent);
+    border-color: var(--yt-accent);
+    color: var(--yt-accent-ink);
+}
+
+/* help text under the sort mode */
+body.yodayo-tavern #tag_view_list > .justifyLeft {
+    color: var(--yt-faint);
+    font-size: var(--yt-text-xs);
+    text-align: left;
+}
+
+body.yodayo-tavern #tag_view_list .tag_view_list_tags {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 4px;
+}
+
+/* each tag is a row: handle, folder, visibility, colors, name, count, delete */
+body.yodayo-tavern #tag_view_list .tag_view_item {
+    display: flex;
+    align-items: center;
+    gap: var(--yt-space-2);
+    min-height: 44px;
+    margin: 0;
+    padding: 6px var(--yt-space-3);
+    background-color: color-mix(in srgb, var(--yt-surface) 55%, transparent);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+    transition: border-color var(--yt-fast) var(--yt-ease), background-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern #tag_view_list .tag_view_item:hover {
+    border-color: var(--yt-line-strong);
+    background-color: color-mix(in srgb, var(--yt-surface-2) 70%, transparent);
+}
+
+body.yodayo-tavern #tag_view_list .drag-handle {
+    color: var(--yt-faint);
+    cursor: grab;
+}
+
+body.yodayo-tavern #tag_view_list .tag_view_item .right_menu_button {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    border-radius: 9999px;
+    font-size: 13px;
+    filter: none;
+    opacity: 1;
+}
+
+/* "no folder" is the normal case: a faint folder icon instead of a red cross on it */
+body.yodayo-tavern #tag_view_list .tag_as_folder.no_folder {
+    color: var(--yt-faint);
+}
+
+body.yodayo-tavern #tag_view_list .tag_as_folder.no_folder .tag_folder_indicator {
+    display: none;
+}
+
+body.yodayo-tavern #tag_view_list .tag_as_folder:not(.no_folder) {
+    color: var(--yt-accent);
+}
+
+/* color pickers become pill swatches */
+body.yodayo-tavern #tag_view_list toolcool-color-picker {
+    --tool-cool-color-picker-btn-bg: transparent;
+    --tool-cool-color-picker-btn-border-color: transparent;
+    --tool-cool-color-picker-btn-border-color-inner: var(--yt-line-strong);
+    --tool-cool-color-picker-btn-border-radius: 9999px;
+    --tool-cool-color-picker-btn-border-radius-inner: 9999px;
+}
+
+body.yodayo-tavern #tag_view_list .tag_view_color_picker {
+    display: flex;
+    align-items: center;
+}
+
+body.yodayo-tavern #tag_view_list .tag_view_name {
+    margin: 0 var(--yt-space-1);
+    cursor: text;
+}
+
+body.yodayo-tavern #tag_view_list .tag_view_counter {
+    margin-left: auto;
+    color: var(--yt-muted);
+    font-size: var(--yt-text-sm);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    text-align: right;
+}
+
+body.yodayo-tavern #tag_view_list .tag_delete {
+    color: var(--yt-faint);
+}
+
+body.yodayo-tavern #tag_view_list .tag_delete:hover {
+    color: var(--yt-danger);
+    background-color: color-mix(in srgb, var(--yt-danger) 14%, transparent);
+}
