@@ -353,6 +353,86 @@ function applyRecentChatsDefaults() {
     saveSettings();
 }
 
+const POSITIONS = Object.freeze([
+    { value: 'left', icon: 'fa-arrow-left', label: 'Chat on the left' },
+    { value: 'middle', icon: 'fa-arrows-left-right-to-line', label: 'Chat in the middle' },
+    { value: 'right', icon: 'fa-arrow-right', label: 'Chat on the right' },
+]);
+
+/** Arrow button left of the message box, like Yodayo's, that moves the chat left, middle or right. */
+function initPositionToggle() {
+    const form = document.getElementById('leftSendForm');
+    if (!form) {
+        return;
+    }
+    const wrap = document.createElement('div');
+    wrap.id = 'yt-position-toggle';
+
+    const button = document.createElement('div');
+    button.className = 'yt-position-button fa-solid interactable';
+    button.tabIndex = 0;
+    button.setAttribute('role', 'button');
+    button.setAttribute('aria-haspopup', 'true');
+
+    const menu = document.createElement('div');
+    menu.className = 'yt-position-menu';
+    menu.hidden = true;
+    for (const position of POSITIONS) {
+        const option = document.createElement('div');
+        option.className = `yt-position-option fa-solid ${position.icon} interactable`;
+        option.title = position.label;
+        option.tabIndex = 0;
+        option.setAttribute('role', 'button');
+        option.dataset.value = position.value;
+        const choose = (event) => {
+            event.stopPropagation();
+            getSettings().chatPosition = position.value;
+            applySettings();
+            syncSettingsUI();
+            saveSettings();
+            menu.hidden = true;
+            refresh();
+        };
+        option.addEventListener('click', choose);
+        option.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                choose(event);
+            }
+        });
+        menu.append(option);
+    }
+
+    const refresh = () => {
+        const current = POSITIONS.find(p => p.value === getSettings().chatPosition) ?? POSITIONS[1];
+        button.className = `yt-position-button fa-solid ${current.icon} interactable`;
+        button.title = `${current.label} (click to change)`;
+        for (const option of menu.children) {
+            option.classList.toggle('active', option.dataset.value === current.value);
+        }
+    };
+
+    const toggle = (event) => {
+        event.stopPropagation();
+        menu.hidden = !menu.hidden;
+    };
+    button.addEventListener('click', toggle);
+    button.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            toggle(event);
+        }
+    });
+    document.addEventListener('click', (event) => {
+        if (!wrap.contains(/** @type {Node} */ (event.target))) {
+            menu.hidden = true;
+        }
+    });
+
+    wrap.append(button, menu);
+    form.prepend(wrap);
+    refresh();
+    $('#yt_chat_position').on('change', refresh);
+}
+
 /** Arrow at the top of a chat that closes it and returns to the home page. */
 function initBackButton() {
     const sheld = document.getElementById('sheld');
@@ -404,6 +484,7 @@ async function init() {
 
     initRailToggle();
     initBackButton();
+    initPositionToggle();
     applyRecentChatsDefaults();
     initSheetResizers({ getSettings, saveSettings });
     initSliderFills();
