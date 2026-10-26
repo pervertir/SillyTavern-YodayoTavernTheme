@@ -9,6 +9,7 @@ import { initSwipeCounters } from './swipes.js';
 import { applyAdvanced, initAdvancedControls } from './advanced.js';
 import { initSettingsPopout } from './popout.js';
 import { placePagination } from './pagination.js';
+import { initSharpAvatars, sharpenAvatars } from './avatars.js';
 import { applyBackgroundOverride, getEffectiveOverrides, initCharacterSettings } from './charsettings.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
@@ -203,6 +204,8 @@ function applySettings() {
     applyColors(settings, overrides.colors);
     applyAdvanced({ ...settings, advanced: { ...settings.advanced, ...overrides.advanced } });
     applyBackgroundOverride(settings);
+    // avatar size may have changed
+    requestAnimationFrame(() => sharpenAvatars());
     placePagination(settings.enabled);
     applySheetWidths(settings);
     applyVnHeight(settings);
@@ -572,6 +575,8 @@ async function init() {
         blur.id = 'yt-chat-blur';
         document.body.append(blur);
     }
+
+    initSharpAvatars(() => getSettings().enabled);
 
     refreshCharacterSettings = initCharacterSettings({
         getSettings,
