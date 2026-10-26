@@ -79,20 +79,44 @@ body.yodayo-tavern.charListGrid #rm_print_characters_block {
     padding: var(--yt-space-2) 0;
 }
 
+/* no box behind each portrait and name; hovering lifts it and rings the avatar */
 body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select,
 body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select,
 body.yodayo-tavern.charListGrid #rm_print_characters_block .bogus_folder_select {
     width: auto;
-    padding: var(--yt-space-2);
-    background-color: var(--yt-surface);
-    border: 1px solid var(--yt-line);
-    transition: transform var(--yt-fast) var(--yt-ease), border-color var(--yt-fast) var(--yt-ease);
+    padding: var(--yt-space-1);
+    background-color: transparent;
+    border-color: transparent;
+    transition: transform var(--yt-fast) var(--yt-ease);
 }
 
 body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select:hover,
-body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select:hover {
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select:hover,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .bogus_folder_select:hover {
     transform: translateY(-2px);
-    border-color: var(--yt-accent-line);
+    background-color: transparent;
+    border-color: transparent;
+}
+
+body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select .avatar img,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select .avatar img {
+    transition: box-shadow var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select:hover .avatar img,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select:hover .avatar img {
+    box-shadow: 0 0 0 2px var(--yt-accent);
+}
+
+body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select.selected,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select.selected {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select.selected .avatar img,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select.selected .avatar img {
+    box-shadow: 0 0 0 2px var(--yt-accent);
 }
 
 /* Tag filters */
