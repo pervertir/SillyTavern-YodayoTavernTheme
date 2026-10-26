@@ -20,7 +20,7 @@ body.yodayo-tavern.yt-home-active #chat {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--yt-line);
-    border-radius: var(--yt-radius-xl);
+    border-radius: 24px;
 }
 
 body.yodayo-tavern.yt-home-active #form_sheld,
@@ -246,6 +246,28 @@ body.yodayo-tavern .yt-home-header {
     flex-wrap: wrap;
 }
 
+body.yodayo-tavern .yt-home-tabs {
+    display: flex;
+    align-items: center;
+    gap: var(--yt-space-5);
+}
+
+body.yodayo-tavern .yt-home-tab {
+    padding: 0 0 6px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--yt-muted);
+    font: 600 16px var(--yt-font);
+    cursor: pointer;
+    transition: color var(--yt-fast) var(--yt-ease), border-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .yt-home-tab:hover {
+    color: var(--yt-text);
+    border-bottom-color: var(--yt-line-strong);
+}
+
 body.yodayo-tavern .yt-home-title {
     font-size: 16px;
     font-weight: 600;
@@ -264,10 +286,10 @@ body.yodayo-tavern .yt-home-search {
     align-items: center;
     gap: var(--yt-space-2);
     height: 36px;
-    padding: 0 var(--yt-space-3);
+    padding: 0 var(--yt-space-4);
     background-color: var(--yt-surface);
     border: 1px solid var(--yt-line);
-    border-radius: var(--yt-radius);
+    border-radius: 9999px;
     color: var(--yt-muted);
     transition: border-color var(--yt-fast) var(--yt-ease);
 }
@@ -492,4 +514,33 @@ body.yodayo-tavern .yt-home-empty {
     body.yodayo-tavern .yt-home-search input {
         width: 110px;
     }
+}
+
+/* Group cards show up to four members side by side */
+body.yodayo-tavern .yt-card-group .yt-card-media {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2px;
+}
+
+body.yodayo-tavern .yt-card-group .yt-card-collage-1 img {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+}
+
+body.yodayo-tavern .yt-card-group .yt-card-collage-2 img {
+    grid-row: 1 / -1;
+}
+
+body.yodayo-tavern .yt-card-group .yt-card-collage-3 img:first-child {
+    grid-row: 1 / -1;
+}
+
+body.yodayo-tavern .yt-card-group .yt-card-media img {
+    min-height: 0;
+}
+
+body.yodayo-tavern .yt-card-group:hover .yt-card-media img {
+    transform: none;
 }

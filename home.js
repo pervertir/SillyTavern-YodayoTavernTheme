@@ -108,17 +108,53 @@ function renderCard({ character, index }) {
     return card;
 }
 
+function renderGroupCard(group) {
+    const card = el('button', 'yt-card yt-card-group');
+    card.type = 'button';
+    card.title = group.name;
+    card.addEventListener('click', () => SillyTavern.getContext().openGroupChat(group.id));
+
+    const media = el('div', 'yt-card-media');
+    // up to four members side by side as the group's picture
+    const members = (group.members ?? []).filter(Boolean).slice(0, 4);
+    media.classList.add(`yt-card-collage-${Math.max(members.length, 1)}`);
+    for (const avatar of members) {
+        const img = el('img');
+        img.loading = 'lazy';
+        img.alt = '';
+        img.src = `characters/${encodeURIComponent(avatar)}`;
+        media.append(img);
+    }
+
+    const stat = el('span', 'yt-card-stat');
+    stat.append(el('i', 'fa-solid fa-users'), el('span', '', `${group.members?.length ?? 0} members`));
+    media.append(stat);
+
+    const meta = el('div', 'yt-card-meta');
+    meta.append(el('span', 'yt-card-creator', 'Group chat'));
+
+    card.append(media, el('div', 'yt-card-name', group.name), meta);
+    return card;
+}
+
 function renderGrid(home) {
     const grid = home.querySelector('.yt-home-grid');
     const query = searchText.trim().toLowerCase();
-    const entries = getCharacterEntries()
+    const characters = getCharacterEntries()
         .filter(({ character }) => activeTagId === null || getTagIds(character).includes(activeTagId))
         .filter(({ character }) => !query || character.name.toLowerCase().includes(query)
             || (character.data?.creator ?? '').toLowerCase().includes(query))
-        .sort((a, b) => (Number(b.character.date_last_chat) || 0) - (Number(a.character.date_last_chat) || 0)
-            || a.character.name.localeCompare(b.character.name));
+        .map(entry => ({ lastChat: Number(entry.character.date_last_chat) || 0, name: entry.character.name, render: () => renderCard(entry) }));
 
-    grid.replaceChildren(...entries.map(renderCard));
+    // groups have no tags, so they show only under "All characters"
+    const groups = activeTagId !== null ? [] : (SillyTavern.getContext().groups ?? [])
+        .filter(group => !query || group.name.toLowerCase().includes(query))
+        .map(group => ({ lastChat: Number(group.date_last_chat) || 0, name: group.name, render: () => renderGroupCard(group) }));
+
+    const entries = [...characters, ...groups]
+        .sort((a, b) => b.lastChat - a.lastChat || a.name.localeCompare(b.name));
+
+    grid.replaceChildren(...entries.map(entry => entry.render()));
 
     if (!entries.length) {
         grid.append(el('div', 'yt-home-empty', query || activeTagId !== null
@@ -154,7 +190,21 @@ function buildHome() {
     home.id = HOME_ID;
 
     const header = el('div', 'yt-home-header');
-    const title = el('div', 'yt-home-title', 'Tavern');
+    const title = el('div', 'yt-home-tabs');
+    const assistant = el('button', 'yt-home-tab', 'ST Assistant');
+    assistant.type = 'button';
+    assistant.title = "Chat with SillyTavern's assistant";
+    assistant.addEventListener('click', () => {
+        // SillyTavern's own "Temporary Chat" button opens the assistant; it lives in the
+        // welcome panel that the home has moved into its recent chats row
+        const button = document.querySelector('#chat .welcomePanel .openTemporaryChat');
+        if (button instanceof HTMLElement) {
+            button.click();
+        } else {
+            toastr.warning('The assistant chat is not available right now.', 'Yodayo Tavern Theme');
+        }
+    });
+    title.append(el('div', 'yt-home-title', 'Tavern'), assistant);
 
     const actions = el('div', 'yt-home-actions');
     const search = el('label', 'yt-home-search');
@@ -181,7 +231,15 @@ function buildHome() {
     importButton.append(el('i', 'fa-solid fa-file-import'), el('span', '', 'Import'));
     importButton.addEventListener('click', () => document.getElementById('character_import_button')?.click());
 
-    actions.append(search, create, importButton);
+    const newGroup = el('button', 'yt-home-action');
+    newGroup.type = 'button';
+    newGroup.append(el('i', 'fa-solid fa-users'), el('span', '', 'New group'));
+    newGroup.addEventListener('click', () => {
+        openRightPanel();
+        document.getElementById('rm_button_group_chats')?.click();
+    });
+
+    actions.append(search, create, newGroup, importButton);
     header.append(title, actions);
 
     const divider = el('div', 'yt-home-divider');
