@@ -1,5 +1,7 @@
 // Yodayo Tavern Theme: toggles the scoped styles in style.css and exposes a small settings panel.
 
+import { initTavernHome } from './home.js';
+
 const MODULE_NAME = 'yodayoTavernTheme';
 const BODY_CLASS = 'yodayo-tavern';
 const DEFAULT_ACCENT = '#e4f063';
@@ -15,7 +17,10 @@ const defaultSettings = Object.freeze({
     characterArt: true,
     panelOpacity: 80,
     navMode: 'rail-auto',
+    tavernHome: true,
 });
+
+let syncTavernHome = () => {};
 
 /** How long the auto-hiding rail stays visible after the page loads, so it can be found. */
 const RAIL_PEEK_MS = 1500;
@@ -125,6 +130,7 @@ function applySettings() {
 
     $('#yt_conflict_note').toggleClass('displayNone', !(settings.enabled && isMoonlitEnabled()));
     updateCharacterArt();
+    syncTavernHome();
 }
 
 function syncSettingsUI() {
@@ -139,6 +145,7 @@ function syncSettingsUI() {
     $('#yt_chat_position').val(settings.chatPosition);
     $('#yt_character_art').prop('checked', settings.characterArt);
     $('#yt_nav_mode').val(settings.navMode);
+    $('#yt_tavern_home').prop('checked', settings.tavernHome);
     $('#yt_panel_opacity').val(settings.panelOpacity);
     $('#yt_panel_opacity_value').text(`${settings.panelOpacity}%`);
 }
@@ -180,6 +187,9 @@ function bindSettingsUI() {
     $('#yt_character_art').on('change', function () {
         update('characterArt', $(this).prop('checked'));
     });
+    $('#yt_tavern_home').on('change', function () {
+        update('tavernHome', $(this).prop('checked'));
+    });
     $('#yt_nav_mode').on('change', function () {
         update('navMode', String($(this).val()));
     });
@@ -196,6 +206,7 @@ jQuery(async () => {
 
     syncSettingsUI();
     bindSettingsUI();
+    syncTavernHome = initTavernHome(() => getSettings().enabled && getSettings().tavernHome);
     applySettings();
 
     document.body.classList.add('yt-rail-peek');

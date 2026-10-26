@@ -1,0 +1,301 @@
+/* Tavern home: the Yodayo-style character browser home.js puts on the welcome screen */
+
+/* The home gets a wide, centered column and no composer, like yodayo.com/tavern */
+body.yodayo-tavern.yt-home-active #sheld {
+    width: min(1180px, calc(100vw - var(--yt-dock-gap, 16px) * 2));
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+
+body.yodayo-tavern.yt-nav-rail.yt-home-active #sheld {
+    width: min(1180px, calc(100vw - 96px));
+}
+
+/* a solid page like Yodayo's, softened so the background still shows at the edges */
+body.yodayo-tavern.yt-home-active #chat {
+    margin: var(--yt-space-2) 0;
+    padding: 0 var(--yt-space-4) var(--yt-space-4);
+    background-color: rgb(26 28 30 / 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-xl);
+}
+
+body.yodayo-tavern.yt-home-active #form_sheld,
+body.yodayo-tavern.yt-home-active #yt-character-art,
+body.yodayo-tavern.yt-home-active #chat > .mes {
+    display: none;
+}
+
+/* SillyTavern's own welcome card stays below the grid as "Recent chats" */
+body.yodayo-tavern.yt-home-active .welcomePanel .welcomeHeader {
+    display: none;
+}
+
+body.yodayo-tavern.yt-home-active .welcomePanel {
+    max-width: none;
+    margin: var(--yt-space-5) 0 var(--yt-space-4);
+    background-color: var(--yt-surface);
+    backdrop-filter: none;
+}
+
+body.yodayo-tavern .yt-home {
+    display: flex;
+    flex-direction: column;
+    gap: var(--yt-space-4);
+    padding: var(--yt-space-4) var(--yt-space-2) 0;
+    font-family: var(--yt-font);
+}
+
+body.yodayo-tavern .yt-home-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--yt-space-3);
+    flex-wrap: wrap;
+}
+
+body.yodayo-tavern .yt-home-title {
+    font-size: 16px;
+    font-weight: 600;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--yt-accent);
+}
+
+body.yodayo-tavern .yt-home-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--yt-space-2);
+}
+
+body.yodayo-tavern .yt-home-search {
+    display: flex;
+    align-items: center;
+    gap: var(--yt-space-2);
+    height: 36px;
+    padding: 0 var(--yt-space-3);
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius);
+    color: var(--yt-muted);
+    transition: border-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .yt-home-search:focus-within {
+    border-color: var(--yt-accent);
+}
+
+body.yodayo-tavern .yt-home-search input {
+    width: 180px;
+    min-height: 0;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none !important;
+}
+
+body.yodayo-tavern .yt-home-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 var(--yt-space-3);
+    background: transparent;
+    border: none;
+    border-radius: var(--yt-radius);
+    color: var(--yt-accent);
+    font: 600 14px var(--yt-font);
+    cursor: pointer;
+    transition: background-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .yt-home-action:hover {
+    background-color: var(--yt-accent-soft);
+}
+
+body.yodayo-tavern .yt-home-action + .yt-home-action {
+    color: var(--yt-text);
+}
+
+/* "Characters" between two hairlines */
+body.yodayo-tavern .yt-home-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--yt-space-4);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+body.yodayo-tavern .yt-home-divider::before,
+body.yodayo-tavern .yt-home-divider::after {
+    content: '';
+    flex: 1;
+    border-top: 1px solid var(--yt-line-strong);
+}
+
+/* Tag chips: one scrolling row */
+body.yodayo-tavern .yt-home-chips {
+    display: flex;
+    gap: var(--yt-space-2);
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+}
+
+body.yodayo-tavern .yt-home-chips::-webkit-scrollbar {
+    display: none;
+}
+
+body.yodayo-tavern .yt-chip {
+    flex: 0 0 auto;
+    height: 36px;
+    padding: 0 var(--yt-space-3);
+    background-color: var(--yt-surface);
+    border: 1px solid transparent;
+    border-radius: var(--yt-radius);
+    color: var(--yt-text);
+    font: 500 14px var(--yt-font);
+    cursor: pointer;
+    transition: border-color var(--yt-fast) var(--yt-ease), background-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .yt-chip:hover {
+    background-color: var(--yt-surface-2);
+}
+
+body.yodayo-tavern .yt-chip.active {
+    border-color: var(--yt-accent);
+}
+
+/* Character cards */
+body.yodayo-tavern .yt-home-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--yt-space-3);
+}
+
+body.yodayo-tavern .yt-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 0 var(--yt-space-2);
+    background-color: var(--yt-surface);
+    border: none;
+    border-radius: var(--yt-radius);
+    color: var(--yt-text);
+    text-align: left;
+    font-family: var(--yt-font);
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform var(--yt-fast) var(--yt-ease), box-shadow var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .yt-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px var(--yt-accent-line), var(--yt-shadow-sm);
+}
+
+body.yodayo-tavern .yt-card-media {
+    position: relative;
+    aspect-ratio: 1;
+    background-color: var(--yt-surface-2);
+    border-radius: var(--yt-radius);
+    overflow: hidden;
+}
+
+body.yodayo-tavern .yt-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    transition: transform var(--yt-slow) var(--yt-ease);
+}
+
+body.yodayo-tavern .yt-card:hover .yt-card-media img {
+    transform: scale(1.04);
+}
+
+body.yodayo-tavern .yt-card-stat {
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    background-color: var(--yt-surface);
+    border-radius: var(--yt-radius);
+    color: var(--yt-muted);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+body.yodayo-tavern .yt-card-fav {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(0 0 0 / 0.45);
+    border-radius: 9999px;
+    color: var(--yt-accent);
+    font-size: 11px;
+}
+
+body.yodayo-tavern .yt-card-name {
+    padding: 0 var(--yt-space-2);
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.yodayo-tavern .yt-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--yt-space-2);
+    padding: 0 var(--yt-space-2);
+    color: var(--yt-muted);
+    font-size: 12px;
+}
+
+body.yodayo-tavern .yt-card-creator {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.yodayo-tavern .yt-card-tags {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+body.yodayo-tavern .yt-home-empty {
+    grid-column: 1 / -1;
+    padding: var(--yt-space-5);
+    text-align: center;
+    color: var(--yt-muted);
+}
+
+@media screen and (max-width: 1000px) {
+    body.yodayo-tavern .yt-home-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: var(--yt-space-2);
+    }
+
+    body.yodayo-tavern .yt-home-search input {
+        width: 110px;
+    }
+}
