@@ -64,12 +64,67 @@ body.yodayo-tavern .yt-home .welcomePanel.recentHidden .welcomeRecent {
     display: block;
 }
 
+/* one row that scrolls sideways; the arrows from home.js page through it */
+body.yodayo-tavern .yt-home-recent {
+    position: relative;
+}
+
 body.yodayo-tavern .yt-home .welcomeRecent .recentChatList {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: var(--yt-space-3) var(--yt-space-4);
-    padding: var(--yt-space-2) 0;
+    flex-wrap: nowrap;
+    gap: var(--yt-space-4);
+    /* room above and below for the hover cards, which the scroll area would clip */
+    padding: var(--yt-space-3) var(--yt-space-2);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+}
+
+body.yodayo-tavern .yt-home .welcomeRecent .recentChatList::-webkit-scrollbar {
+    display: none;
+}
+
+body.yodayo-tavern .yt-home .welcomeRecent .recentChatList .recentChat {
+    flex: 0 0 auto;
+}
+
+/* same round ghost arrows as the chat's swipe buttons */
+body.yodayo-tavern .yt-recent-arrow {
+    position: absolute;
+    top: 30px;
+    z-index: 6;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background-color: var(--yt-panel-surface);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: 9999px;
+    color: var(--yt-text);
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: var(--yt-shadow-sm);
+    transition: background-color var(--yt-fast) var(--yt-ease), color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .yt-recent-arrow:hover {
+    background-color: var(--yt-surface-3);
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern .yt-recent-arrow[hidden] {
+    display: none;
+}
+
+body.yodayo-tavern .yt-recent-prev {
+    left: -6px;
+}
+
+body.yodayo-tavern .yt-recent-next {
+    right: -6px;
 }
 
 body.yodayo-tavern .yt-home .welcomeRecent .recentChatList .recentChat {

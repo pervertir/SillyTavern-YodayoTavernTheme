@@ -260,6 +260,36 @@ function getRecentChatLabel(item) {
 }
 
 /** Moves SillyTavern's welcome panel (recent chats) into the home, above the characters. */
+/** Prev/next arrows for the recent chats row, shown only when there is more to scroll to. */
+function addRecentArrows(slot, list) {
+    if (!(list instanceof HTMLElement)) {
+        return;
+    }
+    const makeArrow = (direction) => {
+        const arrow = el('button', `yt-recent-arrow yt-recent-${direction} fa-solid fa-chevron-${direction === 'prev' ? 'left' : 'right'}`);
+        arrow.type = 'button';
+        arrow.title = direction === 'prev' ? 'Earlier chats' : 'More chats';
+        arrow.addEventListener('click', () => {
+            const step = Math.max(list.clientWidth * 0.8, 120);
+            list.scrollBy({ left: direction === 'prev' ? -step : step, behavior: 'smooth' });
+        });
+        return arrow;
+    };
+    const prev = makeArrow('prev');
+    const next = makeArrow('next');
+    slot.append(prev, next);
+
+    const update = () => {
+        prev.hidden = list.scrollLeft <= 1;
+        next.hidden = list.scrollLeft + list.clientWidth >= list.scrollWidth - 1;
+    };
+    list.addEventListener('scroll', update, { passive: true });
+    new ResizeObserver(update).observe(list);
+    // "show more" adds chats to the row without changing its size
+    new MutationObserver(update).observe(list, { childList: true });
+    update();
+}
+
 function adoptRecentChats(home) {
     const chat = document.getElementById('chat');
     const slot = home.querySelector('.yt-home-recent');
@@ -268,6 +298,7 @@ function adoptRecentChats(home) {
         return;
     }
     slot.replaceChildren(panel);
+    addRecentArrows(slot, panel.querySelector('.recentChatList'));
 
     for (const item of panel.querySelectorAll('.recentChat')) {
         if (item.querySelector('.yt-recent-label')) {
