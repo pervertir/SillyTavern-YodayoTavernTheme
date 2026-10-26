@@ -1,41 +1,116 @@
-/* Buttons */
+/* Controls: buttons, fields, selects, switches, sliders, sections and tabs */
+
+/* Buttons: secondary by default; .active / .toggleEnabled is the primary (accent) look */
 body.yodayo-tavern .menu_button {
-    background-color: var(--yt-surface);
+    min-height: var(--yt-control-h);
+    padding: 0 var(--yt-space-3);
+    gap: var(--yt-space-2);
+    background-color: var(--yt-surface-2);
     border: 1px solid var(--yt-line);
-    border-radius: var(--yt-radius);
+    border-radius: var(--yt-radius-md);
     color: var(--yt-text);
-    transition: border-color 0.15s ease, background-color 0.15s ease;
+    font-size: var(--yt-text-md);
+    font-weight: 500;
+    filter: none;
+    transition: background-color var(--yt-fast) var(--yt-ease), border-color var(--yt-fast) var(--yt-ease), color var(--yt-fast) var(--yt-ease);
 }
 
-body.yodayo-tavern .menu_button:hover {
-    background-color: var(--yt-surface-2);
-    border-color: var(--yt-accent-line);
+body.yodayo-tavern .menu_button.fa-solid,
+body.yodayo-tavern .menu_button.fa-regular {
+    /* icon-only buttons are square */
+    min-width: var(--yt-control-h);
+    padding: 0;
+}
+
+body.yodayo-tavern .menu_button:not(.disabled):not([disabled]):hover {
+    background-color: var(--yt-surface-3);
+    border-color: var(--yt-line-strong);
+}
+
+body.yodayo-tavern .menu_button:not(.disabled):not([disabled]):active {
+    transform: translateY(1px);
 }
 
 body.yodayo-tavern .menu_button.active,
 body.yodayo-tavern .menu_button.toggleEnabled,
-body.yodayo-tavern .menu_button_icon.active {
+body.yodayo-tavern .menu_button_icon.active,
+body.yodayo-tavern .menu_button:not(.disabled):not([disabled]).active:hover {
     background-color: var(--yt-accent);
     color: var(--yt-accent-ink);
     border-color: var(--yt-accent);
 }
 
+body.yodayo-tavern .menu_button.disabled,
+body.yodayo-tavern .menu_button[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+body.yodayo-tavern .menu_button.redWarningBG,
+body.yodayo-tavern .menu_button.caution {
+    background-color: color-mix(in srgb, var(--yt-danger) 18%, var(--yt-surface-2));
+    border-color: color-mix(in srgb, var(--yt-danger) 45%, transparent);
+    color: var(--yt-danger);
+}
+
+/* Ghost icon buttons used around the UI */
 body.yodayo-tavern .right_menu_button,
 body.yodayo-tavern .mes_edit_buttons .menu_button {
     color: var(--yt-muted);
+    border-radius: var(--yt-radius-md);
+    transition: color var(--yt-fast) var(--yt-ease), background-color var(--yt-fast) var(--yt-ease);
 }
 
-/* Form fields */
+body.yodayo-tavern .right_menu_button:hover {
+    color: var(--yt-text);
+    background-color: var(--yt-surface-2);
+    filter: none;
+}
+
+/* Text fields and selects */
 body.yodayo-tavern .text_pole,
 body.yodayo-tavern textarea:not(#send_textarea),
 body.yodayo-tavern select,
 body.yodayo-tavern input[type="text"],
 body.yodayo-tavern input[type="search"],
-body.yodayo-tavern input[type="number"] {
+body.yodayo-tavern input[type="number"],
+body.yodayo-tavern input[type="password"],
+body.yodayo-tavern input[type="url"] {
     background-color: var(--yt-surface);
-    border: 1px solid var(--yt-line);
-    border-radius: var(--yt-radius);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-md);
     color: var(--yt-text);
+    font-family: var(--yt-font);
+    font-size: var(--yt-text-md);
+    box-shadow: none;
+    transition: border-color var(--yt-fast) var(--yt-ease), box-shadow var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern input.text_pole,
+body.yodayo-tavern select,
+body.yodayo-tavern input[type="text"],
+body.yodayo-tavern input[type="search"],
+body.yodayo-tavern input[type="password"],
+body.yodayo-tavern input[type="url"] {
+    min-height: var(--yt-control-h);
+    padding: 0 var(--yt-space-3);
+}
+
+body.yodayo-tavern textarea:not(#send_textarea) {
+    padding: var(--yt-space-2) var(--yt-space-3);
+    line-height: 1.5;
+}
+
+body.yodayo-tavern .text_pole::placeholder,
+body.yodayo-tavern textarea::placeholder,
+body.yodayo-tavern input::placeholder {
+    color: var(--yt-faint);
+}
+
+body.yodayo-tavern .text_pole:hover,
+body.yodayo-tavern textarea:not(#send_textarea):hover,
+body.yodayo-tavern select:hover {
+    border-color: color-mix(in srgb, var(--yt-text) 28%, transparent);
 }
 
 body.yodayo-tavern .text_pole:focus,
@@ -43,11 +118,321 @@ body.yodayo-tavern textarea:not(#send_textarea):focus,
 body.yodayo-tavern select:focus,
 body.yodayo-tavern input[type="text"]:focus,
 body.yodayo-tavern input[type="search"]:focus,
-body.yodayo-tavern input[type="number"]:focus {
-    border-color: var(--yt-accent-line);
+body.yodayo-tavern input[type="number"]:focus,
+body.yodayo-tavern input[type="password"]:focus,
+body.yodayo-tavern input[type="url"]:focus {
+    border-color: var(--yt-accent);
+    box-shadow: 0 0 0 3px var(--yt-accent-soft);
     outline: none;
+}
+
+/* Selects get a drawn chevron instead of the browser's */
+body.yodayo-tavern select:not([multiple]) {
+    -webkit-appearance: none;
+    appearance: none;
+    padding-right: 32px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a8a8a8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    cursor: pointer;
+}
+
+body.yodayo-tavern select option,
+body.yodayo-tavern select optgroup {
+    background-color: var(--yt-surface);
+    color: var(--yt-text);
+}
+
+/* Searchable selects (select2) */
+body.yodayo-tavern .select2-container .select2-selection {
+    min-height: var(--yt-control-h);
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-md);
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern .select2-container--focus .select2-selection,
+body.yodayo-tavern .select2-container--open .select2-selection {
+    border-color: var(--yt-accent);
+    box-shadow: 0 0 0 3px var(--yt-accent-soft);
+}
+
+body.yodayo-tavern .select2-dropdown {
+    background-color: var(--yt-surface-2);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-md);
+    box-shadow: var(--yt-shadow);
+    overflow: hidden;
+}
+
+body.yodayo-tavern .select2-results__option--highlighted {
+    background-color: var(--yt-accent-soft) !important;
+    color: var(--yt-text) !important;
+}
+
+body.yodayo-tavern .select2-selection__choice {
+    background-color: var(--yt-surface-3) !important;
+    border: 1px solid var(--yt-line) !important;
+    border-radius: 9999px !important;
+    color: var(--yt-text) !important;
+}
+
+/* Checkboxes inside labelled settings become switches; list checkboxes stay boxes */
+body.yodayo-tavern input[type="checkbox"] {
+    outline: none;
+    border: 1px solid var(--yt-line-strong);
+    border-radius: var(--yt-radius-sm);
+    background-color: var(--yt-surface);
+    box-shadow: none;
+    filter: none;
+    transition: background-color var(--yt-fast) var(--yt-ease), border-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern input[type="checkbox"]::before {
+    box-shadow: inset 1em 1em var(--yt-accent-ink);
 }
 
 body.yodayo-tavern input[type="checkbox"]:checked {
     background-color: var(--yt-accent);
+    border-color: var(--yt-accent);
+}
+
+body.yodayo-tavern .checkbox_label input[type="checkbox"],
+body.yodayo-tavern label.checkbox input[type="checkbox"] {
+    width: 34px;
+    height: 20px;
+    border-radius: 9999px;
+    border: none;
+    background-color: var(--yt-surface-3);
+    place-content: center start;
+    padding: 0 3px;
+    transform: none;
+}
+
+body.yodayo-tavern .checkbox_label input[type="checkbox"]::before,
+body.yodayo-tavern label.checkbox input[type="checkbox"]::before {
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    clip-path: none;
+    transform: none;
+    box-shadow: none;
+    background-color: var(--yt-text);
+    transition: translate var(--yt-fast) var(--yt-ease), background-color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern .checkbox_label input[type="checkbox"]:checked,
+body.yodayo-tavern label.checkbox input[type="checkbox"]:checked {
+    background-color: var(--yt-accent);
+}
+
+body.yodayo-tavern .checkbox_label input[type="checkbox"]:checked::before,
+body.yodayo-tavern label.checkbox input[type="checkbox"]:checked::before {
+    translate: 14px 0;
+    background-color: var(--yt-accent-ink);
+}
+
+body.yodayo-tavern .checkbox_label input[type="checkbox"]:disabled,
+body.yodayo-tavern input[type="checkbox"]:disabled {
+    opacity: 0.45;
+}
+
+body.yodayo-tavern .checkbox_label {
+    gap: var(--yt-space-2);
+    align-items: center;
+}
+
+/* Radio buttons */
+body.yodayo-tavern input[type="radio"] {
+    accent-color: var(--yt-accent);
+}
+
+/* Sliders: SillyTavern sizes the track's background image to show the fill,
+   so the image is the accent fill and the background color is the empty track */
+body.yodayo-tavern input[type="range"],
+body.yodayo-tavern .neo-range-slider {
+    height: 4px !important;
+    border-radius: 9999px !important;
+    background-color: var(--yt-surface-3) !important;
+    background-image: linear-gradient(var(--yt-accent), var(--yt-accent)) !important;
+    background-repeat: no-repeat !important;
+    box-shadow: none !important;
+    filter: none !important;
+    cursor: pointer;
+}
+
+body.yodayo-tavern input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    background: var(--yt-text);
+    border: 3px solid var(--yt-accent);
+    box-shadow: var(--yt-shadow-sm);
+    transition: transform var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    background: var(--yt-text);
+    border: 3px solid var(--yt-accent);
+}
+
+body.yodayo-tavern input[type="range"]:hover::-webkit-slider-thumb,
+body.yodayo-tavern input[type="range"]:active::-webkit-slider-thumb {
+    transform: scale(1.15);
+}
+
+body.yodayo-tavern input[type="range"]:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--yt-accent-soft) !important;
+}
+
+/* The number box beside a slider becomes a small chip */
+body.yodayo-tavern .range-block-counter input,
+body.yodayo-tavern .neo-range-input {
+    min-height: 0;
+    height: 26px;
+    padding: 0 var(--yt-space-2);
+    background-color: var(--yt-surface-2);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius);
+    font-size: var(--yt-text-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+body.yodayo-tavern .neo-range-input {
+    border-radius: 0 0 var(--yt-radius) var(--yt-radius);
+}
+
+body.yodayo-tavern .range-block {
+    gap: var(--yt-space-1);
+}
+
+body.yodayo-tavern .range-block-title {
+    font-size: var(--yt-text-sm);
+    font-weight: 500;
+    color: var(--yt-text);
+}
+
+/* Collapsible sections */
+body.yodayo-tavern .inline-drawer-header,
+body.yodayo-tavern .standoutHeader {
+    background-image: none;
+    background-color: transparent;
+    border: none;
+    border-radius: var(--yt-radius-md);
+    padding: var(--yt-space-2) var(--yt-space-2);
+    transition: background-color var(--yt-fast) var(--yt-ease);
+}
+
+/* SillyTavern paints these with a gradient through an id selector */
+body.yodayo-tavern #extensions_settings .inline-drawer-toggle.inline-drawer-header,
+body.yodayo-tavern #extensions_settings2 .inline-drawer-toggle.inline-drawer-header,
+body.yodayo-tavern #user-settings-block h4,
+body.yodayo-tavern .standoutHeader {
+    background-image: none;
+}
+
+/* Section titles inside settings read as small uppercase labels */
+body.yodayo-tavern #user-settings-block h4,
+body.yodayo-tavern .drawer-content h4.standoutHeader {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid var(--yt-line);
+    border-radius: 0;
+    padding: var(--yt-space-2) 0 var(--yt-space-1);
+    margin: var(--yt-space-3) 0 var(--yt-space-2);
+    font-size: var(--yt-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern .inline-drawer-header:hover,
+body.yodayo-tavern .standoutHeader.inline-drawer-header:hover,
+body.yodayo-tavern #extensions_settings .inline-drawer-toggle.inline-drawer-header:hover,
+body.yodayo-tavern #extensions_settings2 .inline-drawer-toggle.inline-drawer-header:hover {
+    background-color: var(--yt-surface-2);
+    filter: none;
+}
+
+body.yodayo-tavern .standoutHeader,
+body.yodayo-tavern #extensions_settings .inline-drawer-header,
+body.yodayo-tavern #extensions_settings2 .inline-drawer-header {
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line);
+}
+
+body.yodayo-tavern .inline-drawer-header b,
+body.yodayo-tavern .standoutHeader b,
+body.yodayo-tavern .standoutHeader strong {
+    font-size: var(--yt-text-md);
+    font-weight: 600;
+}
+
+body.yodayo-tavern .inline-drawer-icon {
+    font-size: 12px;
+    color: var(--yt-muted);
+    filter: none;
+    transition: transform var(--yt-fast) var(--yt-ease);
+}
+
+/* swap SillyTavern's filled circle chevrons for a plain chevron */
+body.yodayo-tavern .inline-drawer-icon.fa-circle-chevron-down::before {
+    content: "\f078";
+}
+
+body.yodayo-tavern .inline-drawer-icon.fa-circle-chevron-up::before {
+    content: "\f077";
+}
+
+body.yodayo-tavern .standoutHeader ~ .inline-drawer-content,
+body.yodayo-tavern #extensions_settings .inline-drawer-content,
+body.yodayo-tavern #extensions_settings2 .inline-drawer-content {
+    background-color: transparent;
+    border: none;
+    border-left: 2px solid var(--yt-line);
+    border-radius: 0;
+    margin: var(--yt-space-1) 0 var(--yt-space-2) var(--yt-space-2);
+    padding: var(--yt-space-1) 0 var(--yt-space-1) var(--yt-space-3);
+}
+
+body.yodayo-tavern .settingsSectionWrap {
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+    padding: var(--yt-space-3);
+}
+
+/* Tabs and segmented toggles */
+body.yodayo-tavern .tabs,
+body.yodayo-tavern #right-nav-panel-tabs {
+    gap: 2px;
+    padding: 3px;
+    background-color: var(--yt-surface);
+    border: 1px solid var(--yt-line);
+    border-radius: var(--yt-radius-lg);
+}
+
+body.yodayo-tavern .tabs .menu_button,
+body.yodayo-tavern .tab {
+    min-height: 28px;
+    margin: 0;
+    background-color: transparent;
+    border-color: transparent;
+    border-radius: var(--yt-radius-md);
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern .tabs .menu_button.active,
+body.yodayo-tavern .tab.active,
+body.yodayo-tavern .tab.selected {
+    background-color: var(--yt-surface-3);
+    color: var(--yt-text);
+    border-color: var(--yt-line);
 }
