@@ -102,7 +102,11 @@ AMD or Intel on Linux (Vulkan), and falls back to the CPU. The first cutout down
 
 ## Settings
 
-Open **Extensions → Yodayo Tavern Theme**:
+Open **Extensions → Yodayo Tavern Theme**. **Customize everything…** opens a page where
+you can change every part of the theme with a live preview at the top: Colors, Text, Shape,
+Spacing, Layout (show or hide individual parts), Messages, Chat background, Motion, and
+Advanced (your own CSS). Every change applies as you make it. Each section has its own reset,
+and the page has Reset all, Export and Import. The settings below are the most common ones:
 
 ![Settings panel](.github/settings.jpg)
 
@@ -190,6 +194,7 @@ remembered.
 - `charsettings.js`: the chat's cog and its per-character / per-chat look editor
 - `phone.js`: which edge the phone menu bar sits on
 - `avatars.js`: pre-scales chat and character list avatars so they stay sharp
+- `customize.js`: the Customize page (every token, layout toggle and setting in one place)
 - `bgremove.js`: Remove background, through the Background Removal server plugin
 - `colors.js`: chat colors (all characters or per character), character image and export/import
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,

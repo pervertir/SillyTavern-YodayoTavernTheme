@@ -2,6 +2,7 @@
 
 import { initTavernHome } from './home.js';
 import { applyPhoneNav } from './phone.js';
+import { applyCustomize, initCustomize, openCustomize } from './customize.js';
 import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
 import { applySheetWidths, initSheetResizers } from './sheets.js';
 import { applyVnHeight, initVnMode } from './vn.js';
@@ -50,6 +51,8 @@ const defaultSettings = Object.freeze({
     sheetWidths: {},
     /** Advanced look settings from advanced.js: { [key]: value } */
     advanced: {},
+    /** Customize page (customize.js): { tokens: { [css var]: value }, hide: { [element]: true } } */
+    customize: { tokens: {}, hide: {} },
     /** Per-chat overrides from the chat's cog: { [chat id]: { colors, advanced, background } } */
     chatThemes: {},
     /** Background-removed character images: { [source URL]: { path, version } } */
@@ -227,6 +230,8 @@ function applySettings() {
     applyVnHeight(settings);
     updateCharacterArt();
     syncTavernHome();
+    // last, so a custom font family wins over the font setting
+    applyCustomize(settings);
 }
 
 function syncSettingsUI() {
@@ -656,6 +661,19 @@ async function init() {
         },
     });
     document.getElementById('yt_reset_all')?.addEventListener('click', resetAllSettings);
+    initCustomize({
+        getSettings,
+        onChange: () => {
+            applySettings();
+            saveSettings();
+        },
+        onClose: () => {
+            syncSettingsUI();
+            refreshColorControls();
+            refreshAdvancedControls();
+        },
+    });
+    document.getElementById('yt_customize')?.addEventListener('click', () => openCustomize());
     syncTavernHome = initTavernHome(() => getSettings().enabled && getSettings().tavernHome);
     applySettings();
 
