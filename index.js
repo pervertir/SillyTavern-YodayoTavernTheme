@@ -51,8 +51,8 @@ const defaultSettings = Object.freeze({
     sheetWidths: {},
     /** Advanced look settings from advanced.js: { [key]: value } */
     advanced: {},
-    /** Customize page (customize.js): { tokens: { [css var]: value }, hide: { [element]: true } } */
-    customize: { tokens: {}, hide: {} },
+    /** Customize page (customize.js), the shared shape: { tokens: { [css var]: value }, flags: { 'hide-<part>': true } } */
+    customize: { tokens: {}, flags: {} },
     /** Per-chat overrides from the chat's cog: { [chat id]: { colors, advanced, background } } */
     chatThemes: {},
     /** Background-removed character images: { [source URL]: { path, version } } */

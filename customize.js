@@ -7,7 +7,11 @@
 //   setting  a top-level theme setting (accent, font, bubble width…)
 //   advanced an Advanced setting (advanced.js), so the panel and this page stay in step
 //   color    a chat color (colors.js), the universal one; per-character colors still win
-//   hide     a Layout flag in settings.customize.hide, which hides that element
+//   hide     a Layout flag, hide-<part> in settings.customize.flags, which hides that part
+//
+// The stored and exported shape is the one pervertir's themes share
+// (AI/shared/customize-spec.md): { tokens, flags, css }, exported with themeId and version.
+// Controls that live in other settings travel in flags under their own key.
 // Everything applies live through the theme's own apply step.
 
 import { ADVANCED_GROUPS } from './advanced.js';
@@ -152,7 +156,7 @@ const SECTIONS = [
         ],
     },
     {
-        id: 'background', title: 'Chat background', controls: [
+        id: 'background', title: 'Chat Background', controls: [
             { type: 'setting', key: 'flatBackground', label: 'Hide the background image', kind: 'checkbox', def: false },
             { type: 'advanced', key: 'bgBlur', label: 'Background blur' },
             { type: 'advanced', key: 'bgOpacity', label: 'Background image opacity' },
@@ -194,7 +198,14 @@ function el(tag, className, text) {
 function customizeState(settings) {
     settings.customize ??= {};
     settings.customize.tokens ??= {};
-    settings.customize.hide ??= {};
+    settings.customize.flags ??= {};
+    // the first version kept Layout flags under hide
+    for (const [key, on] of Object.entries(settings.customize.hide ?? {})) {
+        if (on) {
+            settings.customize.flags[`hide-${key}`] = true;
+        }
+    }
+    delete settings.customize.hide;
     return settings.customize;
 }
 
@@ -227,7 +238,7 @@ function getValue(control) {
         case 'setting': return settings[control.key] ?? control.def;
         case 'advanced': return settings.advanced?.[control.key] ?? control.def;
         case 'color': return settings.colors?.[control.key] ?? null;
-        case 'hide': return Boolean(state.hide[control.key]);
+        case 'hide': return Boolean(state.flags[`hide-${control.key}`]);
     }
     return undefined;
 }
@@ -265,9 +276,9 @@ function setValue(control, value) {
             break;
         case 'hide':
             if (value) {
-                state.hide[control.key] = true;
+                state.flags[`hide-${control.key}`] = true;
             } else {
-                delete state.hide[control.key];
+                delete state.flags[`hide-${control.key}`];
             }
             break;
     }
@@ -293,6 +304,11 @@ function tokenCss(control, value) {
     return String(value);
 }
 
+/** The shared rule for tokens: a plain custom property name, and no value that breaks out */
+function isSafeToken(name, value) {
+    return /^--[a-zA-Z0-9-]+$/.test(name) && !/[;{}<>]/.test(String(value));
+}
+
 const TOKEN_CONTROLS = SECTIONS.flatMap(section => section.controls).filter(control => control.type === 'token');
 let appliedTokens = new Set();
 
@@ -307,7 +323,7 @@ export function applyCustomize(settings) {
     const next = new Set();
     for (const control of TOKEN_CONTROLS) {
         const value = state.tokens[control.key];
-        if (enabled && value !== undefined && value !== '') {
+        if (enabled && value !== undefined && value !== '' && isSafeToken(control.key, tokenCss(control, value))) {
             body.style.setProperty(control.key, tokenCss(control, value));
             next.add(control.key);
         } else if (appliedTokens.has(control.key)) {
@@ -322,7 +338,7 @@ export function applyCustomize(settings) {
         style.id = HIDE_STYLE_ID;
         document.head.append(style);
     }
-    const hidden = HIDEABLE.filter(([key]) => state.hide[key]).flatMap(([, , selectors]) => selectors.split(',').map(s => `body.yodayo-tavern ${s.trim()}`));
+    const hidden = HIDEABLE.filter(([key]) => state.flags[`hide-${key}`]).flatMap(([, , selectors]) => selectors.split(',').map(s => `body.yodayo-tavern ${s.trim()}`));
     style.textContent = enabled && hidden.length ? `${hidden.join(',\n')} { display: none !important; }` : '';
 }
 
@@ -479,17 +495,72 @@ function buildPreview() {
     return preview;
 }
 
-function exportCustomization() {
-    const settings = api.getSettings();
-    const data = { themeId: THEME_ID, version: VERSION, values: {} };
-    for (const control of SECTIONS.flatMap(section => section.controls).map(describe)) {
-        if (isChanged(control)) {
-            data.values[`${control.type}:${control.key}`] = getValue(control);
+/** A control's value as a shared-format flag: true, or a string; null when at its default */
+function toFlag(control, value) {
+    if (!isChanged(control)) {
+        return null;
+    }
+    if (value === true) {
+        return true;
+    }
+    if (Array.isArray(value)) {
+        return JSON.stringify(value);
+    }
+    return String(value);
+}
+
+function fromFlag(control, flag) {
+    switch (control.kind) {
+        case 'checkbox': return flag === true || flag === 'true';
+        case 'number': {
+            const value = Number(flag);
+            return Number.isFinite(value) ? value : undefined;
+        }
+        case 'rgba': {
+            try {
+                const value = JSON.parse(flag);
+                return Array.isArray(value) && /^#[0-9a-f]{6}$/i.test(value[0]) ? [value[0], Number(value[1])] : undefined;
+            } catch {
+                return undefined;
+            }
+        }
+        case 'color': return /^#[0-9a-f]{6}$/i.test(String(flag)) ? String(flag) : undefined;
+        case 'select': return control.options.some(([option]) => option === String(flag)) ? String(flag) : undefined;
+        default: return String(flag);
+    }
+}
+
+const ALL_CONTROLS = SECTIONS.flatMap(section => section.controls).map(describe);
+const CSS_CONTROL = ALL_CONTROLS.find(control => control.type === 'advanced' && control.key === 'rawCss');
+
+/** The current customization in the shared format */
+function toSharedFormat() {
+    const state = customizeState(api.getSettings());
+    const flags = {};
+    for (const control of ALL_CONTROLS) {
+        if (control.type === 'token' || control === CSS_CONTROL) {
+            continue;
+        }
+        const flag = control.type === 'hide' ? (getValue(control) || null) : toFlag(control, getValue(control));
+        if (flag !== null) {
+            flags[control.type === 'hide' ? `hide-${control.key}` : control.key] = flag;
         }
     }
-    data.tokens = structuredClone(customizeState(settings).tokens);
-    data.hide = structuredClone(customizeState(settings).hide);
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    return {
+        themeId: THEME_ID,
+        version: VERSION,
+        // tokens travel as CSS strings
+        tokens: Object.fromEntries(Object.entries(state.tokens).map(([key, value]) => {
+            const control = TOKEN_CONTROLS.find(item => item.key === key);
+            return [key, control ? tokenCss(control, value) : String(value)];
+        })),
+        flags,
+        css: getValue(CSS_CONTROL) ?? '',
+    };
+}
+
+function exportCustomization() {
+    const blob = new Blob([JSON.stringify(toSharedFormat(), null, 2)], { type: 'application/json' });
     const link = el('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'yodayo-tavern-customize.json';
@@ -497,21 +568,49 @@ function exportCustomization() {
     setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 }
 
+/** Replaces the customization with a shared-format file; keeps only what this theme knows. */
 function importCustomization(data, rows, onChange) {
-    if (data?.themeId !== THEME_ID) {
-        toastr.error('This file is not a Yodayo Tavern Theme customization.', 'Yodayo Tavern Theme');
+    if (!data || typeof data !== 'object' || !data.themeId || typeof data.tokens !== 'object') {
+        toastr.error('This is not a theme customization file.', 'Yodayo Tavern Theme');
         return;
     }
-    resetControls(rows.map(row => row.control), () => {});
-    for (const { control } of rows) {
-        const value = data.values?.[`${control.type}:${control.key}`];
-        if (value !== undefined) {
+    resetControls(ALL_CONTROLS, () => {});
+    let kept = 0;
+    for (const control of ALL_CONTROLS) {
+        let value;
+        if (control.type === 'token') {
+            const raw = data.tokens[control.key];
+            if (raw === undefined || !isSafeToken(control.key, raw)) {
+                continue;
+            }
+            value = control.kind === 'number' ? parseFloat(raw) : control.kind === 'rgba' ? undefined : raw;
+            if (control.kind === 'rgba') {
+                const match = String(raw).match(/rgba?\(\s*(\d+)[ ,]+(\d+)[ ,]+(\d+)\s*(?:[/,]\s*([\d.]+))?/);
+                if (match) {
+                    const hex = `#${[match[1], match[2], match[3]].map(n => Number(n).toString(16).padStart(2, '0')).join('')}`;
+                    value = [hex, Math.round(Number(match[4] ?? 1) * 100)];
+                } else if (Array.isArray(raw)) {
+                    value = raw;
+                }
+            }
+        } else if (control === CSS_CONTROL) {
+            value = typeof data.css === 'string' ? data.css : undefined;
+        } else {
+            const flag = data.flags?.[control.type === 'hide' ? `hide-${control.key}` : control.key];
+            value = flag === undefined ? undefined : fromFlag(control, flag);
+        }
+        if (value !== undefined && !(typeof value === 'number' && Number.isNaN(value))) {
             setValue(control, value);
+            kept++;
         }
     }
     onChange();
     rows.forEach(row => row.refresh());
-    toastr.success('Customization imported.', 'Yodayo Tavern Theme');
+    if (data.themeId !== THEME_ID) {
+        toastr.info(`This customization was made for another theme (${String(data.themeId)}). ${kept} matching option${kept === 1 ? '' : 's'} were kept.`, 'Yodayo Tavern Theme');
+    } else {
+        toastr.success('Customization imported.', 'Yodayo Tavern Theme');
+    }
 }
 
 function resetControls(controls, onChange) {
@@ -536,9 +635,9 @@ export async function openCustomize() {
         button.append(el('i', `fa-solid ${icon}`), el('span', '', text));
         return button;
     };
-    const exportButton = makeTool('fa-file-export', 'Export');
-    const importButton = makeTool('fa-file-import', 'Import');
-    const resetAll = makeTool('fa-rotate-left', 'Reset all');
+    const exportButton = makeTool('fa-file-export', 'Export Theme');
+    const importButton = makeTool('fa-file-import', 'Import Theme');
+    const resetAll = makeTool('fa-rotate-left', 'Reset All');
     const file = el('input');
     file.type = 'file';
     file.accept = 'application/json,.json';
