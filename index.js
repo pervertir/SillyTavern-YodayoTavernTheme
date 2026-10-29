@@ -87,6 +87,8 @@ const ST_RECENT_DEFAULTS = { maxDisplayed: 15, collapsedDisplayed: 3 };
 const THEME_RECENT_DEFAULTS = { maxDisplayed: 20, collapsedDisplayed: 20 };
 
 const ART_ID = 'yt-character-art';
+/** Custom character images that failed to load this session; the card shows instead */
+const brokenArt = new Set();
 /** Character images at least this share of the art area's height fill it; smaller ones keep
  * their own size, so none is enlarged more than 1.25×. */
 const ART_FILL_RATIO = 0.8;
@@ -151,7 +153,7 @@ function isMoonlitEnabled() {
 /** Image for the open solo chat's character: a custom image if set, else the card. */
 function getCharacterImageUrl() {
     const override = getEffectiveOverrides(getSettings()).image || getCharacterImageOverride(getSettings());
-    return override || getCurrentAvatarUrl() || null;
+    return (override && !brokenArt.has(override) ? override : getCurrentAvatarUrl()) || null;
 }
 
 /** Puts the character image on the side opposite the chat when it is docked left or right. */
@@ -183,6 +185,13 @@ function updateCharacterArt() {
             art.classList.toggle('yt-art-fill', big);
         };
         img.addEventListener('load', fit);
+        img.addEventListener('error', () => {
+            const src = img.getAttribute('src');
+            if (src && src !== getCurrentAvatarUrl()) {
+                brokenArt.add(src);
+                updateCharacterArt();
+            }
+        });
         new ResizeObserver(() => img.complete && fit()).observe(art);
         art.append(img);
         document.body.append(art);
