@@ -2,6 +2,8 @@
 // Each setting either sets a CSS variable on <body>, toggles a body class (yt-adv-<key>),
 // or is handled specially (raw CSS, visual novel height). css/advanced.css uses them.
 
+import { debounce, el, hexToRgb } from './util.js';
+
 const RAW_CSS_ID = 'yt-raw-css';
 
 /**
@@ -111,11 +113,6 @@ export const ADVANCED_GROUPS = Object.freeze([
 
 const ALL_ITEMS = ADVANCED_GROUPS.flatMap(group => group.items);
 
-function hexToRgb(hex) {
-    const value = parseInt(String(hex).replace('#', ''), 16) || 0;
-    return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
-}
-
 function getValue(settings, item) {
     if (item.special === 'vnHeight') {
         return Math.round((settings.vnHeight ?? 0.3) * 100);
@@ -144,10 +141,10 @@ function cssValue(item, value) {
 export function applyAdvanced(settings) {
     const body = document.body;
     for (const item of ALL_ITEMS) {
-        const value = getValue(settings, item);
         if (item.special) {
             continue;
         }
+        const value = getValue(settings, item);
         if (item.type === 'checkbox') {
             body.classList.toggle(`yt-adv-${item.key}`, Boolean(value));
         } else if (item.type === 'select') {
@@ -159,11 +156,11 @@ export function applyAdvanced(settings) {
             }
             let style = document.getElementById(RAW_CSS_ID);
             if (!style) {
-                style = document.createElement('style');
+                style = el('style');
                 style.id = RAW_CSS_ID;
                 document.head.append(style);
             }
-            style.textContent = settings.enabled ? String(value) : '';
+            style.textContent = String(value);
         } else if (item.cssVar) {
             const isDefault = JSON.stringify(value) === JSON.stringify(item.def);
             if (isDefault) {
@@ -201,61 +198,40 @@ export function initAdvancedControls({ getSettings, onChange }) {
     const refreshers = [];
 
     for (const group of ADVANCED_GROUPS) {
-        const drawer = document.createElement('div');
-        drawer.className = 'inline-drawer yt-adv-group';
-        const header = document.createElement('div');
-        header.className = 'inline-drawer-toggle inline-drawer-header';
-        const title = document.createElement('b');
-        title.textContent = group.title;
-        const icon = document.createElement('div');
-        icon.className = 'inline-drawer-icon fa-solid fa-circle-chevron-down down';
-        header.append(title, icon);
-        const content = document.createElement('div');
-        content.className = 'inline-drawer-content';
-
+        const drawer = el('div', 'inline-drawer yt-adv-group');
+        const header = el('div', 'inline-drawer-toggle inline-drawer-header');
+        header.append(el('b', '', group.title), el('div', 'inline-drawer-icon fa-solid fa-circle-chevron-down down'));
+        const content = el('div', 'inline-drawer-content');
         if (group.note) {
-            const note = document.createElement('small');
-            note.className = 'yt-muted';
-            note.textContent = group.note;
-            content.append(note);
+            content.append(el('small', 'yt-muted', group.note));
         }
 
         for (const item of group.items) {
             const id = `yt_adv_${item.key}`;
             let row;
             if (item.type === 'checkbox') {
-                row = document.createElement('label');
-                row.className = 'checkbox_label';
+                row = el('label', 'checkbox_label');
                 row.htmlFor = id;
-                const input = document.createElement('input');
+                const input = el('input');
                 input.type = 'checkbox';
                 input.id = id;
                 input.addEventListener('change', () => setValue(item, input.checked));
-                const text = document.createElement('span');
-                text.textContent = item.label;
-                row.append(input, text);
+                row.append(input, el('span', '', item.label));
                 refreshers.push(() => { input.checked = Boolean(getValue(getSettings(), item)); });
             } else {
-                row = document.createElement('div');
-                row.className = 'yt-setting-row';
-                const label = document.createElement('label');
+                row = el('div', 'yt-setting-row');
+                const label = el('label', '', item.label);
                 label.htmlFor = id;
-                label.textContent = item.label;
                 row.append(label);
 
                 if (item.type === 'textarea') {
                     row.classList.add('yt-setting-stack');
-                    const area = document.createElement('textarea');
+                    const area = el('textarea', 'text_pole');
                     area.id = id;
-                    area.className = 'text_pole';
                     area.rows = 6;
                     area.spellcheck = false;
                     area.placeholder = '/* e.g. body.yodayo-tavern #chat { … } */';
-                    let timer;
-                    area.addEventListener('input', () => {
-                        clearTimeout(timer);
-                        timer = setTimeout(() => setValue(item, area.value), 300);
-                    });
+                    area.addEventListener('input', debounce(() => setValue(item, area.value), 300));
                     row.append(area);
                     refreshers.push(() => {
                         if (area !== document.activeElement) {
@@ -263,30 +239,28 @@ export function initAdvancedControls({ getSettings, onChange }) {
                         }
                     });
                 } else if (item.type === 'select') {
-                    const select = document.createElement('select');
+                    const select = el('select', 'text_pole');
                     select.id = id;
-                    select.className = 'text_pole';
                     for (const [value, text] of item.options) {
-                        const option = document.createElement('option');
+                        const option = el('option', '', text);
                         option.value = value;
-                        option.textContent = text;
                         select.append(option);
                     }
                     select.addEventListener('change', () => setValue(item, select.value));
                     row.append(select);
                     refreshers.push(() => { select.value = String(getValue(getSettings(), item)); });
                 } else if (item.type === 'color') {
-                    const input = document.createElement('input');
+                    const input = el('input');
                     input.type = 'color';
                     input.id = id;
                     input.addEventListener('input', () => setValue(item, input.value));
                     row.append(input);
                     refreshers.push(() => { input.value = getValue(getSettings(), item); });
                 } else if (item.type === 'rgba') {
-                    const input = document.createElement('input');
+                    const input = el('input');
                     input.type = 'color';
                     input.id = id;
-                    const alpha = document.createElement('input');
+                    const alpha = el('input');
                     alpha.type = 'range';
                     alpha.min = '0';
                     alpha.max = '100';
@@ -302,9 +276,8 @@ export function initAdvancedControls({ getSettings, onChange }) {
                         alpha.style.setProperty('--yt-fill', `${a}%`);
                     });
                 } else {
-                    const input = document.createElement('input');
+                    const input = el('input', 'text_pole');
                     input.id = id;
-                    input.className = 'text_pole';
                     if (item.type === 'number') {
                         input.type = 'number';
                         input.min = String(item.min ?? '');
@@ -322,10 +295,7 @@ export function initAdvancedControls({ getSettings, onChange }) {
                     });
                     row.append(input);
                     if (item.unit) {
-                        const unit = document.createElement('span');
-                        unit.className = 'yt-muted';
-                        unit.textContent = item.unit;
-                        row.append(unit);
+                        row.append(el('span', 'yt-muted', item.unit));
                     }
                     refreshers.push(() => {
                         if (input !== document.activeElement) {
@@ -334,16 +304,15 @@ export function initAdvancedControls({ getSettings, onChange }) {
                     });
                 }
 
-                const reset = document.createElement('div');
-                reset.className = 'menu_button menu_button_icon fa-solid fa-rotate-left';
+                const reset = el('div', 'menu_button menu_button_icon fa-solid fa-rotate-left');
                 reset.title = 'Back to default';
                 reset.addEventListener('click', () => {
                     const settings = getSettings();
                     if (item.special === 'vnHeight') {
                         settings.vnHeight = item.def / 100;
                     } else {
-                        const { [item.key]: _removed, ...rest } = settings.advanced ?? {};
-                        settings.advanced = rest;
+                        settings.advanced = { ...settings.advanced };
+                        delete settings.advanced[item.key];
                     }
                     refresh();
                     onChange();

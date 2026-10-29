@@ -1,9 +1,10 @@
 // Keeps each slider's accent fill in step with its value. SillyTavern only sizes the fill
 // for some sliders (and leaves Zen sliders at a fixed 70%), so the theme sets --yt-fill.
 
+import { isThemeOn } from './util.js';
+
 function updateFill(slider) {
-    // nothing while the theme is off
-    if (!document.body.classList.contains('yodayo-tavern')) {
+    if (!isThemeOn()) {
         return;
     }
     const min = Number(slider.min) || 0;

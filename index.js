@@ -18,13 +18,12 @@ import { initSharpAvatars, sharpenAvatars } from './avatars.js';
 import { getCutout, initBackgroundRemoval, revalidateCutout } from './bgremove.js';
 import { applyFavicon, applySplashLogo, LOGO_URL } from './brand.js';
 import { applyBackgroundOverride, getEffectiveOverrides, initCharacterSettings } from './charsettings.js';
+import { BODY_CLASS, el, getCurrentAvatarUrl, MODULE_NAME, onActivate, TITLE } from './util.js';
 
-const MODULE_NAME = 'yodayoTavernTheme';
 /** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
 const EXTENSION_FOLDER = new URL('.', import.meta.url).pathname
     .replace(/^.*\/scripts\/extensions\//, '')
     .replace(/\/$/, '');
-const BODY_CLASS = 'yodayo-tavern';
 const DEFAULT_ACCENT = '#f597e8';
 
 const defaultSettings = Object.freeze({
@@ -98,10 +97,12 @@ const fonts = {
 
 function getSettings() {
     const { extensionSettings } = SillyTavern.getContext();
-    if (!extensionSettings[MODULE_NAME]) {
-        extensionSettings[MODULE_NAME] = structuredClone(defaultSettings);
-    }
-    const settings = extensionSettings[MODULE_NAME];
+    return extensionSettings[MODULE_NAME] ??= structuredClone(defaultSettings);
+}
+
+/** Brings settings saved by older versions up to date and fills in new defaults. Runs at startup. */
+function migrateSettings() {
+    const settings = getSettings();
     // the single Navigation setting became a position plus a trigger
     if (settings.navMode !== undefined) {
         const legacy = { 'rail-toggle': ['left', 'menu'], 'rail-auto': ['left', 'autohide'], rail: ['left', 'always'], top: ['top', 'always'] };
@@ -118,11 +119,15 @@ function getSettings() {
             settings[key] = structuredClone(defaultSettings[key]);
         }
     }
-    return settings;
 }
 
 function saveSettings() {
     SillyTavern.getContext().saveSettingsDebounced();
+}
+
+function applyAndSave() {
+    applySettings();
+    saveSettings();
 }
 
 /** Picks dark or light ink so text on the accent color stays readable. */
@@ -145,18 +150,7 @@ function isMoonlitEnabled() {
 /** Image for the open solo chat's character: a custom image if set, else the card. */
 function getCharacterImageUrl() {
     const override = getEffectiveOverrides(getSettings()).image || getCharacterImageOverride(getSettings());
-    if (override) {
-        return override;
-    }
-    const { characters, characterId, groupId } = SillyTavern.getContext();
-    if (groupId || characterId === undefined) {
-        return null;
-    }
-    const avatar = characters[characterId]?.avatar;
-    if (!avatar || avatar === 'none') {
-        return null;
-    }
-    return `characters/${encodeURIComponent(avatar)}`;
+    return override || getCurrentAvatarUrl() || null;
 }
 
 /** Puts the character image on the side opposite the chat when it is docked left or right. */
@@ -179,9 +173,9 @@ function updateCharacterArt() {
         return;
     }
     if (!art) {
-        art = document.createElement('div');
+        art = el('div');
         art.id = ART_ID;
-        const img = document.createElement('img');
+        const img = el('img');
         img.alt = '';
         // big enough images fill the full height; small ones keep their size instead of blurring
         img.addEventListener('load', () => {
@@ -270,8 +264,7 @@ function syncSettingsUI() {
 function bindSettingsUI() {
     const update = (key, value) => {
         getSettings()[key] = value;
-        applySettings();
-        saveSettings();
+        applyAndSave();
     };
 
     $('#yt_enabled').on('change', function () {
@@ -355,7 +348,7 @@ async function resetAllSettings() {
     refreshColorControls();
     refreshAdvancedControls();
     saveSettings();
-    toastr.success('All theme settings are back to their defaults.', 'Yodayo Tavern Theme');
+    toastr.success('All theme settings are back to their defaults.', TITLE);
 }
 
 /** Copies the recognised settings from an exported file and applies them. */
@@ -414,39 +407,41 @@ function matchesShortcut(event, shortcut) {
     return event.key.toLowerCase() === key || code === key;
 }
 
+function toggleRail() {
+    setRailOpen(!document.body.classList.contains('yt-rail-open'));
+}
+
+/** A button that shows or hides the menu bar */
+function railButton(id) {
+    const button = el('button');
+    button.id = id;
+    button.type = 'button';
+    button.title = 'Menu';
+    button.setAttribute('aria-label', 'Menu');
+    button.setAttribute('aria-controls', 'top-settings-holder');
+    button.setAttribute('aria-expanded', 'false');
+    button.addEventListener('click', toggleRail);
+    return button;
+}
+
 /** Moescape-logo button and arrow tab that open the bar; Escape or a click elsewhere closes it again. */
 function initRailToggle() {
-    const arrow = document.createElement('button');
-    arrow.id = RAIL_ARROW_ID;
-    arrow.type = 'button';
-    arrow.title = 'Menu';
-    arrow.setAttribute('aria-label', 'Menu');
-    arrow.setAttribute('aria-controls', 'top-settings-holder');
-    arrow.setAttribute('aria-expanded', 'false');
-    arrow.addEventListener('click', () => setRailOpen(!document.body.classList.contains('yt-rail-open')));
-    document.body.append(arrow);
+    document.body.append(railButton(RAIL_ARROW_ID));
     updateRailArrow();
 
     document.addEventListener('keydown', (event) => {
         const settings = getSettings();
         if (settings.enabled && settings.navTrigger !== 'always' && matchesShortcut(event, settings.navShortcut)) {
             event.preventDefault();
-            setRailOpen(!document.body.classList.contains('yt-rail-open'));
+            toggleRail();
         }
     });
 
-    const button = document.createElement('button');
-    button.id = RAIL_TOGGLE_ID;
-    button.type = 'button';
-    button.title = 'Menu';
-    const logo = document.createElement('img');
+    const button = railButton(RAIL_TOGGLE_ID);
+    const logo = el('img');
     logo.src = LOGO_URL;
     logo.alt = '';
     button.append(logo);
-    button.setAttribute('aria-label', 'Menu');
-    button.setAttribute('aria-controls', 'top-settings-holder');
-    button.setAttribute('aria-expanded', 'false');
-    button.addEventListener('click', () => setRailOpen(!document.body.classList.contains('yt-rail-open')));
     document.body.append(button);
 
     document.addEventListener('keydown', (event) => {
@@ -504,39 +499,31 @@ function initPositionToggle() {
     if (!formSheld) {
         return;
     }
-    const wrap = document.createElement('div');
+    const wrap = el('div');
     wrap.id = 'yt-position-toggle';
 
-    const button = document.createElement('div');
-    button.className = 'yt-position-button fa-solid interactable';
+    const button = el('div', 'yt-position-button fa-solid interactable');
     button.tabIndex = 0;
     button.setAttribute('role', 'button');
     button.setAttribute('aria-haspopup', 'true');
 
-    const menu = document.createElement('div');
-    menu.className = 'yt-position-menu';
+    const menu = el('div', 'yt-position-menu');
     menu.hidden = true;
     for (const position of POSITIONS) {
-        const option = document.createElement('div');
-        option.className = `yt-position-option fa-solid ${position.icon} interactable`;
+        const option = el('div', `yt-position-option fa-solid ${position.icon} interactable`);
         option.title = position.label;
         option.tabIndex = 0;
         option.setAttribute('role', 'button');
+        option.setAttribute('aria-label', position.label);
         option.dataset.value = position.value;
-        const choose = (event) => {
+        onActivate(option, (event) => {
+            event.preventDefault();
             event.stopPropagation();
             getSettings().chatPosition = position.value;
-            applySettings();
+            applyAndSave();
             syncSettingsUI();
-            saveSettings();
             menu.hidden = true;
             refresh();
-        };
-        option.addEventListener('click', choose);
-        option.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                choose(event);
-            }
         });
         menu.append(option);
     }
@@ -545,24 +532,23 @@ function initPositionToggle() {
         const current = POSITIONS.find(p => p.value === getSettings().chatPosition) ?? POSITIONS[1];
         button.className = `yt-position-button fa-solid ${current.icon} interactable`;
         button.title = `${current.label} (click to change)`;
+        button.setAttribute('aria-label', button.title);
+        button.setAttribute('aria-expanded', String(!menu.hidden));
         for (const option of menu.children) {
             option.classList.toggle('active', option.dataset.value === current.value);
         }
     };
 
-    const toggle = (event) => {
+    onActivate(button, (event) => {
+        event.preventDefault();
         event.stopPropagation();
         menu.hidden = !menu.hidden;
-    };
-    button.addEventListener('click', toggle);
-    button.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            toggle(event);
-        }
+        button.setAttribute('aria-expanded', String(!menu.hidden));
     });
     document.addEventListener('click', (event) => {
-        if (!wrap.contains(/** @type {Node} */ (event.target))) {
+        if (!menu.hidden && !wrap.contains(/** @type {Node} */ (event.target))) {
             menu.hidden = true;
+            button.setAttribute('aria-expanded', 'false');
         }
     });
 
@@ -572,7 +558,6 @@ function initPositionToggle() {
     $('#yt_chat_position').on('change', refresh);
 }
 
-/** Arrow at the top of a chat that closes it and returns to the home page. */
 /**
  * SillyTavern imports any image file dropped on the page as a character, and an image
  * dragged from the page itself (a card, an avatar) counts too, which made copies of
@@ -601,15 +586,15 @@ function initDragGuard() {
     }
 }
 
+/** Arrow at the top of a chat that closes it and returns to the home page. */
 function initBackButton() {
     const sheld = document.getElementById('sheld');
     if (!sheld) {
         return;
     }
-    const button = document.createElement('button');
+    const button = el('button', 'fa-solid fa-arrow-left');
     button.id = BACK_BUTTON_ID;
     button.type = 'button';
-    button.className = 'fa-solid fa-arrow-left';
     button.title = 'Back to home';
     button.setAttribute('aria-label', 'Back to home');
     // SillyTavern's own "Close chat" option, from the burger menu
@@ -645,31 +630,20 @@ async function init() {
         const html = await renderExtensionTemplateAsync(EXTENSION_FOLDER, 'settings');
         $(container).append(html);
     } else {
-        console.warn('[Yodayo Tavern] Extensions panel not found; the theme still applies, settings stay hidden.');
+        console.warn(`[${TITLE}] Extensions panel not found; the theme still applies, settings stay hidden.`);
     }
 
+    migrateSettings();
     syncSettingsUI();
     bindSettingsUI();
-    refreshColorControls = initColorControls({
-        getSettings,
-        onChange: () => {
-            applySettings();
-            saveSettings();
-        },
-    });
+    refreshColorControls = initColorControls({ getSettings, onChange: applyAndSave });
     initBackupControls({ getSettings, onImport: importSettings });
-    refreshAdvancedControls = initAdvancedControls({
-        getSettings,
-        onChange: () => {
-            applySettings();
-            saveSettings();
-        },
-    });
+    refreshAdvancedControls = initAdvancedControls({ getSettings, onChange: applyAndSave });
     initSettingsPopout();
     // the chat field blur lives on its own layer: #sheld clips its overflow, so a blur
     // that spills past the chat's edges can't be part of it
     if (!document.getElementById('yt-chat-blur')) {
-        const blur = document.createElement('div');
+        const blur = el('div');
         blur.id = 'yt-chat-blur';
         document.body.append(blur);
     }
@@ -677,13 +651,7 @@ async function init() {
     initSharpAvatars(() => getSettings().enabled);
     initBackgroundRemoval({ getSettings, saveSettings });
 
-    refreshCharacterSettings = initCharacterSettings({
-        getSettings,
-        onChange: () => {
-            applySettings();
-            saveSettings();
-        },
-    });
+    refreshCharacterSettings = initCharacterSettings({ getSettings, onChange: applyAndSave });
     document.getElementById('yt_reset_all')?.addEventListener('click', resetAllSettings);
     exclusive = registerTheme({
         id: 'yodayo',
@@ -694,18 +662,14 @@ async function init() {
         isEnabled: () => getSettings().enabled,
         disable: () => {
             getSettings().enabled = false;
-            applySettings();
+            applyAndSave();
             syncSettingsUI();
-            saveSettings();
         },
         pauseUserTheme: () => getSettings().pauseUserTheme,
     });
     initCustomize({
         getSettings,
-        onChange: () => {
-            applySettings();
-            saveSettings();
-        },
+        onChange: applyAndSave,
         onClose: () => {
             syncSettingsUI();
             refreshColorControls();

@@ -5,6 +5,7 @@
 // processed once.
 
 import { uploadImage } from './charsettings.js';
+import { readAsDataUrl, TITLE } from './util.js';
 
 const PLUGIN_URL = '/api/plugins/background-removal';
 const PLUGIN_REPO = 'https://github.com/pervertir/SillyTavern-BackgroundRemoval';
@@ -18,6 +19,11 @@ let getSettings = () => ({});
 let saveSettings = () => {};
 
 class PluginMissingError extends Error {}
+
+/** Saved cutouts are { path, version }; the first version stored the path alone. */
+function cutoutPath(entry) {
+    return typeof entry === 'string' ? entry : entry?.path ?? null;
+}
 
 let installHelpShown = false;
 
@@ -58,7 +64,7 @@ function watchProgress() {
             if (toast) {
                 toast.find('.toast-message').text(text);
             } else {
-                toast = toastr.info(text, 'Yodayo Tavern Theme', { timeOut: 0, extendedTimeOut: 0, tapToDismiss: false });
+                toast = toastr.info(text, TITLE, { timeOut: 0, extendedTimeOut: 0, tapToDismiss: false });
             }
         } catch {
             // the status is only for show
@@ -72,22 +78,13 @@ function watchProgress() {
     };
 }
 
-function blobToBase64(blob) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result).replace(/^data:[^,]+,/, ''));
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(blob);
-    });
-}
-
 /** Sends one image to the server plugin and returns the cutout as a PNG blob at full size. */
 async function cutOut(src) {
     const source = await fetch(src);
     if (!source.ok) {
         throw new Error(`Could not load ${src}`);
     }
-    const image = await blobToBase64(await source.blob());
+    const image = (await readAsDataUrl(await source.blob())).replace(/^data:[^,]+,/, '');
     const stopProgress = watchProgress();
     try {
         const response = await fetch(`${PLUGIN_URL}/remove`, {
@@ -127,14 +124,14 @@ async function getVersion(src) {
  */
 export function getCutout(src, onReady) {
     const settings = getSettings();
-    const done = settings.cutouts?.[src];
+    const done = cutoutPath(settings.cutouts?.[src]);
     if (done) {
-        return typeof done === 'string' ? done : done.path;
+        return done;
     }
     if (!jobs.has(src) && !failed.has(src)) {
         const job = Promise.all([cutOut(src), getVersion(src)])
-            .then(async ([blob, version]) => ({ version, path: await uploadImage(new File([blob], 'cutout.png', { type: 'image/png' }), 'yodayo-cutout') }))
-            .then(({ path, version }) => {
+            .then(async ([blob, version]) => {
+                const path = await uploadImage(new File([blob], 'cutout.png', { type: 'image/png' }), 'yodayo-cutout');
                 const current = getSettings();
                 current.cutouts ??= {};
                 current.cutouts[src] = { path, version };
@@ -144,11 +141,11 @@ export function getCutout(src, onReady) {
             })
             .catch((error) => {
                 failed.add(src);
-                console.error('[Yodayo Tavern Theme] background removal failed', error);
+                console.error(`[${TITLE}] background removal failed`, error);
                 if (error instanceof PluginMissingError) {
                     showInstallHelp();
                 } else {
-                    toastr.warning('Could not remove the background from the character image; showing it as is.', 'Yodayo Tavern Theme');
+                    toastr.warning('Could not remove the background from the character image; showing it as is.', TITLE);
                 }
             })
             .finally(() => jobs.delete(src));
@@ -159,8 +156,7 @@ export function getCutout(src, onReady) {
 
 /** The finished cutout for an image, without starting one. */
 export function getCachedCutout(src) {
-    const done = getSettings().cutouts?.[src];
-    return done ? (typeof done === 'string' ? done : done.path) : null;
+    return cutoutPath(getSettings().cutouts?.[src]);
 }
 
 /** Whether a cutout is being made for an image right now */

@@ -6,8 +6,10 @@ import { renderTemplateAsync } from '../../../templates.js';
 import { openWelcomeScreen } from '../../../welcome-screen.js';
 import { getCachedCutout } from './bgremove.js';
 import { LOGO_URL } from './brand.js';
+import { el, onActivate, TITLE } from './util.js';
 
 const HOME_ID = 'yt-home';
+const ASSISTANT_ID = 'yt-home-assistant';
 const ACTIVE_CLASS = 'yt-home-active';
 const MAX_TAG_CHIPS = 24;
 /** Width of a recent chat's hover card, used to open it leftward near the right edge. */
@@ -17,6 +19,14 @@ const DEFAULT_CHAT_NAME = /^(?:.* - )?\d{4}-\d{1,2}-\d{1,2} ?@\d{1,2}h ?\d{1,2}m
 
 let activeTagId = null;
 let searchText = '';
+/** Aborted when the home is taken down: ends its document listeners and observers */
+let homeLifetime = new AbortController();
+
+/** Disconnects an observer once the home is taken down. */
+function untilHomeCloses(observer) {
+    homeLifetime.signal.addEventListener('abort', () => observer.disconnect(), { once: true });
+    return observer;
+}
 
 /** Character orders, the same choices as SillyTavern's character list. "Date added" is the
  * card's creation date; "Date modified" is when its file last changed. */
@@ -54,18 +64,6 @@ function sortFields(item) {
         chatSize: Number(item.chat_size) || 0,
         random: Math.random(),
     };
-}
-
-/** Small DOM helper so names and tags from character cards are never parsed as HTML. */
-function el(tag, className, text) {
-    const node = document.createElement(tag);
-    if (className) {
-        node.className = className;
-    }
-    if (text !== undefined) {
-        node.textContent = text;
-    }
-    return node;
 }
 
 function getCharacterEntries() {
@@ -167,16 +165,10 @@ function renderCard({ character, index }) {
     remove.title = `Delete ${character.name}`;
     remove.setAttribute('aria-label', remove.title);
     remove.append(el('i', 'fa-solid fa-trash-can'));
-    const onDelete = (event) => {
+    onActivate(remove, (event) => {
         event.preventDefault();
         event.stopPropagation();
         confirmDelete(character);
-    };
-    remove.addEventListener('click', onDelete);
-    remove.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            onDelete(event);
-        }
     });
     media.append(remove);
 
@@ -280,7 +272,7 @@ function initChipRow(chips) {
             chips.scrollLeft += event.deltaY;
         }
     }, { passive: false });
-    new ResizeObserver(() => updateChipFades(chips)).observe(chips);
+    untilHomeCloses(new ResizeObserver(() => updateChipFades(chips))).observe(chips);
 }
 
 function renderChips(home) {
@@ -307,6 +299,7 @@ function renderChips(home) {
 }
 
 function buildHome() {
+    homeLifetime = new AbortController();
     const home = el('section', 'yt-home');
     home.id = HOME_ID;
 
@@ -314,7 +307,7 @@ function buildHome() {
     const title = el('div', 'yt-home-tabs');
     const assistant = el('button', 'yt-home-tab', 'ST Assistant');
     assistant.type = 'button';
-    assistant.title = "Chat with SillyTavern's assistant";
+    assistant.title = 'Chat with SillyTavern\'s assistant';
     assistant.addEventListener('click', () => {
         // on a phone there's no room for the assistant beside the Tavern window, so this tab
         // shows it in the window's place: picture, greeting and the message box
@@ -328,7 +321,7 @@ function buildHome() {
         if (button instanceof HTMLElement) {
             button.click();
         } else {
-            toastr.warning('The assistant chat is not available right now.', 'Yodayo Tavern Theme');
+            toastr.warning('The assistant chat is not available right now.', TITLE);
         }
     });
     const tavern = el('div', 'yt-home-title', 'Tavern');
@@ -409,7 +402,6 @@ function getRecentChatLabel(item) {
     return file && !DEFAULT_CHAT_NAME.test(file) ? file : characterName || file;
 }
 
-/** Moves SillyTavern's welcome panel (recent chats) into the home, above the characters. */
 /** Prev/next arrows for the recent chats row, shown only when there is more to scroll to. */
 function addRecentArrows(slot, list) {
     if (!(list instanceof HTMLElement)) {
@@ -438,9 +430,9 @@ function addRecentArrows(slot, list) {
     for (const type of ['swiped-left', 'swiped-right']) {
         list.addEventListener(type, event => event.stopPropagation());
     }
-    new ResizeObserver(update).observe(list);
+    untilHomeCloses(new ResizeObserver(update)).observe(list);
     // "show more" adds chats to the row without changing its size
-    new MutationObserver(update).observe(list, { childList: true });
+    untilHomeCloses(new MutationObserver(update)).observe(list, { childList: true });
     update();
 }
 
@@ -487,30 +479,33 @@ function buildAbout() {
         event.stopPropagation();
         setOpen(card.hidden);
     });
+    const { signal } = homeLifetime;
     document.addEventListener('click', (event) => {
         if (!card.hidden && !about.contains(/** @type {Node} */ (event.target))) {
             setOpen(false);
         }
-    });
+    }, { signal });
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && !card.hidden) {
             setOpen(false);
         }
-    });
+    }, { signal });
 
     about.append(card, button);
     return about;
 }
 
+/** Welcome panel each home's recent chats tools are wired to */
+const toolPanels = new WeakMap();
+
 /** Recent chats settings and show/hide, next to the "Recent chats" heading; they press the
  * welcome panel's own buttons, whose header the home hides. */
 function addRecentTools(home, panel) {
     const tools = home.querySelector('.yt-home-divider-tools');
-    if (!tools || tools.dataset.panelBound === 'true' && tools.ytPanel === panel) {
+    if (!tools || toolPanels.get(tools) === panel) {
         return;
     }
-    tools.dataset.panelBound = 'true';
-    tools.ytPanel = panel;
+    toolPanels.set(tools, panel);
     const proxy = (selector, icon, title) => {
         const button = el('button', `yt-divider-tool fa-solid ${icon}`);
         button.type = 'button';
@@ -543,7 +538,7 @@ function addRecentTools(home, panel) {
             panel.querySelector('.showRecentChats')?.click();
         }
     }
-    new MutationObserver(update).observe(panel, { attributes: true, attributeFilter: ['class'] });
+    untilHomeCloses(new MutationObserver(update)).observe(panel, { attributes: true, attributeFilter: ['class'] });
     tools.replaceChildren(settings, toggle);
     update();
 
@@ -588,8 +583,6 @@ function render() {
     renderChips(home);
     renderGrid(home);
 }
-
-const ASSISTANT_ID = 'yt-home-assistant';
 
 /** Full-size card image for the welcome assistant, read from the greeting SillyTavern adds. */
 function getAssistantInfo(chat) {
@@ -688,6 +681,7 @@ export function initTavernHome(isEnabled) {
                     chat.prepend(adopted);
                 }
                 existing.remove();
+                homeLifetime.abort();
             }
             return;
         }
