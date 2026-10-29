@@ -1,4 +1,4 @@
-// Group chats: every member stands side by side opposite the chat. Whoever spoke last stands in
+// Group chats: every member stands side by side opposite the chat, each in their own slot. Whoever spoke last stands in
 // front, a little bigger; while a member is writing a reply they glow.
 
 import { el } from './util.js';
@@ -75,7 +75,7 @@ export function renderLineup(art, members, getUrl, onError) {
     const shown = pickShown(members);
     const speaker = getSpeaker(members);
     const existing = new Map([...art.querySelectorAll('.yt-art-member')].map(node => [node.dataset.avatar, node]));
-    const nodes = shown.map((avatar) => {
+    const nodes = shown.map((avatar, slot) => {
         let node = existing.get(avatar);
         if (!node) {
             node = el('div', 'yt-art-member');
@@ -91,6 +91,7 @@ export function renderLineup(art, members, getUrl, onError) {
         if (img.getAttribute('src') !== url) {
             img.setAttribute('src', url);
         }
+        node.style.setProperty('--yt-slot', String(slot));
         node.classList.toggle('yt-art-speaker', avatar === speaker);
         node.classList.toggle('yt-art-replying', avatar === replying);
         return node;

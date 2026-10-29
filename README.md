@@ -147,7 +147,9 @@ With the chat docked to one side, the character appears on the other. If you use
 Character Expressions, the expression sprite moves there. Otherwise the extension
 shows the character's card image. In a group chat every member stands there side by side:
 whoever spoke last is in front and a little bigger, and a member glows while writing a
-reply. On phones the chat always fills the screen.
+reply. Each character stands up to 80% of the screen height, never larger than its image.
+Drag a character to move it; each chat remembers where you put them, and a double-click puts
+one back. On phones the chat always fills the screen.
 
 ### Chat styles and visual novel mode
 
@@ -210,6 +212,7 @@ remembered.
 - `theme-exclusive.js`: one theme at a time, shared unchanged with pervertir's other themes
 - `bgremove.js`: Remove background, through the Background Removal server plugin
 - `groupart.js`: the group chat lineup beside the chat
+- `artdrag.js`: dragging the characters beside the chat, remembered per chat
 - `colors.js`: chat colors (all characters or per character), character image and export/import
 - `util.js`: small helpers the other modules share
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,
