@@ -105,7 +105,7 @@ for (const [folder] of OTHERS) {
     report(`off, ${folder.split('/')[1]} on`, await findLeaks());
 }
 
-// on → off → on without a reload, at home and in a chat
+// on → off live, then on again (which reloads the page once), at home and in a chat
 const toggle = (on) => page.evaluate((on) => { const c = document.getElementById('yt_enabled'); c.checked = on; c.dispatchEvent(new Event('change', { bubbles: true })); }, on);
 const reportOn = async (label) => {
     const state = await page.evaluate(() => ({
@@ -117,13 +117,23 @@ const reportOn = async (label) => {
     console.log(`${missing.length ? 'FAIL' : 'ok  '} ${label}${missing.length ? `: missing ${missing.join(', ')}` : ''}`);
     failed ||= missing.length > 0;
 };
+/** Turns the theme on and waits for the one reload that follows. */
+const turnOn = async () => {
+    const reloaded = page.waitForEvent('load', { timeout: 15000 }).then(() => true, () => false);
+    await toggle(true);
+    if (!await reloaded) {
+        console.log('FAIL turning on did not reload the page');
+        failed = true;
+    }
+    await page.waitForFunction(() => window.SillyTavern?.getContext?.().characters, null, { timeout: 60000 });
+    await wait(4000);
+};
 await setup(true, null);
 await reportOn('on at load');
 await toggle(false);
 await wait(2500);
 report('turned off live (home)', await findLeaks());
-await toggle(true);
-await wait(2500);
+await turnOn();
 await reportOn('turned on again (home)');
 const opened = await page.evaluate(async () => {
     const ctx = SillyTavern.getContext();
@@ -137,8 +147,7 @@ if (opened) {
     await toggle(false);
     await wait(2500);
     report('turned off live (in a chat)', await findLeaks());
-    await toggle(true);
-    await wait(2500);
+    await turnOn();
     await reportOn('turned on again (in a chat)');
 }
 
