@@ -1,6 +1,8 @@
 // Chat colors, modelled on the Yodayo Chat Customizer: one set for all characters,
 // optional per-character overrides, a per-character image, and JSON export/import.
 
+import { debounce, downloadJson, el, getCurrentAvatar, HEX_COLOR, TITLE } from './util.js';
+
 /** Each color maps to a CSS variable; null in settings means "use the theme default". */
 export const COLOR_FIELDS = Object.freeze([
     { group: 'Character', key: 'charName', label: 'Name', cssVar: '--yt-char-name', preview: 'accent' },
@@ -13,17 +15,7 @@ export const COLOR_FIELDS = Object.freeze([
     { group: 'You', key: 'userBubble', label: 'Bubble', cssVar: '--yt-user-bubble', preview: '#3a3d33' },
 ]);
 
-const HEX_COLOR = /^#[0-9a-f]{6}$/i;
 const EXPORT_FILE = 'yodayo-tavern-theme.json';
-
-/** Avatar file of the character in the open solo chat, or null. */
-export function getCurrentAvatar() {
-    const { characters, characterId, groupId } = SillyTavern.getContext();
-    if (groupId || characterId === undefined) {
-        return null;
-    }
-    return characters[characterId]?.avatar ?? null;
-}
 
 function getCurrentCharacterName() {
     const { characters, characterId } = SillyTavern.getContext();
@@ -110,19 +102,13 @@ export function initColorControls({ getSettings, onChange }) {
     for (const field of COLOR_FIELDS) {
         if (field.group !== group) {
             group = field.group;
-            const heading = document.createElement('div');
-            heading.className = 'yt-color-group';
-            heading.textContent = group;
-            rows.append(heading);
+            rows.append(el('div', 'yt-color-group', group));
         }
-        const row = document.createElement('div');
-        row.className = 'yt-setting-row yt-color-row';
-
-        const label = document.createElement('label');
+        const row = el('div', 'yt-setting-row yt-color-row');
+        const label = el('label', '', field.label);
         label.htmlFor = `yt_color_${field.key}`;
-        label.textContent = field.label;
 
-        const input = document.createElement('input');
+        const input = el('input');
         input.type = 'color';
         input.id = `yt_color_${field.key}`;
         input.addEventListener('input', () => {
@@ -131,8 +117,7 @@ export function initColorControls({ getSettings, onChange }) {
             onChange();
         });
 
-        const reset = document.createElement('div');
-        reset.className = 'menu_button menu_button_icon fa-solid fa-rotate-left';
+        const reset = el('div', 'menu_button menu_button_icon fa-solid fa-rotate-left');
         reset.title = 'Back to default';
         reset.addEventListener('click', () => {
             delete getEditedColors()[field.key];
@@ -150,21 +135,15 @@ export function initColorControls({ getSettings, onChange }) {
 
     const imageRow = document.getElementById('yt_char_image_row');
     const imageInput = /** @type {HTMLInputElement|null} */ (document.getElementById('yt_char_image'));
-    let imageTimer;
-    imageInput?.addEventListener('input', () => {
-        clearTimeout(imageTimer);
-        imageTimer = setTimeout(applyImage, 400);
-    });
-    function applyImage() {
+    imageInput?.addEventListener('input', debounce(() => {
         const avatar = getCurrentAvatar();
         if (!avatar) {
             return;
         }
-        const url = imageInput.value.trim();
-        getCharacterTheme(getSettings(), avatar, true).image = url;
+        getCharacterTheme(getSettings(), avatar, true).image = imageInput.value.trim();
         pruneCharacterTheme(getSettings(), avatar);
         onChange();
-    }
+    }));
 
     document.getElementById('yt_colors_reset')?.addEventListener('click', () => {
         const settings = getSettings();
@@ -214,14 +193,7 @@ export function initColorControls({ getSettings, onChange }) {
 
 /** Wires the Export and Import buttons. `onImport` receives the parsed settings object. */
 export function initBackupControls({ getSettings, onImport }) {
-    document.getElementById('yt_export')?.addEventListener('click', () => {
-        const blob = new Blob([JSON.stringify(getSettings(), null, 2)], { type: 'application/json' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = EXPORT_FILE;
-        link.click();
-        setTimeout(() => URL.revokeObjectURL(link.href), 0);
-    });
+    document.getElementById('yt_export')?.addEventListener('click', () => downloadJson(getSettings(), EXPORT_FILE));
 
     const fileInput = /** @type {HTMLInputElement|null} */ (document.getElementById('yt_import_file'));
     document.getElementById('yt_import')?.addEventListener('click', () => fileInput?.click());
@@ -237,10 +209,10 @@ export function initBackupControls({ getSettings, onImport }) {
                 throw new Error('not a settings object');
             }
             onImport(data);
-            toastr.success('Theme settings imported.', 'Yodayo Tavern Theme');
+            toastr.success('Theme settings imported.', TITLE);
         } catch (error) {
-            console.error('[Yodayo Tavern] Import failed', error);
-            toastr.error('That file is not a Yodayo Tavern settings export.', 'Yodayo Tavern Theme');
+            console.error(`[${TITLE}] import failed`, error);
+            toastr.error('That file is not a Yodayo Tavern settings export.', TITLE);
         }
     });
 }

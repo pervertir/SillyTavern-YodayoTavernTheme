@@ -1,8 +1,9 @@
-// Sharper chat and character management avatars. SillyTavern shows each message's avatar from a large thumbnail
-// (864×1280 by default) squeezed into a ~50px circle, and the browser's downsampling at
-// that ratio looks soft. This pre-scales each avatar to its exact on-screen size in steps
-// with high-quality smoothing, and shows the result through CSS `content`, so the img's
-// src (which SillyTavern reads, e.g. to zoom the avatar on click) never changes.
+// Crisp avatars at any size. A picture shrunk a lot (a large card in a ~50px circle) looks
+// soft with the browser's downsampling, and a small thumbnail shown bigger than it is (recent
+// chats, a large avatar size, a retina screen) looks blurry. Each avatar is pre-scaled to its
+// exact on-screen pixel size in steps with high-quality smoothing, from the full card image
+// when the thumbnail is too small, and shown through CSS `content`, so the img's src (which
+// SillyTavern reads, e.g. to zoom the avatar on click) never changes.
 
 /** `${src}|${width}x${height}|${position}` → Promise of an object URL, oldest first */
 const cache = new Map();
@@ -10,6 +11,24 @@ const cache = new Map();
 const CACHE_LIMIT = 300;
 
 let isEnabled = () => true;
+
+/** Pictures the theme sharpens: chat messages, recent chats, and the character management menu */
+const CHAT_AVATARS = '#chat .mes .avatar img, #chat .recentChat .avatar img';
+const PANEL_AVATARS = '#right-nav-panel .avatar img, #avatar_load_preview';
+/** Shown at up to this much over its own size, a picture still looks sharp enough */
+const MAX_UPSCALE = 1.15;
+
+/** The full-size image behind a SillyTavern thumbnail URL, or null */
+function fullSizeUrl(src) {
+    const query = src.match(/(?:^|\/)thumbnail\?(.*)$/)?.[1];
+    if (!query) {
+        return null;
+    }
+    const params = new URLSearchParams(query);
+    const file = params.get('file');
+    const folder = { avatar: 'characters', persona: 'User Avatars' }[params.get('type') ?? ''];
+    return file && folder ? `${folder}/${encodeURIComponent(file)}` : null;
+}
 
 function loadImage(src) {
     return new Promise((resolve, reject) => {
@@ -61,9 +80,15 @@ async function sharpen(img) {
     const ratio = window.devicePixelRatio || 1;
     const width = Math.round(img.clientWidth * ratio);
     const height = Math.round(img.clientHeight * ratio);
-    // only worth it when the picture is shrunk a lot
-    if (!width || !height || img.naturalWidth < width * 2) {
+    if (!width || !height) {
+        return;
+    }
+    const upscale = Math.max(width / img.naturalWidth, height / img.naturalHeight);
+    const full = upscale > MAX_UPSCALE ? fullSizeUrl(src) : null;
+    // worth it when the picture is shrunk a lot, or too small and a bigger one exists
+    if (!full && img.naturalWidth < width * 2) {
         img.style.removeProperty('content');
+        delete img.dataset.ytSharp;
         return;
     }
     const position = getComputedStyle(img).objectPosition;
@@ -72,7 +97,7 @@ async function sharpen(img) {
         return;
     }
     if (!cache.has(key)) {
-        cache.set(key, render(src, width, height, position).catch(() => null));
+        cache.set(key, render(full ?? src, width, height, position).catch(() => null));
         trimCache();
     }
     const url = await cache.get(key);
@@ -99,9 +124,6 @@ function trimCache() {
         pending.then(url => url && URL.revokeObjectURL(url));
     }
 }
-
-/** Character management avatars: the character and group lists and the open character's picture */
-const PANEL_AVATARS = '#right-nav-panel .avatar img, #avatar_load_preview';
 
 function sharpenOrWait(img) {
     if (!isEnabled()) {
@@ -150,8 +172,8 @@ function initPanelAvatars() {
 
 /** Sharpens the avatars of the given messages, or of the whole chat. */
 export function sharpenAvatars(messageId) {
-    const scope = messageId === undefined ? '#chat .mes' : `#chat .mes[mesid="${messageId}"]`;
-    for (const img of document.querySelectorAll(`${scope} .avatar img`)) {
+    const selector = messageId === undefined ? CHAT_AVATARS : `#chat .mes[mesid="${messageId}"] .avatar img`;
+    for (const img of document.querySelectorAll(selector)) {
         sharpenOrWait(img);
     }
     if (messageId === undefined) {
@@ -174,6 +196,12 @@ export function initSharpAvatars(enabled) {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(all, 250);
     });
+    // recent chats load their pictures whenever the home shows
+    document.getElementById('chat')?.addEventListener('load', (event) => {
+        if (event.target instanceof HTMLImageElement && event.target.matches('#chat .recentChat .avatar img')) {
+            sharpenOrWait(event.target);
+        }
+    }, true);
     initPanelAvatars();
     all();
 }

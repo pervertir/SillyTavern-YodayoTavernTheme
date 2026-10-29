@@ -24,6 +24,17 @@ body.yodayo-tavern #chat .mes .mes_block {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    flex: 0 1 auto;
+    width: fit-content;
+    min-width: 140px;
+    max-width: min(calc(100% - 26px), var(--yt-bubble-max));
+    margin-right: 26px;
+    padding: 8px 14px 10px;
+    background-color: var(--yt-panel-surface);
+    backdrop-filter: var(--yt-backdrop);
+    -webkit-backdrop-filter: var(--yt-backdrop);
+    border: 1px solid var(--yt-line);
+    border-radius: 4px var(--yt-bubble-radius) var(--yt-bubble-radius) var(--yt-bubble-radius);
 }
 
 /* Character bubble: see-through with a backdrop blur so text stays readable on any image */
@@ -86,17 +97,19 @@ body.yodayo-tavern #chat .mes[is_system="true"] .mes_text {
 /* Names, timestamps and message actions */
 body.yodayo-tavern #chat .mes .ch_name {
     width: 100%;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+    min-height: 26px;
+    align-items: center;
 }
 
 body.yodayo-tavern #chat .mes .name_text {
     color: var(--yt-text);
     font-weight: 600;
-    font-size: 0.95em;
+    font-size: 13px;
 }
 
 body.yodayo-tavern #chat .mes:not([is_user="true"]) .name_text {
-    color: var(--yt-accent);
+    color: var(--yt-char-name);
 }
 
 body.yodayo-tavern #chat .mes .timestamp,
@@ -137,18 +150,25 @@ body.yodayo-tavern #chat .swipes-counter {
 body.yodayo-tavern #chat .swipe_left:hover,
 body.yodayo-tavern #chat .swipe_right:hover {
     color: var(--yt-accent);
+    background-color: var(--yt-panel-surface);
 }
 
 body.yodayo-tavern #chat .swipes-counter {
     font-size: 0.75em;
+    padding: 0 6px;
+    border-radius: 9999px;
+    font-variant-numeric: tabular-nums;
+    opacity: 1;
 }
 
 /* Reasoning block */
 body.yodayo-tavern #chat .mes_reasoning_details {
-    background-color: var(--yt-surface);
-    border: 1px solid var(--yt-line);
     border-radius: var(--yt-radius-lg);
-    padding: 6px 12px;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin-bottom: var(--yt-space-2);
+    max-width: min(100%, var(--yt-bubble-max));
 }
 
 /* Inline formatting */
@@ -169,9 +189,12 @@ body.yodayo-tavern .mes_text code {
 }
 
 body.yodayo-tavern .mes_text pre {
-    background-color: var(--yt-bg);
+    position: relative;
+    padding: 28px 12px 10px;
+    background-color: rgb(17 18 20 / 0.9);
     border: 1px solid var(--yt-line);
-    border-radius: var(--yt-radius);
+    border-radius: var(--yt-radius-md);
+    overflow-x: auto;
 }
 
 body.yodayo-tavern .mes_text blockquote {
@@ -240,30 +263,18 @@ body.yodayo-tavern #chat .swipe_right {
     transition: color var(--yt-fast) var(--yt-ease), background-color var(--yt-fast) var(--yt-ease);
 }
 
-body.yodayo-tavern #chat .swipe_left:hover,
-body.yodayo-tavern #chat .swipe_right:hover {
-    background-color: var(--yt-panel-surface);
-}
-
-body.yodayo-tavern #chat .swipes-counter {
-    padding: 0 6px;
-    border-radius: 9999px;
-    font-variant-numeric: tabular-nums;
-    opacity: 1;
-}
-
 /* Edit mode: the bubble becomes an outlined editor */
 body.yodayo-tavern #chat .mes .edit_textarea,
 body.yodayo-tavern #chat .mes #curEditTextarea {
-    background-color: var(--yt-panel-surface);
-    backdrop-filter: var(--yt-backdrop);
-    -webkit-backdrop-filter: var(--yt-backdrop);
-    border: 1px solid var(--yt-accent);
-    border-radius: var(--yt-bubble-radius);
-    box-shadow: 0 0 0 3px var(--yt-accent-soft);
-    padding: 10px 14px;
     line-height: 1.6;
     color: var(--yt-text);
+    background-color: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
 }
 
 body.yodayo-tavern #chat .mes .mes_edit_buttons {
@@ -291,13 +302,6 @@ body.yodayo-tavern #chat .mes .mes_edit_buttons .mes_edit_delete:hover {
 }
 
 /* Reasoning: a muted chip that opens into a quiet panel */
-body.yodayo-tavern #chat .mes_reasoning_details {
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    margin-bottom: var(--yt-space-2);
-    max-width: min(100%, var(--yt-bubble-max));
-}
 
 body.yodayo-tavern #chat .mes_reasoning_summary {
     display: inline-flex;
@@ -325,14 +329,6 @@ body.yodayo-tavern #chat .mes_reasoning {
 }
 
 /* Code blocks */
-body.yodayo-tavern .mes_text pre {
-    position: relative;
-    padding: 28px 12px 10px;
-    background-color: rgb(17 18 20 / 0.9);
-    border: 1px solid var(--yt-line);
-    border-radius: var(--yt-radius-md);
-    overflow-x: auto;
-}
 
 body.yodayo-tavern .mes_text pre::before {
     content: 'code';
@@ -425,19 +421,6 @@ body.yodayo-tavern .welcomePanel .chatActions .menu_button {
 
 /* The whole message block is the bubble, so the name and actions sit inside it
    above the text. These rules come last and replace the text-only bubble above. */
-body.yodayo-tavern #chat .mes .mes_block {
-    flex: 0 1 auto;
-    width: fit-content;
-    min-width: 140px;
-    max-width: min(calc(100% - 26px), var(--yt-bubble-max));
-    margin-right: 26px;
-    padding: 8px 14px 10px;
-    background-color: var(--yt-panel-surface);
-    backdrop-filter: var(--yt-backdrop);
-    -webkit-backdrop-filter: var(--yt-backdrop);
-    border: 1px solid var(--yt-line);
-    border-radius: 4px var(--yt-bubble-radius) var(--yt-bubble-radius) var(--yt-bubble-radius);
-}
 
 body.yodayo-tavern #chat .mes .mes_text {
     width: auto;
@@ -472,16 +455,6 @@ body.yodayo-tavern #chat .mes[is_system="true"] .mes_block {
     -webkit-backdrop-filter: none;
 }
 
-body.yodayo-tavern #chat .mes .ch_name {
-    margin-bottom: 2px;
-    min-height: 26px;
-    align-items: center;
-}
-
-body.yodayo-tavern #chat .mes .name_text {
-    font-size: 13px;
-}
-
 /* No date and time on messages */
 body.yodayo-tavern #chat .mes .timestamp {
     display: none;
@@ -493,17 +466,6 @@ body.yodayo-tavern #chat .mes .mes_block:has(.edit_textarea) {
     max-width: min(calc(100% - 26px), var(--yt-bubble-max));
     border-color: var(--yt-accent);
     box-shadow: 0 0 0 3px var(--yt-accent-soft);
-}
-
-body.yodayo-tavern #chat .mes .edit_textarea,
-body.yodayo-tavern #chat .mes #curEditTextarea {
-    background-color: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 0;
 }
 
 @media screen and (max-width: 1000px) {
@@ -525,10 +487,6 @@ body.yodayo-tavern #chat .mes .mes_block {
 
 body.yodayo-tavern #chat .mes[is_user="true"] .mes_block {
     background-color: color-mix(in srgb, var(--yt-user-bubble) calc(var(--yt-panel-alpha) * 100%), transparent);
-}
-
-body.yodayo-tavern #chat .mes:not([is_user="true"]) .name_text {
-    color: var(--yt-char-name);
 }
 
 body.yodayo-tavern #chat .mes[is_user="true"] .name_text {

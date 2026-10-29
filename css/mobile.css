@@ -200,27 +200,13 @@
         max-width: 100%;
     }
 
-    /* Tavern home: the window fits the space the bar leaves */
+    /* Tavern home: the window fits the space the bar leaves. !important against
+       SillyTavern's phone rule that pins #sheld to left: 0 at 100dvw */
     body.yodayo-tavern.yt-home-active #sheld {
         top: calc(var(--yt-m-top) + var(--yt-m-gap));
-        left: var(--yt-m-gap);
-        right: var(--yt-m-gap);
-        width: auto;
         height: calc(100dvh - var(--yt-m-top) - var(--yt-m-bottom) - var(--yt-m-gap) * 2);
         max-height: none;
-        margin: 0;
         border-radius: 20px;
-    }
-
-    body.yodayo-tavern.yt-home-active #chat {
-        margin: 12px 4px 12px 0;
-        padding: 0 8px 0 12px;
-    }
-
-    /* nothing in the Tavern window may be wider than the window (Safari sizes flex items and
-       search fields by their content unless told not to) */
-    /* !important against SillyTavern's phone rule that pins #sheld to left: 0 at 100dvw */
-    body.yodayo-tavern.yt-home-active #sheld {
         box-sizing: border-box;
         left: max(var(--yt-m-gap), env(safe-area-inset-left, 0px)) !important;
         right: auto !important;
@@ -231,6 +217,13 @@
         padding: 0;
     }
 
+    body.yodayo-tavern.yt-home-active #chat {
+        margin: 12px 4px 12px 0;
+        padding: 0 8px 0 12px;
+    }
+
+    /* nothing in the Tavern window may be wider than the window (Safari sizes flex items and
+       search fields by their content unless told not to) */
     body.yodayo-tavern.yt-home-active #chat,
     body.yodayo-tavern .yt-home,
     body.yodayo-tavern .yt-home * {

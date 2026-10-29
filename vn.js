@@ -1,6 +1,8 @@
 // Visual novel mode: a drag handle on the chat's top edge trades chat height for
 // character-image height. The split is saved as a share of the window height.
 
+import { el, trackPointer } from './util.js';
+
 const MIN_SHARE = 0.15;
 const MAX_SHARE = 0.85;
 const GAP = 8;
@@ -21,32 +23,22 @@ export function applyVnHeight(settings) {
  * @param {() => void} options.onModeChange Called when SillyTavern turns VN mode on or off
  */
 export function initVnMode({ getSettings, saveSettings, onModeChange }) {
-    const handle = document.createElement('div');
-    handle.className = 'yt-vn-handle';
+    const handle = el('div', 'yt-vn-handle');
     handle.title = 'Drag to resize the chat';
     handle.setAttribute('role', 'separator');
     handle.setAttribute('aria-orientation', 'horizontal');
 
     handle.addEventListener('pointerdown', (event) => {
         event.preventDefault();
-        handle.setPointerCapture(event.pointerId);
         document.body.classList.add('yt-vn-resizing');
-
-        const onMove = (moveEvent) => {
-            const share = clampShare((window.innerHeight - moveEvent.clientY - GAP) / window.innerHeight);
+        trackPointer(handle, event, (move) => {
+            const share = clampShare((window.innerHeight - move.clientY - GAP) / window.innerHeight);
             getSettings().vnHeight = Math.round(share * 1000) / 1000;
             applyVnHeight(getSettings());
-        };
-        const onUp = () => {
-            handle.removeEventListener('pointermove', onMove);
-            handle.removeEventListener('pointerup', onUp);
-            handle.removeEventListener('pointercancel', onUp);
+        }, () => {
             document.body.classList.remove('yt-vn-resizing');
             saveSettings();
-        };
-        handle.addEventListener('pointermove', onMove);
-        handle.addEventListener('pointerup', onUp);
-        handle.addEventListener('pointercancel', onUp);
+        });
     });
 
     document.body.append(handle);

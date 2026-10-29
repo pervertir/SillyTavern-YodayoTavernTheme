@@ -179,6 +179,8 @@ body.yodayo-tavern .select2-container .select2-selection--multiple .select2-sele
     border: 1px solid var(--yt-line);
     border-radius: 9999px;
     color: var(--yt-text);
+    margin: 0;
+    padding: 2px 8px;
 }
 
 /* Checkboxes inside labelled settings become switches; list checkboxes stay boxes */
@@ -443,12 +445,6 @@ body.yodayo-tavern #extensions_settings2 .inline-drawer-content {
     padding: var(--yt-space-1) 0 var(--yt-space-1) var(--yt-space-3);
 }
 
-body.yodayo-tavern .settingsSectionWrap {
-    border: 1px solid var(--yt-line);
-    border-radius: var(--yt-radius-lg);
-    padding: var(--yt-space-3);
-}
-
 /* Tabs and segmented toggles */
 body.yodayo-tavern .tabs {
     gap: 2px;
@@ -513,9 +509,4 @@ body.yodayo-tavern .select2-container .select2-search--inline .select2-search__f
     color: var(--yt-text);
     resize: none;
     overflow: hidden;
-}
-
-body.yodayo-tavern .select2-container .select2-selection--multiple .select2-selection__choice {
-    margin: 0;
-    padding: 2px 8px;
 }

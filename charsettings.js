@@ -3,27 +3,26 @@
 // open character or just this chat. Chat settings win over character settings, which win
 // over the universal settings (those are only edited in the extension's own panel).
 
-import { COLOR_FIELDS, getCurrentAvatar } from './colors.js';
+import { COLOR_FIELDS } from './colors.js';
 import { ADVANCED_GROUPS } from './advanced.js';
 import { getCachedCutout, isCutoutPending } from './bgremove.js';
+import { debounce, el, getCurrentAvatar, getCurrentAvatarUrl, HEX_COLOR, makeDraggable, readAsDataUrl, TITLE, unwrapCssUrl } from './util.js';
 
 const COG_ID = 'yt-chat-settings-cog';
 const WINDOW_ID = 'yt-chat-settings-window';
-const HEX_COLOR = /^#[0-9a-f]{6}$/i;
 /** Advanced groups that can be set per character or chat */
 const SCOPED_GROUPS = ['Message style', 'Background effects'];
-export const SCOPED_ITEMS = Object.freeze(ADVANCED_GROUPS
-    .filter(group => SCOPED_GROUPS.includes(group.title))
-    .flatMap(group => group.items));
 
-function getChatId() {
-    return SillyTavern.getContext().getCurrentChatId?.() ?? null;
+/** Where a scope's overrides are stored, and the key of the open chat or character in it */
+function scopeAddress(scope) {
+    return scope === 'chat'
+        ? { store: 'chatThemes', key: SillyTavern.getContext().getCurrentChatId?.() ?? null }
+        : { store: 'characterThemes', key: getCurrentAvatar() };
 }
 
 /** The override object for a scope, created on demand when `create` is set. */
 function getScope(settings, scope, create = false) {
-    const store = scope === 'chat' ? 'chatThemes' : 'characterThemes';
-    const key = scope === 'chat' ? getChatId() : getCurrentAvatar();
+    const { store, key } = scopeAddress(scope);
     if (!key) {
         return null;
     }
@@ -41,8 +40,7 @@ function getScope(settings, scope, create = false) {
 
 /** Drops an override object once nothing in it is set. */
 function prune(settings, scope) {
-    const store = scope === 'chat' ? 'chatThemes' : 'characterThemes';
-    const key = scope === 'chat' ? getChatId() : getCurrentAvatar();
+    const { store, key } = scopeAddress(scope);
     const entry = settings[store]?.[key];
     if (entry && !Object.keys(entry.colors ?? {}).length && !Object.keys(entry.advanced ?? {}).length && !entry.background && !entry.image && entry.removeBg === undefined) {
         delete settings[store][key];
@@ -70,8 +68,7 @@ export function applyBackgroundOverride(settings) {
     if (background) {
         // a relative url() inside a custom property resolves against the stylesheet that
         // uses it (this extension's css folder), so make it absolute against the page
-        const raw = background.match(/^url\((['"]?)(.*)\1\)$/)?.[2] ?? background;
-        const absolute = new URL(raw, location.href).href;
+        const absolute = new URL(unwrapCssUrl(background), location.href).href;
         document.body.style.setProperty('--yt-bg-override', `url("${absolute.replace(/"/g, '%22')}")`);
     } else {
         document.body.style.removeProperty('--yt-bg-override');
@@ -80,11 +77,11 @@ export function applyBackgroundOverride(settings) {
 
 function listBackgrounds() {
     return [...document.querySelectorAll('#bg_menu_content .bg_example, #bg_custom_content .bg_example')]
-        .map(el => ({
-            name: el.getAttribute('title') || el.getAttribute('bgfile') || '',
-            file: el.getAttribute('bgfile') || '',
-            custom: el.getAttribute('custom') === 'true' || Boolean(el.closest('#bg_custom_content')),
-            url: String($(el).data('url') || ''),
+        .map(node => ({
+            name: node.getAttribute('title') || node.getAttribute('bgfile') || '',
+            file: node.getAttribute('bgfile') || '',
+            custom: node.getAttribute('custom') === 'true' || Boolean(node.closest('#bg_custom_content')),
+            url: String($(node).data('url') || ''),
         }))
         .filter(bg => bg.url);
 }
@@ -102,31 +99,14 @@ async function loadBackgroundFolders() {
             return { folders: data.folders ?? [], imageFolderMap: data.imageFolderMap ?? {} };
         }
     } catch (error) {
-        console.warn('[Yodayo Tavern Theme] could not load background folders', error);
+        console.warn(`[${TITLE}] could not load background folders`, error);
     }
     return { folders: [], imageFolderMap: {} };
 }
 
-/** Plain image URL from a CSS url("...") value, for thumbnails. */
-function thumbUrl(value) {
-    return value.match(/^url\((['"]?)(.*)\1\)$/)?.[2] ?? value;
-}
-
-/** The open character's card image, used when no custom image is set. */
-function defaultImage() {
-    const { characters, characterId, groupId } = SillyTavern.getContext();
-    const avatar = groupId || characterId === undefined ? null : characters[characterId]?.avatar;
-    return avatar && avatar !== 'none' ? `characters/${encodeURIComponent(avatar)}` : '';
-}
-
 /** Saves an image into SillyTavern's user images folder (under the character's name) and returns its path. */
 export async function uploadImage(file, prefix = 'yodayo-art') {
-    const dataUrl = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result));
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(file);
-    });
+    const dataUrl = await readAsDataUrl(file);
     const [, format = 'png', image = ''] = dataUrl.match(/^data:image\/([a-z0-9.+-]+);base64,(.*)$/i) ?? [];
     const { characters, characterId, getRequestHeaders } = SillyTavern.getContext();
     const response = await fetch('/api/images/upload', {
@@ -135,7 +115,7 @@ export async function uploadImage(file, prefix = 'yodayo-art') {
         body: JSON.stringify({
             image,
             format: format.replace('jpeg', 'jpg').replace('svg+xml', 'svg'),
-            ch_name: characters[characterId]?.name || 'Yodayo Tavern Theme',
+            ch_name: characters[characterId]?.name || TITLE,
             filename: `${prefix}-${Date.now()}`,
         }),
     });
@@ -144,26 +124,6 @@ export async function uploadImage(file, prefix = 'yodayo-art') {
     }
     const { path } = await response.json();
     return path;
-}
-
-/** Waits until typing pauses, so a half-typed URL isn't loaded on every key. */
-function debounce(fn, ms = 400) {
-    let timer;
-    return () => {
-        clearTimeout(timer);
-        timer = setTimeout(fn, ms);
-    };
-}
-
-function el(tag, className, text) {
-    const node = document.createElement(tag);
-    if (className) {
-        node.className = className;
-    }
-    if (text !== undefined) {
-        node.textContent = text;
-    }
-    return node;
 }
 
 function resetButton(onClick) {
@@ -215,9 +175,12 @@ export function initCharacterSettings({ getSettings, onChange }) {
 
         const bar = el('div', 'yt-window-bar');
         const title = el('b', '', 'Theme for this chat');
+        title.id = `${WINDOW_ID}-title`;
+        win.setAttribute('aria-labelledby', title.id);
         const close = el('button', 'yt-window-close fa-solid fa-xmark');
         close.type = 'button';
         close.title = 'Close';
+        close.setAttribute('aria-label', close.title);
         close.addEventListener('click', closeWindow);
         bar.append(title, close);
 
@@ -243,7 +206,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
             const s = getSettings();
             const target = getScope(s, scope, true);
             if (!target) {
-                toastr.info('Open a chat first.', 'Yodayo Tavern Theme');
+                toastr.info('Open a chat first.', TITLE);
                 return;
             }
             mutate(target);
@@ -352,8 +315,8 @@ export function initCharacterSettings({ getSettings, onChange }) {
                 const path = await uploadImage(file);
                 edit(target => { target.image = path; });
             } catch (error) {
-                console.error('[Yodayo Tavern Theme] image upload failed', error);
-                toastr.error('The image could not be uploaded.', 'Yodayo Tavern Theme');
+                console.error(`[${TITLE}] image upload failed`, error);
+                toastr.error('The image could not be uploaded.', TITLE);
             }
         });
         imageRow.append(preview, upload, fileInput, resetButton(() => edit(target => { delete target.image; })));
@@ -379,7 +342,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
         refreshers.push(() => {
             const own = current().image || '';
             const overrides = getEffectiveOverrides(getSettings());
-            const source = overrides.image || defaultImage();
+            const source = overrides.image || getCurrentAvatarUrl();
             const cutout = overrides.removeBg && source ? getCachedCutout(source) : null;
             const effective = cutout || source;
             preview.src = effective || '';
@@ -479,7 +442,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
                     return item.text;
                 }
                 const row = $('<span class="yt-bg-option"></span>');
-                row.append($('<span class="yt-bg-option-thumb"></span>').css('background-image', `url("${thumbUrl(item.id)}")`));
+                row.append($('<span class="yt-bg-option-thumb"></span>').css('background-image', `url("${unwrapCssUrl(item.id)}")`));
                 row.append($('<span></span>').text(item.text));
                 return row;
             };
@@ -511,28 +474,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
             }
         });
 
-        // drag by the title bar
-        bar.addEventListener('pointerdown', (event) => {
-            if (event.target === close) {
-                return;
-            }
-            event.preventDefault();
-            bar.setPointerCapture(event.pointerId);
-            const start = win.getBoundingClientRect();
-            const dx = event.clientX - start.left;
-            const dy = event.clientY - start.top;
-            const onMove = (moveEvent) => {
-                win.style.left = `${Math.min(Math.max(moveEvent.clientX - dx, 0), window.innerWidth - win.offsetWidth)}px`;
-                win.style.top = `${Math.min(Math.max(moveEvent.clientY - dy, 0), window.innerHeight - 48)}px`;
-                win.style.right = 'auto';
-            };
-            const onUp = () => {
-                bar.removeEventListener('pointermove', onMove);
-                bar.removeEventListener('pointerup', onUp);
-            };
-            bar.addEventListener('pointermove', onMove);
-            bar.addEventListener('pointerup', onUp);
-        });
+        makeDraggable(win, bar, close);
     }
 
     return () => refreshWindow();

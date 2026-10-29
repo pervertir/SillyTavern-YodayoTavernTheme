@@ -16,8 +16,9 @@
 
 import { ADVANCED_GROUPS } from './advanced.js';
 import { COLOR_FIELDS } from './colors.js';
+import { BODY_CLASS, downloadJson, el, HEX_COLOR, hexToRgb, TITLE } from './util.js';
 
-const THEME_ID = 'yodayo-tavern';
+const THEME_ID = BODY_CLASS;
 const VERSION = 1;
 const HIDE_STYLE_ID = 'yt-customize-hide';
 
@@ -78,7 +79,7 @@ const SECTIONS = [
         id: 'text', title: 'Text', controls: [
             {
                 type: 'setting', key: 'font', label: 'Font', kind: 'select', def: 'inter',
-                options: [['inter', 'Inter (system font if missing)'], ['system', 'System UI font'], ['default', "SillyTavern's font"]],
+                options: [['inter', 'Inter (system font if missing)'], ['system', 'System UI font'], ['default', 'SillyTavern\'s font']],
             },
             { type: 'token', key: '--yt-font', label: 'Custom font family (overrides the above)', kind: 'text', def: '', placeholder: 'e.g. "Nunito", sans-serif' },
             { type: 'token', key: '--yt-text-md', label: 'Body text', ...px(11, 22), def: 14 },
@@ -184,17 +185,6 @@ const SECTIONS = [
 
 let api = null;
 
-function el(tag, className, text) {
-    const node = document.createElement(tag);
-    if (className) {
-        node.className = className;
-    }
-    if (text !== undefined) {
-        node.textContent = text;
-    }
-    return node;
-}
-
 function customizeState(settings) {
     settings.customize ??= {};
     settings.customize.tokens ??= {};
@@ -207,11 +197,6 @@ function customizeState(settings) {
     }
     delete settings.customize.hide;
     return settings.customize;
-}
-
-function hexToRgb(hex) {
-    const value = parseInt(String(hex).slice(1), 16);
-    return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
 }
 
 /** The control's description, with an Advanced item's own type, range and default */
@@ -342,8 +327,8 @@ export function applyCustomize(settings) {
         style.id = HIDE_STYLE_ID;
         document.head.append(style);
     }
-    const hidden = HIDEABLE.filter(([key]) => state.flags[`hide-${key}`]).flatMap(([, , selectors]) => selectors.split(',').map(s => `body.yodayo-tavern ${s.trim()}`));
-    style.textContent = enabled && hidden.length ? `${hidden.join(',\n')} { display: none !important; }` : '';
+    const hidden = HIDEABLE.filter(([key]) => state.flags[`hide-${key}`]).flatMap(([, , selectors]) => selectors.split(',').map(s => `body.${BODY_CLASS} ${s.trim()}`));
+    style.textContent = hidden.length ? `${hidden.join(',\n')} { display: none !important; }` : '';
 }
 
 /** One row: label, control, reset. Returns the row, its control and a refresh function. */
@@ -374,7 +359,7 @@ function buildRow(raw, onChange) {
                 const fallback = control.type === 'color'
                     ? getComputedStyle(document.body).getPropertyValue(COLOR_FIELDS.find(f => f.key === control.key).cssVar).trim()
                     : control.def;
-                input.value = /^#[0-9a-f]{6}$/i.test(value ?? '') ? value : (/^#[0-9a-f]{6}$/i.test(fallback) ? fallback : '#000000');
+                input.value = HEX_COLOR.test(value ?? '') ? value : (HEX_COLOR.test(fallback) ? fallback : '#000000');
             };
             break;
         }
@@ -455,7 +440,11 @@ function buildRow(raw, onChange) {
             area.addEventListener('input', () => commit(area.value));
             field.append(area);
             row.classList.add('yt-cz-wide');
-            refresh = () => { if (area !== document.activeElement) area.value = getValue(control); };
+            refresh = () => {
+                if (area !== document.activeElement) {
+                    area.value = getValue(control);
+                }
+            };
             break;
         }
         default: {
@@ -464,7 +453,11 @@ function buildRow(raw, onChange) {
             input.placeholder = control.placeholder ?? '';
             input.addEventListener('input', () => commit(input.value));
             field.append(input);
-            refresh = () => { if (input !== document.activeElement) input.value = getValue(control) ?? ''; };
+            refresh = () => {
+                if (input !== document.activeElement) {
+                    input.value = getValue(control) ?? '';
+                }
+            };
         }
     }
 
@@ -523,12 +516,12 @@ function fromFlag(control, flag) {
         case 'rgba': {
             try {
                 const value = JSON.parse(flag);
-                return Array.isArray(value) && /^#[0-9a-f]{6}$/i.test(value[0]) ? [value[0], Number(value[1])] : undefined;
+                return Array.isArray(value) && HEX_COLOR.test(value[0]) ? [value[0], Number(value[1])] : undefined;
             } catch {
                 return undefined;
             }
         }
-        case 'color': return /^#[0-9a-f]{6}$/i.test(String(flag)) ? String(flag) : undefined;
+        case 'color': return HEX_COLOR.test(String(flag)) ? String(flag) : undefined;
         case 'select': return control.options.some(([option]) => option === String(flag)) ? String(flag) : undefined;
         default: return String(flag);
     }
@@ -564,18 +557,13 @@ function toSharedFormat() {
 }
 
 function exportCustomization() {
-    const blob = new Blob([JSON.stringify(toSharedFormat(), null, 2)], { type: 'application/json' });
-    const link = el('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'yodayo-tavern-customize.json';
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    downloadJson(toSharedFormat(), 'yodayo-tavern-customize.json');
 }
 
 /** Replaces the customization with a shared-format file; keeps only what this theme knows. */
 function importCustomization(data, rows, onChange) {
     if (!data || typeof data !== 'object' || !data.themeId || typeof data.tokens !== 'object') {
-        toastr.error('This is not a theme customization file.', 'Yodayo Tavern Theme');
+        toastr.error('This is not a theme customization file.', TITLE);
         return;
     }
     resetControls(ALL_CONTROLS, () => {});
@@ -611,9 +599,9 @@ function importCustomization(data, rows, onChange) {
     onChange();
     rows.forEach(row => row.refresh());
     if (data.themeId !== THEME_ID) {
-        toastr.info(`This customization was made for another theme (${String(data.themeId)}). ${kept} matching option${kept === 1 ? '' : 's'} were kept.`, 'Yodayo Tavern Theme');
+        toastr.info(`This customization was made for another theme (${String(data.themeId)}). ${kept} matching option${kept === 1 ? '' : 's'} were kept.`, TITLE);
     } else {
-        toastr.success('Customization imported.', 'Yodayo Tavern Theme');
+        toastr.success('Customization imported.', TITLE);
     }
 }
 
@@ -692,7 +680,7 @@ export async function openCustomize() {
         try {
             importCustomization(JSON.parse(await chosen.text()), rows, onChange);
         } catch {
-            toastr.error('That file could not be read.', 'Yodayo Tavern Theme');
+            toastr.error('That file could not be read.', TITLE);
         }
     });
     resetAll.addEventListener('click', async () => {

@@ -2,6 +2,7 @@
 body.yodayo-tavern #form_sheld {
     padding: 8px 12px 12px 12px;
     background-color: transparent;
+    position: relative;
 }
 
 /* !important beats SillyTavern's no-blur mode, which forces a solid color here */
@@ -202,10 +203,6 @@ body.yodayo-tavern #qr--bar > .qr--buttons .qr--button:hover {
    menu above it. It sits outside the pill, so #form_sheld is its frame. */
 #yt-position-toggle {
     display: none;
-}
-
-body.yodayo-tavern #form_sheld {
-    position: relative;
 }
 
 body.yodayo-tavern #yt-position-toggle {

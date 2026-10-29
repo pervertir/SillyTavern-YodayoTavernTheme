@@ -199,9 +199,15 @@ body.yodayo-tavern .drawer-content .checkbox_label > :is(small, span) {
 /* Scrollbars: sheets never scroll sideways (the close button's gutter and a few wide rows
    used to add a horizontal bar), and the AI response settings scroll only their inner list.
    As a flex column the list takes exactly the room left under the pin row; with
-   height: 100% it overflowed by that row and the sheet grew a second scrollbar. */
+   height: 100% it overflowed by that row and the sheet grew a second scrollbar.
+   Opening a sheet: SillyTavern grows each drawer's height from 0 with a scrollbar-hiding
+   trick that the theme's thin scrollbars defeat, so every open flashed a scrollbar and a
+   collapsed sliver of the menu. Sheets now fade and slide in from the bar instead, with no
+   height animation. The fill mode is "backwards" so no transform stays on the sheet
+   afterwards (a transform would trap SillyTavern's fixed popups inside it). */
 body.yodayo-tavern.yt-nav-rail .drawer-content {
     overflow-x: hidden;
+    transition: none;
 }
 
 body.yodayo-tavern.yt-nav-rail #left-nav-panel.openDrawer {
@@ -215,15 +221,6 @@ body.yodayo-tavern.yt-nav-rail #left-nav-panel.openDrawer > .scrollableInner {
     min-height: 0;
     height: auto;
     overflow-y: auto;
-}
-
-/* Opening a sheet: SillyTavern grows each drawer's height from 0 with a scrollbar-hiding
-   trick that the theme's thin scrollbars defeat, so every open flashed a scrollbar and a
-   collapsed sliver of the menu. Sheets now fade and slide in from the bar instead, with no
-   height animation. The fill mode is "backwards" so no transform stays on the sheet
-   afterwards (a transform would trap SillyTavern's fixed popups inside it). */
-body.yodayo-tavern.yt-nav-rail .drawer-content {
-    transition: none;
 }
 
 body.yodayo-tavern.yt-nav-rail .drawer-content.openDrawer {

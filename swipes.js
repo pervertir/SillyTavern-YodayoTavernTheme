@@ -1,10 +1,12 @@
 // Marks messages that have only one swipe, so the theme can hide their "1/1" counter.
 // Runs on SillyTavern's message and chat events only, never per streamed token.
 
+import { isThemeOn } from './util.js';
+
 const SINGLE = /^\s*1\D*\/\D*1\s*$/;
 
 function markSingleSwipes() {
-    if (!document.body.classList.contains('yodayo-tavern')) {
+    if (!isThemeOn()) {
         return;
     }
     for (const counter of document.querySelectorAll('#chat .mes .swipes-counter')) {

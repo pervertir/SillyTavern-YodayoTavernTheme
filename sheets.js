@@ -1,6 +1,8 @@
 // Drag handle that resizes the rail's drawer sheets. Each sheet has a default width in
 // css/nav.css; a drag stores that sheet's own width in settings.sheetWidths.
 
+import { el, trackPointer } from './util.js';
+
 const MIN_WIDTH = 360;
 /** Room always left for the chat beside an open sheet (matches --yt-sheet-room) */
 const MIN_CHAT_ROOM = 120;
@@ -43,9 +45,8 @@ function addCloseButtons() {
         if (!toggle) {
             continue;
         }
-        const button = document.createElement('button');
+        const button = el('button', 'yt-sheet-close fa-solid fa-xmark');
         button.type = 'button';
-        button.className = 'yt-sheet-close fa-solid fa-xmark';
         button.title = 'Close';
         button.setAttribute('aria-label', 'Close');
         button.addEventListener('click', (event) => {
@@ -72,8 +73,7 @@ export function applySheetWidths(settings) {
  * @param {() => void} options.saveSettings Saves them
  */
 export function initSheetResizers({ getSettings, saveSettings }) {
-    const handle = document.createElement('div');
-    handle.className = 'yt-sheet-handle';
+    const handle = el('div', 'yt-sheet-handle');
     handle.title = 'Drag to resize, double-click to reset';
     handle.hidden = true;
     handle.setAttribute('role', 'separator');
@@ -97,14 +97,13 @@ export function initSheetResizers({ getSettings, saveSettings }) {
             return;
         }
         event.preventDefault();
-        handle.setPointerCapture(event.pointerId);
         document.body.classList.add('yt-sheet-resizing');
         const rect = sheet.getBoundingClientRect();
         const anchor = getAnchor();
         const center = rect.left + rect.width / 2;
 
-        const onMove = (moveEvent) => {
-            const x = moveEvent.clientX;
+        trackPointer(handle, event, (move) => {
+            const x = move.clientX;
             const total = anchor === 'right' ? rect.right - x : anchor === 'center' ? (x - center) * 2 : x - rect.left;
             const room = anchor === 'right' ? rect.right - MIN_CHAT_ROOM : anchor === 'center' ? window.innerWidth - 32 : window.innerWidth - rect.left - MIN_CHAT_ROOM;
             const max = Math.max(MIN_WIDTH, room - CLOSE_GUTTER);
@@ -114,17 +113,10 @@ export function initSheetResizers({ getSettings, saveSettings }) {
             settings.sheetWidths = { ...settings.sheetWidths, [sheet.id]: width };
             setSheetWidth(sheet, width);
             position();
-        };
-        const onUp = () => {
-            handle.removeEventListener('pointermove', onMove);
-            handle.removeEventListener('pointerup', onUp);
-            handle.removeEventListener('pointercancel', onUp);
+        }, () => {
             document.body.classList.remove('yt-sheet-resizing');
             saveSettings();
-        };
-        handle.addEventListener('pointermove', onMove);
-        handle.addEventListener('pointerup', onUp);
-        handle.addEventListener('pointercancel', onUp);
+        });
     });
 
     // double-click puts the sheet back to its default width
@@ -134,8 +126,8 @@ export function initSheetResizers({ getSettings, saveSettings }) {
             return;
         }
         const settings = getSettings();
-        const { [sheet.id]: _removed, ...rest } = settings.sheetWidths ?? {};
-        settings.sheetWidths = rest;
+        settings.sheetWidths = { ...settings.sheetWidths };
+        delete settings.sheetWidths[sheet.id];
         setSheetWidth(sheet, undefined);
         saveSettings();
         requestAnimationFrame(position);
