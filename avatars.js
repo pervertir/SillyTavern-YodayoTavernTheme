@@ -12,9 +12,9 @@ const CACHE_LIMIT = 300;
 
 let isEnabled = () => true;
 
-/** Pictures the theme sharpens: chat messages, recent chats, and the character management menu */
+/** Pictures the theme sharpens: chat messages, recent chats, and the character and persona menus */
 const CHAT_AVATARS = '#chat .mes .avatar img, #chat .recentChat .avatar img';
-const PANEL_AVATARS = '#right-nav-panel .avatar img, #avatar_load_preview';
+const PANEL_AVATARS = '#right-nav-panel .avatar img, #avatar_load_preview, #PersonaManagement .avatar img';
 /** Shown at up to this much over its own size, a picture still looks sharp enough */
 const MAX_UPSCALE = 1.15;
 
@@ -30,7 +30,7 @@ function fullSizeUrl(src) {
     return file && folder ? `${folder}/${encodeURIComponent(file)}` : null;
 }
 
-function loadImage(src) {
+export function loadImage(src) {
     return new Promise((resolve, reject) => {
         const image = new Image();
         image.decoding = 'async';
@@ -49,7 +49,8 @@ function coverCrop(image, width, height, position) {
     return [(image.naturalWidth - sw) * (Number.isFinite(px) ? px : 0.5), (image.naturalHeight - sh) * (Number.isFinite(py) ? py : 0), sw, sh];
 }
 
-async function render(src, width, height, position) {
+/** `src` cropped like `object-fit: cover` and pre-scaled to exactly width × height device pixels, as an object URL. */
+export async function prescale(src, width, height, position) {
     const image = await loadImage(src);
     let [sx, sy, sw, sh] = coverCrop(image, width, height, position);
     /** @type {CanvasImageSource} */
@@ -97,7 +98,7 @@ async function sharpen(img) {
         return;
     }
     if (!cache.has(key)) {
-        cache.set(key, render(full ?? src, width, height, position).catch(() => null));
+        cache.set(key, prescale(full ?? src, width, height, position).catch(() => null));
         trimCache();
     }
     const url = await cache.get(key);
@@ -150,27 +151,28 @@ function sharpenPanelAvatars() {
  * whenever the menu or its lists change size, which includes opening.
  */
 function initPanelAvatars() {
-    const panel = document.getElementById('right-nav-panel');
-    if (!panel) {
-        return;
-    }
-    panel.addEventListener('load', (event) => {
-        if (event.target instanceof HTMLImageElement && event.target.matches(PANEL_AVATARS)) {
-            sharpenOrWait(event.target);
-        }
-    }, true);
     let frame = 0;
     const observer = new ResizeObserver(() => {
         cancelAnimationFrame(frame);
         frame = requestAnimationFrame(sharpenPanelAvatars);
     });
-    // the lists themselves too: they lay out only once the menu has opened
-    for (const element of [panel, ...panel.querySelectorAll('#rm_print_characters_block, #rm_group_members, #rm_group_add_members, #avatar_div')]) {
-        observer.observe(element);
+    for (const panel of [document.getElementById('right-nav-panel'), document.getElementById('PersonaManagement')]) {
+        if (!panel) {
+            continue;
+        }
+        panel.addEventListener('load', (event) => {
+            if (event.target instanceof HTMLImageElement && event.target.matches(PANEL_AVATARS)) {
+                sharpenOrWait(event.target);
+            }
+        }, true);
+        // the lists themselves too: they lay out only once the menu has opened
+        for (const element of [panel, ...panel.querySelectorAll('#rm_print_characters_block, #rm_group_members, #rm_group_add_members, #avatar_div, #user_avatar_block')]) {
+            observer.observe(element);
+        }
     }
 }
 
-/** Sharpens the avatars of the given messages, or of the whole chat. */
+/** Sharpens the avatars of the given messages, or of the whole chat and the menus. */
 export function sharpenAvatars(messageId) {
     const selector = messageId === undefined ? CHAT_AVATARS : `#chat .mes[mesid="${messageId}"] .avatar img`;
     for (const img of document.querySelectorAll(selector)) {

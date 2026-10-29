@@ -15,6 +15,7 @@ import { applyAdvanced, initAdvancedControls } from './advanced.js';
 import { initSettingsPopout } from './popout.js';
 import { placePagination } from './pagination.js';
 import { initSharpAvatars, sharpenAvatars } from './avatars.js';
+import { initBackgroundThumbnails, restoreBackgroundThumbnails, sharpenBackgroundThumbnails } from './bgthumbs.js';
 import { getCutout, initBackgroundRemoval, revalidateCutout } from './bgremove.js';
 import { getLineupMembers, initLineupEvents, renderLineup } from './groupart.js';
 import { applyArtOffsets, initArtDrag } from './artdrag.js';
@@ -100,8 +101,8 @@ const ART_ID = 'yt-character-art';
 /** Custom character images that failed to load this session; the card shows instead */
 const brokenArt = new Set();
 /** Character images at least this share of the art area's height fill it; smaller ones keep
- * their own size, so none is enlarged more than 1.25×. */
-const ART_FILL_RATIO = 0.8;
+ * their own size, so none is enlarged more than 1.15× (more looks soft). */
+const ART_FILL_RATIO = 1 / 1.15;
 
 const fonts = {
     inter: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
@@ -318,7 +319,14 @@ function applySettings() {
     applyAdvanced({ ...settings, advanced: { ...settings.advanced, ...overrides.advanced } });
     applyBackgroundOverride(settings);
     // avatar size may have changed
-    requestAnimationFrame(() => sharpenAvatars());
+    requestAnimationFrame(() => {
+        sharpenAvatars();
+        if (settings.enabled) {
+            sharpenBackgroundThumbnails();
+        } else {
+            restoreBackgroundThumbnails();
+        }
+    });
     placePagination(settings.enabled);
     applySheetWidths(settings);
     applyVnHeight(settings);
@@ -749,6 +757,7 @@ async function init() {
     }
 
     initSharpAvatars(() => getSettings().enabled);
+    initBackgroundThumbnails();
     initBackgroundRemoval({
         getSettings,
         saveSettings,

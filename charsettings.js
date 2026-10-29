@@ -111,6 +111,8 @@ function listBackgrounds() {
             custom: node.getAttribute('custom') === 'true' || Boolean(node.closest('#bg_custom_content')),
             url: String($(node).data('url') || ''),
         }))
+        // SillyTavern's thumbnail is plenty for the picker's small swatches; chat backgrounds have none
+        .map(bg => ({ ...bg, thumb: bg.custom || !bg.file ? unwrapCssUrl(bg.url) : `thumbnail?type=bg&file=${encodeURIComponent(bg.file)}` }))
         .filter(bg => bg.url);
 }
 
@@ -298,6 +300,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
                 for (const bg of items) {
                     const option = el('option', '', bg.name);
                     option.value = bg.url;
+                    option.dataset.thumb = bg.thumb;
                     group.append(option);
                 }
                 bgSelect.append(group);
@@ -567,7 +570,8 @@ export function initCharacterSettings({ getSettings, onChange }) {
                     return item.text;
                 }
                 const row = $('<span class="yt-bg-option"></span>');
-                row.append($('<span class="yt-bg-option-thumb"></span>').css('background-image', `url("${unwrapCssUrl(item.id)}")`));
+                const thumb = item.element?.dataset.thumb || unwrapCssUrl(item.id);
+                row.append($('<span class="yt-bg-option-thumb"></span>').css('background-image', `url("${thumb}")`));
                 row.append($('<span></span>').text(item.text));
                 return row;
             };
