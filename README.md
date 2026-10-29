@@ -199,13 +199,14 @@ remembered.
 - `pagination.js`: moves page controls below their lists
 - `charsettings.js`: the chat's cog and its per-character / per-chat look editor
 - `phone.js`: which edge the phone menu bar sits on
-- `avatars.js`: pre-scales chat and character list avatars so they stay sharp
+- `avatars.js`: pre-scales avatars to their exact on-screen size so they stay sharp, from the full card image when a thumbnail is too small
 - `customize.js`: the Customize page (every token, layout toggle and setting in one place)
 - `groups.js`: "Create group" button label, Enter to create, and the scenario hint for new groups
 - `mount.js`: takes everything the theme added out of the page while it is off, and puts it back
 - `theme-exclusive.js`: one theme at a time, shared unchanged with pervertir's other themes
 - `bgremove.js`: Remove background, through the Background Removal server plugin
 - `colors.js`: chat colors (all characters or per character), character image and export/import
+- `util.js`: small helpers the other modules share
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,
   composer, lists, overlays, layout). Every rule is scoped under `body.yodayo-tavern`.
 

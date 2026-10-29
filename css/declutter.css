@@ -69,12 +69,6 @@ body.yodayo-tavern .drawer-content :is(.note-link-span, .fa-circle-info, .fa-cir
     opacity: 1;
 }
 
-/* Menus: setting groups are separated by spacing, not boxes */
-body.yodayo-tavern .settingsSectionWrap {
-    border: none;
-    padding: var(--yt-space-2) 0;
-}
-
 /* Drawer chrome: pin and lock toggles stay faint until hovered */
 body.yodayo-tavern :is(#lm_button_panel_pin_div, #rm_button_panel_pin_div, #WI_panel_pin_div) {
     opacity: 0.35;

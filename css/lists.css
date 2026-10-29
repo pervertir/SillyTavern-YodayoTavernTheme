@@ -5,6 +5,8 @@ body.yodayo-tavern .bogus_folder_select {
     border-radius: var(--yt-radius-lg);
     border: 1px solid transparent;
     transition: background-color 0.15s ease, border-color 0.15s ease;
+    padding: var(--yt-space-2);
+    gap: var(--yt-space-3);
 }
 
 body.yodayo-tavern .character_select:hover,
@@ -38,13 +40,6 @@ body.yodayo-tavern .tag.selected {
 body.yodayo-tavern #rm_print_characters_block {
     gap: 2px;
     padding: var(--yt-space-1) 0;
-}
-
-body.yodayo-tavern .character_select,
-body.yodayo-tavern .group_select,
-body.yodayo-tavern .bogus_folder_select {
-    padding: var(--yt-space-2);
-    gap: var(--yt-space-3);
 }
 
 body.yodayo-tavern .character_select .avatar img,
@@ -302,7 +297,9 @@ body.yodayo-tavern #Backgrounds .bg_folder_grid.bg_list {
 }
 
 /* Page controls sit under their list (pagination.js), on a bar that stays visible at the
-   bottom while the list scrolls */
+   bottom while the list scrolls. In a flex column the bar is pushed to the bottom even when
+   the list is short; some
+   containers carry SillyTavern's flex1 grow class, which would stretch the bar */
 body.yodayo-tavern .yt-pagination-bottom {
     position: sticky;
     bottom: 0;
@@ -312,24 +309,18 @@ body.yodayo-tavern .yt-pagination-bottom {
     align-items: center;
     justify-content: center;
     gap: var(--yt-space-1);
-    margin-top: var(--yt-space-2);
     padding: 6px var(--yt-space-2);
     background-color: var(--yt-glass-raised);
     backdrop-filter: var(--yt-backdrop);
     -webkit-backdrop-filter: var(--yt-backdrop);
     border: 1px solid var(--yt-line);
     border-radius: var(--yt-radius-lg);
+    flex: 0 0 auto;
+    margin-top: auto;
 }
 
 body.yodayo-tavern .yt-pagination-bottom:empty {
     display: none;
-}
-
-/* in a flex column the bar is pushed to the bottom even when the list is short; some
-   containers carry SillyTavern's flex1 grow class, which would stretch the bar */
-body.yodayo-tavern .yt-pagination-bottom {
-    flex: 0 0 auto;
-    margin-top: auto;
 }
 
 body.yodayo-tavern #PersonaManagement .persona_management_left_column {

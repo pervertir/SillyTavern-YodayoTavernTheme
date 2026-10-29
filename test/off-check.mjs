@@ -35,7 +35,6 @@ async function setup(ourEnabled, otherFolder) {
     await page.evaluate(async ([self, others, ourEnabled, otherFolder]) => {
         const ctx = SillyTavern.getContext();
         const e = ctx.extensionSettings;
-        const installed = new Set(Object.keys(ctx.extensionSettings).length ? [] : []);
         const off = new Set(e.disabledExtensions ?? []);
         for (const [folder, key] of others) {
             if (folder === otherFolder) {
@@ -52,7 +51,6 @@ async function setup(ourEnabled, otherFolder) {
         e.yodayoTavernTheme.enabled = ourEnabled;
         e.yodayoTavernTheme.activatedAt = ourEnabled ? Date.now() + 120000 : 0;
         e.disabledExtensions = [...off];
-        void installed;
         ctx.saveSettingsDebounced();
         await new Promise(r => setTimeout(r, 2500));
     }, [SELF, OTHERS, ourEnabled, otherFolder]);

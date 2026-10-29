@@ -539,8 +539,7 @@ body.yodayo-tavern .tts_voicemap_block_char {
     border-radius: var(--yt-radius-md);
 }
 
-body.yodayo-tavern #token_counter_textarea,
-body.yodayo-tavern .tokenizer_textarea {
+body.yodayo-tavern #token_counter_textarea {
     border-radius: var(--yt-radius-md);
 }
 

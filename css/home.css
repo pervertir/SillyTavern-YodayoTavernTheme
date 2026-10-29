@@ -6,17 +6,6 @@ body.yodayo-tavern.yt-home-active #sheld {
     left: 0;
     right: 0;
     margin: 0 auto;
-}
-
-body.yodayo-tavern.yt-nav-rail.yt-home-active #sheld {
-    width: min(1180px, calc(100vw - 96px));
-}
-
-/* A solid page like Yodayo's, softened so the background still shows at the edges.
-   The rounded panel is #sheld and the scrolling happens in #chat inside it, inset from
-   the top and bottom: a rounded scroll box would let its scrollbar run past the corners
-   (the theme's thin scrollbars can't be given track margins in Chrome). */
-body.yodayo-tavern.yt-home-active #sheld {
     top: var(--yt-space-2);
     height: calc(100dvh - var(--yt-space-2) * 2);
     max-height: calc(100dvh - var(--yt-space-2) * 2);
@@ -27,6 +16,15 @@ body.yodayo-tavern.yt-home-active #sheld {
     border-radius: 24px;
     overflow: hidden;
 }
+
+body.yodayo-tavern.yt-nav-rail.yt-home-active #sheld {
+    width: min(1180px, calc(100vw - 96px));
+}
+
+/* A solid page like Yodayo's, softened so the background still shows at the edges.
+   The rounded panel is #sheld and the scrolling happens in #chat inside it, inset from
+   the top and bottom: a rounded scroll box would let its scrollbar run past the corners
+   (the theme's thin scrollbars can't be given track margins in Chrome). */
 
 body.yodayo-tavern.yt-home-active #chat {
     margin: 20px 6px 20px 0;
@@ -84,6 +82,8 @@ body.yodayo-tavern .yt-home-recent {
     position: relative;
 }
 
+/* Recent chats swipe sideways on touch screens: the row scrolls on its own, snaps to a
+   circle, and never drags the page or SillyTavern's message swipes along with it */
 body.yodayo-tavern .yt-home .welcomeRecent .recentChatList {
     display: flex;
     flex-direction: row;
@@ -94,6 +94,10 @@ body.yodayo-tavern .yt-home .welcomeRecent .recentChatList {
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
+    touch-action: pan-x pan-y;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
 }
 
 body.yodayo-tavern .yt-home .welcomeRecent .recentChatList::-webkit-scrollbar {
@@ -102,6 +106,16 @@ body.yodayo-tavern .yt-home .welcomeRecent .recentChatList::-webkit-scrollbar {
 
 body.yodayo-tavern .yt-home .welcomeRecent .recentChatList .recentChat {
     flex: 0 0 auto;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 76px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    scroll-snap-align: start;
 }
 
 /* same round ghost arrows as the chat's swipe buttons */
@@ -140,18 +154,6 @@ body.yodayo-tavern .yt-recent-prev {
 
 body.yodayo-tavern .yt-recent-next {
     right: -6px;
-}
-
-body.yodayo-tavern .yt-home .welcomeRecent .recentChatList .recentChat {
-    position: relative;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    width: 76px;
-    padding: 0;
-    background: transparent;
-    border: none;
-    border-radius: 0;
 }
 
 body.yodayo-tavern .yt-home .welcomeRecent .recentChatList .recentChat:hover,
@@ -461,6 +463,7 @@ body.yodayo-tavern .yt-home-chips {
     overflow-x: auto;
     padding-bottom: 2px;
     scrollbar-width: none;
+    --yt-fade: 48px;
 }
 
 body.yodayo-tavern .yt-home-chips::-webkit-scrollbar {
@@ -722,9 +725,6 @@ body.yodayo-tavern .yt-home-sort option {
 }
 
 /* Chips that run past either end of the row fade out instead of being cut off */
-body.yodayo-tavern .yt-home-chips {
-    --yt-fade: 48px;
-}
 
 body.yodayo-tavern .yt-home-chips.yt-fade-end {
     mask-image: linear-gradient(to right, #000 calc(100% - var(--yt-fade)), transparent);
@@ -1046,19 +1046,6 @@ body.yodayo-tavern .yt-card-delete:hover {
     body.yodayo-tavern .yt-card-delete {
         opacity: 1;
     }
-}
-
-/* Recent chats swipe sideways on touch screens: the row scrolls on its own, snaps to a
-   circle, and never drags the page or SillyTavern's message swipes along with it */
-body.yodayo-tavern .yt-home .welcomeRecent .recentChatList {
-    touch-action: pan-x pan-y;
-    overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
-}
-
-body.yodayo-tavern .yt-home .welcomeRecent .recentChatList .recentChat {
-    scroll-snap-align: start;
 }
 
 /* fingers swipe; the arrows are for mice */
