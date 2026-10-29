@@ -13,6 +13,8 @@ const HOME_ID = 'yt-home';
 const ASSISTANT_ID = 'yt-home-assistant';
 const ACTIVE_CLASS = 'yt-home-active';
 const MAX_TAG_CHIPS = 24;
+/** A thumbnail shown at up to this much over its own size still looks sharp */
+const MAX_UPSCALE = 1.15;
 /** Width of a recent chat's hover card, used to open it leftward near the right edge. */
 const RECENT_CARD_WIDTH = 360;
 /** SillyTavern's automatic chat file names, e.g. "Ino - 2026-10-25@23h33m30s707ms". */
@@ -134,9 +136,10 @@ function setCardImage(img, avatar) {
     img.loading = 'lazy';
     img.decoding = 'async';
     img.alt = '';
+    // the thumbnail, unless the card shows it bigger than it is (object-fit: cover fills the box)
     img.addEventListener('load', () => {
-        const needed = img.clientWidth * (window.devicePixelRatio || 1);
-        if (needed && img.naturalWidth < needed * 0.9 && !img.src.includes('characters/')) {
+        const scale = Math.max(img.clientWidth / img.naturalWidth, img.clientHeight / img.naturalHeight) * (window.devicePixelRatio || 1);
+        if (scale > MAX_UPSCALE && !img.src.includes('characters/')) {
             img.src = `characters/${file}`;
         }
     });

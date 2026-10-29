@@ -207,6 +207,7 @@ remembered.
 - `charsettings.js`: the chat's cog and its per-character / per-chat look editor
 - `phone.js`: which edge the phone menu bar sits on
 - `avatars.js`: pre-scales avatars to their exact on-screen size so they stay sharp, from the full card image when a thumbnail is too small
+- `bgthumbs.js`: redraws background thumbnails from the full image when the Backgrounds menu shows them bigger than they are
 - `customize.js`: the Customize page (every token, layout toggle and setting in one place)
 - `groups.js`: "Create group" button label, Enter to create, and the scenario hint for new groups
 - `mount.js`: takes everything the theme added out of the page while it is off, and puts it back
