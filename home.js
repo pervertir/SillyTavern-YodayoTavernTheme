@@ -2,6 +2,7 @@
 // character browser (header, tag chips and a grid of portrait cards).
 
 import { deleteCharacter } from '../../../../script.js';
+import { openGroupById } from '../../../group-chats.js';
 import { renderTemplateAsync } from '../../../templates.js';
 import { openWelcomeScreen } from '../../../welcome-screen.js';
 import { getCachedCutout } from './bgremove.js';
@@ -199,7 +200,8 @@ function renderGroupCard(group) {
     const card = el('button', 'yt-card yt-card-group');
     card.type = 'button';
     card.title = group.name;
-    card.addEventListener('click', () => SillyTavern.getContext().openGroupChat(group.id));
+    // getContext() only has openGroupChat, which needs a chat id and doesn't select the group
+    card.addEventListener('click', () => openGroupById(group.id));
 
     const media = el('div', 'yt-card-media');
     // up to four members side by side as the group's picture
