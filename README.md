@@ -73,7 +73,7 @@ page no longer imports it as a new character.
    ```
    https://github.com/pervertir/SillyTavern-YodayoTavernTheme
    ```
-3. Reload the page. The theme turns on straight away.
+3. The page reloads by itself and the theme is on.
 
 To install by hand, clone this repo into
 `SillyTavern/public/scripts/extensions/third-party/` and reload.
@@ -177,8 +177,8 @@ remembered.
 
 - **Other theme extensions:** only one theme runs at a time. Turning this theme on turns off
   pervertir's other themes (Discord, iMessage, Microsoft Teams) straight away, and disables
-  other theme extensions such as Moonlit Echoes, with a Reload button to finish. Nothing is
-  deleted; turn them back on in **Manage extensions**. SillyTavern's Custom CSS is set aside
+  other theme extensions such as Moonlit Echoes, then reloads the page once to finish. Nothing
+  is deleted; turn them back on in **Manage extensions**. SillyTavern's Custom CSS is set aside
   while this theme is on and comes back when it's off, unchanged. **Also pause my UI theme
   preset** (off by default) does the same for the preset's chat style, avatar shape and Visual
   Novel mode.
