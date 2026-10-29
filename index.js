@@ -87,8 +87,9 @@ const ST_RECENT_DEFAULTS = { maxDisplayed: 15, collapsedDisplayed: 3 };
 const THEME_RECENT_DEFAULTS = { maxDisplayed: 20, collapsedDisplayed: 20 };
 
 const ART_ID = 'yt-character-art';
-/** A character image at least this share of the art area's height is shown at full height. */
-const ART_FILL_RATIO = 0.5;
+/** Character images at least this share of the art area's height fill it; smaller ones keep
+ * their own size, so none is enlarged more than 1.25×. */
+const ART_FILL_RATIO = 0.8;
 
 const fonts = {
     inter: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
@@ -177,11 +178,12 @@ function updateCharacterArt() {
         art.id = ART_ID;
         const img = el('img');
         img.alt = '';
-        // big enough images fill the full height; small ones keep their size instead of blurring
-        img.addEventListener('load', () => {
+        const fit = () => {
             const big = img.naturalHeight >= art.clientHeight * ART_FILL_RATIO;
             art.classList.toggle('yt-art-fill', big);
-        });
+        };
+        img.addEventListener('load', fit);
+        new ResizeObserver(() => img.complete && fit()).observe(art);
         art.append(img);
         document.body.append(art);
     }
