@@ -169,10 +169,12 @@ remembered.
 
 ## Notes
 
-- **Other theme extensions:** Moonlit Echoes and similar extensions restyle the same
-  elements with `!important` rules, so the two will fight. Disable the other one in
-  **Manage extensions** while using this theme. The settings panel warns you when
-  Moonlit Echoes is active.
+- **Other theme extensions:** only one theme runs at a time. Turning this theme on turns off
+  pervertir's other themes (Discord, iMessage, Microsoft Teams) straight away, and disables
+  other theme extensions such as Moonlit Echoes, with a Reload button to finish. Nothing is
+  deleted; turn them back on in **Manage extensions**. **Pause my Custom CSS and UI theme**
+  (off by default) also sets aside SillyTavern's own Custom CSS and UI theme preset while this
+  theme is on, without changing them.
 - **Theme presets:** the extension overrides SillyTavern's theme colors while it is
   enabled, so any built-in theme preset works underneath it.
 - **Font:** Inter isn't bundled. Install it locally for an exact match, otherwise
@@ -195,6 +197,7 @@ remembered.
 - `phone.js`: which edge the phone menu bar sits on
 - `avatars.js`: pre-scales chat and character list avatars so they stay sharp
 - `customize.js`: the Customize page (every token, layout toggle and setting in one place)
+- `theme-exclusive.js`: one theme at a time, shared unchanged with pervertir's other themes
 - `bgremove.js`: Remove background, through the Background Removal server plugin
 - `colors.js`: chat colors (all characters or per character), character image and export/import
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,

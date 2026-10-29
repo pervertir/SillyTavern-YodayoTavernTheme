@@ -3,6 +3,7 @@
 import { initTavernHome } from './home.js';
 import { applyPhoneNav } from './phone.js';
 import { applyCustomize, initCustomize, openCustomize } from './customize.js';
+import { registerTheme } from './theme-exclusive.js';
 import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
 import { applySheetWidths, initSheetResizers } from './sheets.js';
 import { applyVnHeight, initVnMode } from './vn.js';
@@ -53,6 +54,9 @@ const defaultSettings = Object.freeze({
     advanced: {},
     /** Customize page (customize.js), the shared shape: { tokens: { [css var]: value }, flags: { 'hide-<part>': true } } */
     customize: { tokens: {}, flags: {} },
+    /** Pause SillyTavern's Custom CSS and UI theme preset while on (theme-exclusive.js). Off:
+     *  this theme builds on SillyTavern's chat styles and Visual Novel mode, which a preset sets. */
+    pauseUserTheme: false,
     /** Per-chat overrides from the chat's cog: { [chat id]: { colors, advanced, background } } */
     chatThemes: {},
     /** Background-removed character images: { [source URL]: { path, version } } */
@@ -60,6 +64,8 @@ const defaultSettings = Object.freeze({
 });
 
 let syncTavernHome = () => {};
+/** One theme at a time (theme-exclusive.js) */
+let exclusive = { activated: () => {}, changed: () => {} };
 let refreshColorControls = () => {};
 let refreshAdvancedControls = () => {};
 let refreshCharacterSettings = () => {};
@@ -237,6 +243,7 @@ function applySettings() {
 function syncSettingsUI() {
     const settings = getSettings();
     $('#yt_enabled').prop('checked', settings.enabled);
+    $('#yt_pause_user_theme').prop('checked', settings.pauseUserTheme);
     $('#yt_accent').val(settings.accent);
     $('#yt_user_side').val(settings.userSide);
     $('#yt_font').val(settings.font);
@@ -262,7 +269,18 @@ function bindSettingsUI() {
     };
 
     $('#yt_enabled').on('change', function () {
-        update('enabled', $(this).prop('checked'));
+        const on = $(this).prop('checked');
+        update('enabled', on);
+        // turning this theme on turns the other themes off
+        if (on) {
+            exclusive.activated();
+        } else {
+            exclusive.changed();
+        }
+    });
+    $('#yt_pause_user_theme').on('change', function () {
+        update('pauseUserTheme', $(this).prop('checked'));
+        exclusive.changed();
     });
     $('#yt_accent').on('input', function () {
         update('accent', String($(this).val()));
@@ -661,6 +679,21 @@ async function init() {
         },
     });
     document.getElementById('yt_reset_all')?.addEventListener('click', resetAllSettings);
+    exclusive = registerTheme({
+        id: 'yodayo',
+        name: 'Yodayo Tavern',
+        folder: 'SillyTavern-YodayoTavernTheme',
+        settingsKey: MODULE_NAME,
+        bodyClass: BODY_CLASS,
+        isEnabled: () => getSettings().enabled,
+        disable: () => {
+            getSettings().enabled = false;
+            applySettings();
+            syncSettingsUI();
+            saveSettings();
+        },
+        pauseUserTheme: () => getSettings().pauseUserTheme,
+    });
     initCustomize({
         getSettings,
         onChange: () => {
