@@ -3,7 +3,7 @@
 import { initTavernHome } from './home.js';
 import { applyPhoneNav } from './phone.js';
 import { applyCustomize, initCustomize, openCustomize } from './customize.js';
-import { registerTheme } from './theme-exclusive.js';
+import { registerTheme, reloadPage } from './theme-exclusive.js';
 import { setMountCallback, setMounted } from './mount.js';
 import { initGroupCreate } from './groups.js';
 import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
@@ -71,6 +71,8 @@ const defaultSettings = Object.freeze({
 let syncTavernHome = () => {};
 /** One theme at a time (theme-exclusive.js) */
 let exclusive = { activated: () => {}, changed: () => {} };
+/** init() has run, so this page is running the theme's code */
+let initialized = false;
 let refreshColorControls = () => {};
 let refreshAdvancedControls = () => {};
 let refreshCharacterSettings = () => {};
@@ -351,6 +353,7 @@ function bindSettingsUI() {
         // turning this theme on turns the other themes off
         if (on) {
             exclusive.activated();
+            reloadWhenOn('Yodayo Tavern is on.');
         } else {
             exclusive.changed();
         }
@@ -802,28 +805,34 @@ async function init() {
     // everything above added its controls to the page; while the theme is off they go back out
     setMountCallback(() => refreshSliderFills());
     setMounted(getSettings().enabled);
+    initialized = true;
 }
 
 /**
- * Manifest hook for install and update: SillyTavern keeps running the old code until the page
- * reloads, so reload once if the theme is on. A second call within a minute (another update in the same batch)
- * doesn't reload again.
+ * Reloads the page once the settings are saved, so the theme starts from a fresh page whenever
+ * it's loaded into one that's already running. Called on a user's action only (installing,
+ * turning on, updating), so it can't repeat by itself.
  */
-export function reloadForNewVersion() {
-    if (SillyTavern.getContext().extensionSettings[MODULE_NAME]?.enabled === false) {
-        return;
+function reloadWhenOn(message) {
+    if (getSettings().enabled) {
+        reloadPage(message, { stillWanted: () => getSettings().enabled });
     }
-    const key = 'yodayoTavernThemeReloadedAt';
-    try {
-        if (Date.now() - Number(sessionStorage.getItem(key)) < 60_000) {
-            return;
-        }
-        sessionStorage.setItem(key, String(Date.now()));
-    } catch {
-        // without sessionStorage there is no loop to guard against across reloads
+}
+
+/** Manifest hook: SillyTavern calls it right after installing the extension and loading it. */
+export function onInstall() {
+    reloadWhenOn('Yodayo Tavern is installed.');
+}
+
+/**
+ * Manifest hook: SillyTavern calls it after updating the extension. The running code is the old
+ * version, so the page reloads to load the new one. An update made while the page loads, before
+ * init(), already loads the new code.
+ */
+export function onUpdate() {
+    if (initialized) {
+        reloadWhenOn('Yodayo Tavern was updated.');
     }
-    toastr.info('Reloading to apply the new version…', TITLE);
-    setTimeout(() => location.reload(), 1500);
 }
 
 // Start while SillyTavern's loading screen is still up: it waits for APP_INITIALIZED

@@ -11,7 +11,7 @@
     "homepage": "https://github.com/pervertir/SillyTavern-YodayoTavernTheme",
     "auto_update": true,
     "hooks": {
-        "install": "reloadForNewVersion",
-        "update": "reloadForNewVersion"
+        "install": "onInstall",
+        "update": "onUpdate"
     }
 }
