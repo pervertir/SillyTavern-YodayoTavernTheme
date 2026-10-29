@@ -134,3 +134,17 @@ body.yodayo-tavern.yt-bg-override #bg1,
 body.yodayo-tavern.yt-bg-override #bg_custom {
     background-image: var(--yt-bg-override) !important;
 }
+
+/* SillyTavern puts translateZ(0) on <html> (a Chrome flicker fix). In Firefox-based browsers,
+   Zen above all, that 3D layer makes the frosted panels drop their blur and show as solid
+   whenever the page repaints: hovering a tag, moving between panels, leaving the window.
+   Undo it there on desktop; phones keep it, since mobile.css relies on <html> framing the
+   fixed panels. */
+@supports (-moz-appearance: none) {
+    @media screen and (min-width: 1001px) {
+        html:has(body.yodayo-tavern) {
+            transform: none;
+            -webkit-transform: none;
+        }
+    }
+}
