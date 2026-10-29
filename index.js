@@ -5,6 +5,7 @@ import { applyPhoneNav } from './phone.js';
 import { applyCustomize, initCustomize, openCustomize } from './customize.js';
 import { registerTheme } from './theme-exclusive.js';
 import { setMountCallback, setMounted } from './mount.js';
+import { initGroupCreate } from './groups.js';
 import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
 import { applySheetWidths, initSheetResizers } from './sheets.js';
 import { applyVnHeight, initVnMode } from './vn.js';
@@ -722,6 +723,7 @@ async function init() {
     initSliderFills();
     initSwipeCounters();
     initVnMode({ getSettings, saveSettings, onModeChange: updateCharacterArt });
+    initGroupCreate();
 
     const { eventSource, eventTypes } = SillyTavern.getContext();
     eventSource.on(eventTypes.CHAT_CHANGED, () => {

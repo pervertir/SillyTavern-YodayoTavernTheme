@@ -391,3 +391,41 @@ body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select .ch
     width: 100%;
     max-width: none;
 }
+
+/* New group: the save button reads "Create group" (SillyTavern shows only a check mark) */
+body.yodayo-tavern #rm_group_submit {
+    width: auto;
+    height: 34px;
+    min-width: 0;
+    aspect-ratio: auto;
+    padding: 0 14px 0 10px;
+    gap: 6px;
+    background-color: var(--yt-accent);
+    border-color: transparent;
+    border-radius: 9999px;
+    color: var(--yt-accent-ink);
+    font-weight: 600;
+}
+
+body.yodayo-tavern #rm_group_submit::after {
+    content: 'Create group';
+    font-family: var(--yt-font);
+    font-size: var(--yt-text-sm);
+    font-weight: 600;
+}
+
+body.yodayo-tavern #rm_group_submit:hover {
+    background-color: color-mix(in srgb, var(--yt-accent) 85%, white);
+}
+
+#yt-group-create-hint {
+    display: none;
+}
+
+/* shown only while a new group is being made (SillyTavern hides the button when editing) */
+body.yodayo-tavern #rm_group_chats_block:has(#rm_group_submit:not([style*="display: none"])) #yt-group-create-hint {
+    display: block;
+    margin: var(--yt-space-2) 0 0;
+    font-size: var(--yt-text-xs);
+    color: var(--yt-muted);
+}
