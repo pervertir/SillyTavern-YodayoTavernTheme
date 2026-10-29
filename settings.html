@@ -10,10 +10,11 @@
                 <span>Enable theme</span>
             </label>
 
-            <label class="checkbox_label" for="yt_pause_user_theme" title="Turns off SillyTavern's own Custom CSS and UI theme preset (chat style, avatar shape, Visual Novel mode) while this theme is on, without changing them. Off by default, since this theme builds on SillyTavern's chat styles.">
+            <label class="checkbox_label" for="yt_pause_user_theme" title="Your Custom CSS is always off while this theme is on. This also turns off SillyTavern's UI theme preset (chat style, avatar shape, Visual Novel mode) without changing it. Off by default, since this theme builds on SillyTavern's chat styles.">
                 <input id="yt_pause_user_theme" type="checkbox" />
-                <span>Pause my Custom CSS and UI theme</span>
+                <span>Also pause my UI theme preset</span>
             </label>
+            <small class="yt-muted">Turning this theme on switches the other themes off. Your Custom CSS is set aside while it's on and comes back when it's off.</small>
 
             <div id="yt_customize" class="menu_button menu_button_icon yt-customize-open" title="Change every part of the theme, with a live preview">
                 <i class="fa-solid fa-palette"></i>

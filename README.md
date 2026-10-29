@@ -176,9 +176,10 @@ remembered.
 - **Other theme extensions:** only one theme runs at a time. Turning this theme on turns off
   pervertir's other themes (Discord, iMessage, Microsoft Teams) straight away, and disables
   other theme extensions such as Moonlit Echoes, with a Reload button to finish. Nothing is
-  deleted; turn them back on in **Manage extensions**. **Pause my Custom CSS and UI theme**
-  (off by default) also sets aside SillyTavern's own Custom CSS and UI theme preset while this
-  theme is on, without changing them.
+  deleted; turn them back on in **Manage extensions**. SillyTavern's Custom CSS is set aside
+  while this theme is on and comes back when it's off, unchanged. **Also pause my UI theme
+  preset** (off by default) does the same for the preset's chat style, avatar shape and Visual
+  Novel mode.
 - **Theme presets:** the extension overrides SillyTavern's theme colors while it is
   enabled, so any built-in theme preset works underneath it.
 - **Font:** Inter isn't bundled. Install it locally for an exact match, otherwise

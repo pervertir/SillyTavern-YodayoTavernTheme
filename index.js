@@ -202,6 +202,29 @@ function updateCharacterArt() {
     }
 }
 
+/** SillyTavern's Custom CSS is written for its own look, so it stays switched off while the
+ * theme is on. theme-exclusive.js may be muting it too; whoever unmutes last restores the original. */
+function muteCustomCss(mute) {
+    const style = document.getElementById('custom-style');
+    if (!style) {
+        return;
+    }
+    const { dataset } = style;
+    if (mute) {
+        dataset.ytMedia ??= dataset.stThemeMedia ?? style.getAttribute('media') ?? '';
+        style.setAttribute('media', 'not all');
+    } else if (!mute && dataset.ytMedia !== undefined) {
+        if (dataset.stThemeMedia === undefined) {
+            if (dataset.ytMedia) {
+                style.setAttribute('media', dataset.ytMedia);
+            } else {
+                style.removeAttribute('media');
+            }
+        }
+        delete dataset.ytMedia;
+    }
+}
+
 function applySettings() {
     const settings = getSettings();
     const body = document.body;
@@ -247,6 +270,7 @@ function applySettings() {
     // last, so a custom font family wins over the font setting
     applyCustomize(settings);
     applyFavicon(settings.enabled);
+    muteCustomCss(settings.enabled);
     // while off, nothing of the theme stays in the page
     setMounted(settings.enabled);
 }
@@ -291,6 +315,8 @@ function bindSettingsUI() {
     $('#yt_pause_user_theme').on('change', function () {
         update('pauseUserTheme', $(this).prop('checked'));
         exclusive.changed();
+        // unpausing the preset puts the Custom CSS back too; it stays off while the theme is on
+        muteCustomCss(getSettings().enabled);
     });
     $('#yt_accent').on('input', function () {
         update('accent', String($(this).val()));
