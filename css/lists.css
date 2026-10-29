@@ -123,7 +123,12 @@ body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select .av
 
 body.yodayo-tavern.charListGrid #rm_print_characters_block .character_select .avatar img {
     width: 100%;
-    height: 100%;
+    /* a percentage height has nothing to resolve against here, so the picture's own
+       shape won (2:3 cards stood taller than groups); the ratio keeps every card 3:4 */
+    height: auto;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    display: block;
     border-radius: var(--yt-radius-lg);
 }
 
@@ -428,4 +433,99 @@ body.yodayo-tavern #rm_group_chats_block:has(#rm_group_submit:not([style*="displ
     margin: var(--yt-space-2) 0 0;
     font-size: var(--yt-text-xs);
     color: var(--yt-muted);
+}
+
+/* List rows: the name block takes the rest of the row, so it sits beside the 64px avatar
+   (SillyTavern sizes it as 100% - 70px for its 50px avatars, which made rows wrap) */
+body.yodayo-tavern:not(.charListGrid) #rm_print_characters_block :is(.character_select, .group_select) {
+    flex-wrap: nowrap;
+    align-items: center !important;
+}
+
+body.yodayo-tavern:not(.charListGrid) #rm_print_characters_block :is(.character_select_container, .group_select_container) {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+}
+
+/* Groups: the members' avatars tile one picture, the size and shape of a character's */
+body.yodayo-tavern #rm_print_characters_block .group_select .avatar_collage {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 2px;
+    min-width: 0;
+    max-width: none;
+    overflow: hidden;
+    background-color: var(--yt-line);
+    box-shadow: 0 0 0 1px var(--yt-line);
+}
+
+body.yodayo-tavern #rm_print_characters_block .group_select .avatar_collage img {
+    position: static;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+    max-height: none;
+    object-fit: cover;
+    border: none;
+    border-radius: 0 !important;
+    box-shadow: none;
+}
+
+body.yodayo-tavern #rm_print_characters_block .group_select .collage_1 img {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+}
+
+body.yodayo-tavern #rm_print_characters_block .group_select .collage_2 img,
+body.yodayo-tavern #rm_print_characters_block .group_select .collage_3 .img_1 {
+    grid-row: 1 / -1;
+}
+
+/* a group whose members are all gone */
+body.yodayo-tavern #rm_print_characters_block .group_select > .missing-avatar {
+    display: grid;
+    place-items: center;
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: var(--yt-surface-2);
+    color: var(--yt-muted);
+}
+
+body.yodayo-tavern:not(.charListGrid) #rm_print_characters_block .group_select .avatar_collage {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+}
+
+/* Grid: a group is a portrait card like a character's */
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select {
+    align-items: center !important;
+}
+
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select .avatar_collage,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select > .missing-avatar {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    flex: none;
+    border-radius: var(--yt-radius-lg);
+    transition: box-shadow var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select:hover .avatar_collage,
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select.selected .avatar_collage {
+    box-shadow: 0 0 0 2px var(--yt-accent);
+}
+
+body.yodayo-tavern.charListGrid #rm_print_characters_block .group_select :is(.group_select_container, .group_name_block, .ch_name) {
+    width: 100%;
+    max-width: none;
 }
