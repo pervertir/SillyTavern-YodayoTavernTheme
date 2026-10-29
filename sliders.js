@@ -2,6 +2,10 @@
 // for some sliders (and leaves Zen sliders at a fixed 70%), so the theme sets --yt-fill.
 
 function updateFill(slider) {
+    // nothing while the theme is off
+    if (!document.body.classList.contains('yodayo-tavern')) {
+        return;
+    }
     const min = Number(slider.min) || 0;
     const max = Number(slider.max) || 100;
     const value = Number(slider.value);

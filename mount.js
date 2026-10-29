@@ -11,6 +11,13 @@ const KEEP = '.yodayo-tavern-settings, #extensions_settings, #extensions_setting
 
 /** @type {{node: Element, parent: Node, next: Node | null}[]} */
 let stash = [];
+/** Redraws what was cleared (slider fills, menu widths) when the theme comes back */
+let onMount = () => {};
+
+/** @param {() => void} callback */
+export function setMountCallback(callback) {
+    onMount = callback;
+}
 
 function ownedNodes() {
     return [...document.querySelectorAll(OWNED)].filter((node) => {
@@ -43,10 +50,11 @@ function clearMarks() {
     for (const node of document.querySelectorAll('#chat .yt-single-swipe, .recentChat.yt-flip')) {
         node.classList.remove('yt-single-swipe', 'yt-flip');
     }
-    for (const sheet of document.querySelectorAll('.drawer-content[style*="--yt-"]')) {
-        for (const property of [...sheet.style]) {
+    // menu widths, slider fills and anything else the theme set inline
+    for (const node of document.querySelectorAll('[style*="--yt-"]')) {
+        for (const property of [...node.style]) {
             if (property.startsWith('--yt-')) {
-                sheet.style.removeProperty(property);
+                node.style.removeProperty(property);
             }
         }
     }
@@ -65,6 +73,7 @@ export function setMounted(on) {
             }
         }
         stash = [];
+        onMount();
         return;
     }
     for (const node of ownedNodes()) {

@@ -4,11 +4,11 @@ import { initTavernHome } from './home.js';
 import { applyPhoneNav } from './phone.js';
 import { applyCustomize, initCustomize, openCustomize } from './customize.js';
 import { registerTheme } from './theme-exclusive.js';
-import { setMounted } from './mount.js';
+import { setMountCallback, setMounted } from './mount.js';
 import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
 import { applySheetWidths, initSheetResizers } from './sheets.js';
 import { applyVnHeight, initVnMode } from './vn.js';
-import { initSliderFills } from './sliders.js';
+import { initSliderFills, refreshSliderFills } from './sliders.js';
 import { initSwipeCounters } from './swipes.js';
 import { applyAdvanced, initAdvancedControls } from './advanced.js';
 import { initSettingsPopout } from './popout.js';
@@ -740,6 +740,7 @@ async function init() {
     });
 
     // everything above added its controls to the page; while the theme is off they go back out
+    setMountCallback(() => refreshSliderFills());
     setMounted(getSettings().enabled);
 }
 

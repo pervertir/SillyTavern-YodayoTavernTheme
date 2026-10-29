@@ -204,6 +204,10 @@ remembered.
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,
   composer, lists, overlays, layout). Every rule is scoped under `body.yodayo-tavern`.
 
+Before pushing, run `test/off-check.mjs` against a throwaway SillyTavern profile (it changes
+extension settings): it fails if anything of the theme is left in the page while it's off,
+alone or next to another theme, and checks it comes back when turned on again.
+
 To work on it live, clone the repo straight into
 `SillyTavern/public/scripts/extensions/third-party/` and reload SillyTavern after edits.
 
