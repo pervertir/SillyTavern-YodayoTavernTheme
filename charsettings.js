@@ -2,10 +2,13 @@
 // window that sets colors, a background, message style and background effects for the
 // open character or just this chat. Chat settings win over character settings, which win
 // over the universal settings (those are only edited in the extension's own panel).
+// In a group chat the two levels are the group and the group chat, and each can also set
+// the image, background removal and size of every member.
 
 import { COLOR_FIELDS } from './colors.js';
 import { ADVANCED_GROUPS } from './advanced.js';
 import { getCachedCutout, isCutoutPending, isPluginAvailable } from './bgremove.js';
+import { refreshSliderFills } from './sliders.js';
 import { debounce, el, getCurrentAvatar, getCurrentAvatarUrl, HEX_COLOR, makeDraggable, readAsDataUrl, TITLE, unwrapCssUrl } from './util.js';
 
 const COG_ID = 'yt-chat-settings-cog';
@@ -13,10 +16,15 @@ const WINDOW_ID = 'yt-chat-settings-window';
 /** Advanced groups that can be set per character or chat */
 const SCOPED_GROUPS = ['Message style', 'Background effects'];
 
-/** Where a scope's overrides are stored, and the key of the open chat or character in it */
+/** Where a scope's overrides are stored, and the key of the open chat, character or group in it */
 function scopeAddress(scope) {
-    return scope === 'chat'
-        ? { store: 'chatThemes', key: SillyTavern.getContext().getCurrentChatId?.() ?? null }
+    const { getCurrentChatId, groupId } = SillyTavern.getContext();
+    if (scope === 'chat') {
+        return { store: 'chatThemes', key: getCurrentChatId?.() ?? null };
+    }
+    // in a group chat the level above the chat is the group
+    return groupId
+        ? { store: 'groupThemes', key: groupId }
         : { store: 'characterThemes', key: getCurrentAvatar() };
 }
 
@@ -42,7 +50,8 @@ function getScope(settings, scope, create = false) {
 function prune(settings, scope) {
     const { store, key } = scopeAddress(scope);
     const entry = settings[store]?.[key];
-    if (entry && !Object.keys(entry.colors ?? {}).length && !Object.keys(entry.advanced ?? {}).length && !entry.background && !entry.image && entry.removeBg === undefined) {
+    if (entry && !Object.keys(entry.colors ?? {}).length && !Object.keys(entry.advanced ?? {}).length && !entry.background && !entry.image
+        && entry.removeBg === undefined && !Object.keys(entry.members ?? {}).length) {
         delete settings[store][key];
     }
 }
@@ -59,6 +68,24 @@ export function getEffectiveOverrides(settings) {
         // a chat or character can turn background removal on or off; otherwise it's automatic
         // whenever the server plugin is installed
         removeBg: chat.removeBg ?? character.removeBg ?? (Boolean(settings.autoRemoveBg) && isPluginAvailable()),
+    };
+}
+
+/**
+ * Image, background removal and size for one member of the open group chat: what the group chat
+ * sets for them wins over the group, then the member's own character settings.
+ */
+export function getMemberOverrides(settings, avatar) {
+    const chat = getScope(settings, 'chat') ?? {};
+    const group = getScope(settings, 'character') ?? {};
+    const ownChat = chat.members?.[avatar] ?? {};
+    const ownGroup = group.members?.[avatar] ?? {};
+    const character = settings.characterThemes?.[avatar] ?? {};
+    return {
+        image: ownChat.image || ownGroup.image || character.image || '',
+        removeBg: ownChat.removeBg ?? ownGroup.removeBg ?? chat.removeBg ?? group.removeBg ?? character.removeBg
+            ?? (Boolean(settings.autoRemoveBg) && isPluginAvailable()),
+        size: ownChat.size ?? ownGroup.size ?? 100,
     };
 }
 
@@ -152,7 +179,7 @@ export function initCharacterSettings({ getSettings, onChange }) {
     const cog = el('button', 'fa-solid fa-gear');
     cog.id = COG_ID;
     cog.type = 'button';
-    cog.title = 'Look settings for this character or chat';
+    cog.title = 'Look settings for this character, group or chat';
     cog.setAttribute('aria-label', cog.title);
     cog.addEventListener('click', () => {
         if (document.getElementById(WINDOW_ID)) {
@@ -294,8 +321,54 @@ export function initCharacterSettings({ getSettings, onChange }) {
             }
         });
 
-        // Character image (shown beside a docked chat and in VN mode)
-        body.append(el('h4', 'yt-section-title', 'Character image'));
+        // Character image (shown beside a docked chat and in VN mode). In a group chat it's set
+        // for one member at a time, or background removal for all of them.
+        const imageTitle = el('h4', 'yt-section-title', 'Character image');
+        body.append(imageTitle);
+        let member = '';
+        const inGroup = () => Boolean(SillyTavern.getContext().groupId);
+        const memberRow = el('div', 'yt-setting-row');
+        const memberSelect = el('select', 'text_pole');
+        memberSelect.addEventListener('change', () => {
+            member = memberSelect.value;
+            refresh();
+        });
+        memberRow.append(el('label', '', 'Member'), memberSelect);
+        body.append(memberRow);
+        /** The settings object the image controls edit: the scope's, or one member's in it. */
+        const imageTarget = (target) => {
+            if (!inGroup() || !member) {
+                return target;
+            }
+            target.members ??= {};
+            return target.members[member] ??= {};
+        };
+        const editImage = (mutate) => edit((target) => {
+            mutate(imageTarget(target));
+            if (target.members && member && !Object.keys(target.members[member] ?? {}).length) {
+                delete target.members[member];
+            }
+            if (target.members && !Object.keys(target.members).length) {
+                delete target.members;
+            }
+        });
+        const currentImage = () => (inGroup() && member ? current().members?.[member] ?? {} : current());
+        /** The image in effect for what the controls show, and whether its background is removed. */
+        const effectiveImage = () => {
+            const settings = getSettings();
+            if (!inGroup()) {
+                const overrides = getEffectiveOverrides(settings);
+                return { source: overrides.image || getCurrentAvatarUrl(), removeBg: overrides.removeBg };
+            }
+            if (!member) {
+                const chat = getScope(settings, 'chat') ?? {};
+                const group = getScope(settings, 'character') ?? {};
+                return { source: '', removeBg: chat.removeBg ?? group.removeBg ?? (Boolean(settings.autoRemoveBg) && isPluginAvailable()) };
+            }
+            const overrides = getMemberOverrides(settings, member);
+            return { source: overrides.image || `characters/${encodeURIComponent(member)}`, removeBg: overrides.removeBg };
+        };
+
         const imageRow = el('div', 'yt-setting-row yt-image-row');
         const preview = el('img', 'yt-image-preview');
         preview.alt = '';
@@ -314,18 +387,18 @@ export function initCharacterSettings({ getSettings, onChange }) {
             }
             try {
                 const path = await uploadImage(file);
-                edit(target => { target.image = path; });
+                editImage(target => { target.image = path; });
             } catch (error) {
                 console.error(`[${TITLE}] image upload failed`, error);
                 toastr.error('The image could not be uploaded.', TITLE);
             }
         });
-        imageRow.append(preview, upload, fileInput, resetButton(() => edit(target => { delete target.image; })));
+        imageRow.append(preview, upload, fileInput, resetButton(() => editImage(target => { delete target.image; })));
         const imageUrlRow = el('div', 'yt-setting-row');
         const imageUrl = el('input', 'text_pole');
         imageUrl.type = 'url';
         imageUrl.placeholder = 'Or paste an image URL';
-        imageUrl.addEventListener('input', debounce(() => edit(target => { target.image = imageUrl.value.trim(); })));
+        imageUrl.addEventListener('input', debounce(() => editImage(target => { target.image = imageUrl.value.trim(); })));
         imageUrlRow.append(el('label', '', 'URL'), imageUrl);
         // one button: remove the background, or bring it back once removed
         const removeRow = el('div', 'yt-setting-row');
@@ -334,32 +407,77 @@ export function initCharacterSettings({ getSettings, onChange }) {
         const removeText = el('span', '', 'Remove background');
         removeButton.append(removeIcon, removeText);
         removeButton.addEventListener('click', () => {
-            const on = getEffectiveOverrides(getSettings()).removeBg;
-            edit(target => { target.removeBg = !on; });
+            const on = effectiveImage().removeBg;
+            editImage(target => { target.removeBg = !on; });
         });
         const removeStatus = el('small', 'yt-muted yt-remove-status');
-        removeRow.append(removeButton, removeStatus, resetButton(() => edit(target => { delete target.removeBg; })));
-        body.append(imageRow, imageUrlRow, removeRow, el('small', 'yt-muted', 'Shown beside the chat when it sits left or right, and in Visual Novel mode. Leave it unset to use the character card.'));
+        removeRow.append(removeButton, removeStatus, resetButton(() => editImage(target => { delete target.removeBg; })));
+        // a member's height beside the chat, as a share of the usual
+        const sizeRow = el('div', 'yt-setting-row');
+        const sizeInput = el('input');
+        sizeInput.type = 'range';
+        sizeInput.min = '40';
+        sizeInput.max = '150';
+        sizeInput.step = '5';
+        const sizeValue = el('span', 'yt-muted');
+        sizeInput.addEventListener('input', () => editImage(target => { target.size = Number(sizeInput.value); }));
+        sizeRow.append(el('label', '', 'Size'), sizeInput, sizeValue, resetButton(() => editImage(target => { delete target.size; })));
+        const imageNote = el('small', 'yt-muted');
+        body.append(imageRow, imageUrlRow, removeRow, sizeRow, imageNote);
         refreshers.push(() => {
-            const own = current().image || '';
-            const overrides = getEffectiveOverrides(getSettings());
-            const source = overrides.image || getCurrentAvatarUrl();
-            const cutout = overrides.removeBg && source ? getCachedCutout(source) : null;
+            const group = inGroup();
+            if (group) {
+                const { groups, groupId, characters } = SillyTavern.getContext();
+                const avatars = groups.find(x => x.id === groupId)?.members ?? [];
+                if (!avatars.includes(member)) {
+                    member = '';
+                }
+                memberSelect.replaceChildren();
+                const all = el('option', '', 'All members');
+                all.value = '';
+                memberSelect.append(all);
+                for (const avatar of avatars) {
+                    const option = el('option', '', characters.find(x => x.avatar === avatar)?.name ?? avatar);
+                    option.value = avatar;
+                    memberSelect.append(option);
+                }
+                memberSelect.value = member;
+            } else {
+                member = '';
+            }
+            const perMember = group && member;
+            memberRow.classList.toggle('displayNone', !group);
+            // all members share background removal only; an image or size is per member
+            imageRow.classList.toggle('displayNone', group && !member);
+            imageUrlRow.classList.toggle('displayNone', group && !member);
+            sizeRow.classList.toggle('displayNone', !perMember);
+            imageNote.textContent = group
+                ? 'Members stand beside the chat when it sits left or right, and in Visual Novel mode. Pick a member to give them their own image or size.'
+                : 'Shown beside the chat when it sits left or right, and in Visual Novel mode. Leave it unset to use the character card.';
+
+            const own = currentImage();
+            const { source, removeBg } = effectiveImage();
+            const cutout = removeBg && source ? getCachedCutout(source) : null;
             const effective = cutout || source;
             preview.src = effective || '';
             preview.classList.toggle('yt-cutout', Boolean(cutout));
-            removeButton.classList.toggle('active', overrides.removeBg);
-            removeText.textContent = overrides.removeBg ? 'Restore background' : 'Remove background';
-            removeIcon.className = overrides.removeBg ? 'fa-solid fa-image' : 'fa-solid fa-wand-magic-sparkles';
-            removeButton.classList.toggle('disabled', !source);
-            removeRow.classList.toggle('yt-value-set', current().removeBg !== undefined);
-            removeStatus.textContent = !overrides.removeBg || !source ? ''
+            removeButton.classList.toggle('active', removeBg);
+            removeText.textContent = removeBg ? 'Restore background' : 'Remove background';
+            removeIcon.className = removeBg ? 'fa-solid fa-image' : 'fa-solid fa-wand-magic-sparkles';
+            removeButton.classList.toggle('disabled', !source && !group);
+            removeRow.classList.toggle('yt-value-set', own.removeBg !== undefined);
+            removeStatus.textContent = !removeBg || !source ? ''
                 : cutout ? 'Done' : isCutoutPending(source) ? 'Working…' : '';
             preview.classList.toggle('displayNone', !effective);
-            imageRow.classList.toggle('yt-value-set', Boolean(own));
+            imageRow.classList.toggle('yt-value-set', Boolean(own.image));
             if (imageUrl !== document.activeElement) {
-                imageUrl.value = /^\/?user\/images\//.test(own) ? '' : own;
+                imageUrl.value = /^\/?user\/images\//.test(own.image || '') ? '' : own.image || '';
             }
+            const size = perMember ? getMemberOverrides(getSettings(), member).size : 100;
+            sizeInput.value = String(size);
+            refreshSliderFills(sizeRow);
+            sizeValue.textContent = `${size}%`;
+            sizeRow.classList.toggle('yt-value-set', own.size !== undefined);
         });
 
         // Message style and background effects
@@ -417,12 +535,18 @@ export function initCharacterSettings({ getSettings, onChange }) {
 
         function refresh() {
             const avatar = getCurrentAvatar();
-            const { characters, characterId } = SillyTavern.getContext();
-            const name = avatar ? characters[characterId]?.name : '';
+            const { characters, characterId, groups, groupId } = SillyTavern.getContext();
+            const group = groupId ? groups.find(x => x.id === groupId) : null;
+            const name = group?.name ?? (avatar ? characters[characterId]?.name : '');
             title.textContent = name ? `Theme for ${name}` : 'Theme for this chat';
             const characterButton = scopes.querySelector('[data-scope="character"]');
-            characterButton.classList.toggle('disabled', !avatar);
-            if (!avatar && scope === 'character') {
+            characterButton.textContent = group ? 'This group' : 'This character';
+            scopes.querySelector('[data-scope="chat"]').textContent = group ? 'This group chat' : 'This chat';
+            note.textContent = group
+                ? 'Group chat settings win over group settings. Your universal look is set in Extensions → Yodayo Tavern Theme.'
+                : 'Chat settings win over character settings. Your universal look is set in Extensions → Yodayo Tavern Theme.';
+            characterButton.classList.toggle('disabled', !avatar && !group);
+            if (!avatar && !group && scope === 'character') {
                 scope = 'chat';
             }
             for (const button of scopes.children) {

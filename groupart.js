@@ -68,10 +68,12 @@ function pickShown(members) {
  * speaker steps forward with a transition instead of the row being rebuilt.
  * @param {HTMLElement} art The art area
  * @param {string[]} members Avatars of the group's active members
- * @param {(avatar: string) => string} getUrl Image to show for a member
- * @param {(src: string) => void} onError Called with the src of an image that failed to load
+ * @param {object} look
+ * @param {(avatar: string) => string} look.getUrl Image to show for a member
+ * @param {(avatar: string) => number} look.getSize A member's height as a percentage of the usual
+ * @param {(src: string) => void} look.onError Called with the src of an image that failed to load
  */
-export function renderLineup(art, members, getUrl, onError) {
+export function renderLineup(art, members, { getUrl, getSize, onError }) {
     const shown = pickShown(members);
     const speaker = getSpeaker(members);
     const existing = new Map([...art.querySelectorAll('.yt-art-member')].map(node => [node.dataset.avatar, node]));
@@ -92,6 +94,7 @@ export function renderLineup(art, members, getUrl, onError) {
             img.setAttribute('src', url);
         }
         node.style.setProperty('--yt-slot', String(slot));
+        node.style.setProperty('--yt-member-size', String(getSize(avatar) / 100));
         node.classList.toggle('yt-art-speaker', avatar === speaker);
         node.classList.toggle('yt-art-replying', avatar === replying);
         return node;
