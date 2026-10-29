@@ -15,11 +15,11 @@ import { applyAdvanced, initAdvancedControls } from './advanced.js';
 import { initSettingsPopout } from './popout.js';
 import { placePagination } from './pagination.js';
 import { initSharpAvatars, sharpenAvatars } from './avatars.js';
-import { getCutout, initBackgroundRemoval, isPluginAvailable, revalidateCutout } from './bgremove.js';
+import { getCutout, initBackgroundRemoval, revalidateCutout } from './bgremove.js';
 import { getLineupMembers, initLineupEvents, renderLineup } from './groupart.js';
 import { applyArtOffsets, initArtDrag } from './artdrag.js';
 import { applyFavicon, applySplashLogo, LOGO_URL } from './brand.js';
-import { applyBackgroundOverride, getEffectiveOverrides, initCharacterSettings } from './charsettings.js';
+import { applyBackgroundOverride, getEffectiveOverrides, getMemberOverrides, initCharacterSettings } from './charsettings.js';
 import { BODY_CLASS, el, getCurrentAvatarUrl, MODULE_NAME, onActivate, TITLE } from './util.js';
 
 /** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
@@ -61,6 +61,8 @@ const defaultSettings = Object.freeze({
     /** Pause SillyTavern's Custom CSS and UI theme preset while on (theme-exclusive.js). Off:
      *  this theme builds on SillyTavern's chat styles and Visual Novel mode, which a preset sets. */
     pauseUserTheme: false,
+    /** Per-group overrides from the chat's cog: { [group id]: { colors, advanced, background, removeBg, members: { [avatar]: { image, removeBg, size } } } } */
+    groupThemes: {},
     /** Per-chat overrides from the chat's cog: { [chat id]: { colors, advanced, background } } */
     chatThemes: {},
     /** Background-removed character images: { [source URL]: { path, version } } */
@@ -187,14 +189,10 @@ function withCutout(source, removeBg) {
         : source;
 }
 
-/** Image for one member of a group chat: their custom image if set, else the card, cut out like a solo chat's. */
+/** Image for one member of a group chat: the group's or their own custom image if set, else the card, cut out like a solo chat's. */
 function getMemberImageUrl(settings, avatar) {
-    const card = `characters/${encodeURIComponent(avatar)}`;
-    const custom = settings.characterThemes?.[avatar]?.image;
-    const source = custom && !brokenArt.has(custom) ? custom : card;
-    const chat = settings.chatThemes?.[SillyTavern.getContext().getCurrentChatId?.()];
-    const removeBg = chat?.removeBg ?? settings.characterThemes?.[avatar]?.removeBg
-        ?? (Boolean(settings.autoRemoveBg) && isPluginAvailable());
+    const { image, removeBg } = getMemberOverrides(settings, avatar);
+    const source = image && !brokenArt.has(image) ? image : `characters/${encodeURIComponent(avatar)}`;
     return withCutout(source, removeBg);
 }
 
@@ -218,7 +216,11 @@ function updateCharacterArt() {
 
     const members = shown ? getLineupMembers() : null;
     if (members && members.length > 1) {
-        renderLineup(getArtArea(true), members, avatar => getMemberImageUrl(settings, avatar), onArtError);
+        renderLineup(getArtArea(true), members, {
+            getUrl: avatar => getMemberImageUrl(settings, avatar),
+            getSize: avatar => getMemberOverrides(settings, avatar).size,
+            onError: onArtError,
+        });
         applyArtOffsets();
         return;
     }

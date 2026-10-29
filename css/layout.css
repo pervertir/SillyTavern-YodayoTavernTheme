@@ -111,8 +111,9 @@ body.yodayo-tavern #yt-character-art .yt-art-member {
 }
 
 body.yodayo-tavern #yt-character-art .yt-art-member img {
-    max-width: 40vw;
-    max-height: min(100%, 80dvh);
+    max-width: calc(40vw * var(--yt-member-size, 1));
+    /* a member's size from the cog scales this; it still never enlarges the image */
+    max-height: min(100%, 80dvh * var(--yt-member-size, 1));
 }
 
 body.yodayo-tavern #yt-character-art .yt-art-member.yt-art-speaker {

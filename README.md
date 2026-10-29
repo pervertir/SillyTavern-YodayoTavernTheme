@@ -39,8 +39,9 @@ full height when the picture is large enough.
 
 The cog at the top right of a chat opens **Theme for &lt;character&gt;**: colors, a
 background, the character image (upload, URL or **Remove background**), message style and
-background effects, for this character or only this chat. Every change applies as you type
-or drag.
+background effects, for this character or only this chat. In a group chat it sets them for
+**This group** or **This group chat**, and picking a member gives them their own image,
+background removal and size. Every change applies as you type or drag.
 
 ![Chat look editor](.github/look-editor.jpg)
 

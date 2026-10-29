@@ -54,8 +54,8 @@ body.yodayo-tavern.waifuMode #yt-character-art.yt-art-group {
 
 body.yodayo-tavern.waifuMode #yt-character-art .yt-art-member img {
     height: auto;
-    max-width: 30vw;
-    max-height: 100%;
+    max-width: calc(30vw * var(--yt-member-size, 1));
+    max-height: min(100%, 100% * var(--yt-member-size, 1));
 }
 
 /* expression sprites, when Character Expressions is on, take the same place */

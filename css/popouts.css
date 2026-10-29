@@ -386,3 +386,13 @@ body.yodayo-tavern #yt-chat-settings-cog:hover {
 #yt-chat-settings-window .yt-remove-status {
     margin-left: auto;
 }
+
+/* a member's size in the chat look editor: the slider takes the row's free width */
+body.yodayo-tavern #yt-chat-settings-window .yt-setting-row:has(> input[type="range"]) > label {
+    flex-grow: 0;
+}
+
+body.yodayo-tavern #yt-chat-settings-window .yt-setting-row input[type="range"] {
+    flex: 1;
+    min-width: 0;
+}
