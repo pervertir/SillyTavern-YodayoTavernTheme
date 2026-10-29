@@ -17,6 +17,7 @@ import { placePagination } from './pagination.js';
 import { initSharpAvatars, sharpenAvatars } from './avatars.js';
 import { getCutout, initBackgroundRemoval, isPluginAvailable, revalidateCutout } from './bgremove.js';
 import { getLineupMembers, initLineupEvents, renderLineup } from './groupart.js';
+import { applyArtOffsets, initArtDrag } from './artdrag.js';
 import { applyFavicon, applySplashLogo, LOGO_URL } from './brand.js';
 import { applyBackgroundOverride, getEffectiveOverrides, initCharacterSettings } from './charsettings.js';
 import { BODY_CLASS, el, getCurrentAvatarUrl, MODULE_NAME, onActivate, TITLE } from './util.js';
@@ -64,6 +65,8 @@ const defaultSettings = Object.freeze({
     chatThemes: {},
     /** Background-removed character images: { [source URL]: { path, version } } */
     cutouts: {},
+    /** Where characters were dragged beside the chat: { [chat id]: { [avatar]: [x, y] } }, shares of the art area */
+    artOffsets: {},
     /** Remove character image backgrounds without asking when the server plugin is installed */
     autoRemoveBg: true,
 });
@@ -216,6 +219,7 @@ function updateCharacterArt() {
     const members = shown ? getLineupMembers() : null;
     if (members && members.length > 1) {
         renderLineup(getArtArea(true), members, avatar => getMemberImageUrl(settings, avatar), onArtError);
+        applyArtOffsets();
         return;
     }
 
@@ -230,18 +234,25 @@ function updateCharacterArt() {
     if (!img) {
         img = el('img');
         img.alt = '';
+        img.draggable = false;
         const fit = () => {
             const big = img.naturalHeight >= art.clientHeight * ART_FILL_RATIO;
             art.classList.toggle('yt-art-fill', big);
         };
         img.addEventListener('load', fit);
         img.addEventListener('error', () => onArtError(img.getAttribute('src')));
-        new ResizeObserver(() => img.complete && fit()).observe(art);
+        new ResizeObserver(() => {
+            if (img.complete) {
+                fit();
+            }
+            applyArtOffsets();
+        }).observe(art);
         art.append(img);
     }
     if (img.getAttribute('src') !== url) {
         img.setAttribute('src', url);
     }
+    applyArtOffsets();
 }
 
 /** SillyTavern's Custom CSS is written for its own look, so it stays switched off while the
@@ -782,6 +793,7 @@ async function init() {
     initVnMode({ getSettings, saveSettings, onModeChange: updateCharacterArt });
     initGroupCreate();
     initLineupEvents(updateCharacterArt);
+    initArtDrag({ getSettings, saveSettings });
 
     const { eventSource, eventTypes } = SillyTavern.getContext();
     eventSource.on(eventTypes.CHAT_CHANGED, () => {
