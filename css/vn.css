@@ -46,6 +46,18 @@ body.yodayo-tavern.waifuMode #yt-character-art img {
     border-radius: var(--yt-radius-lg);
 }
 
+/* a group lineup stays within the middle of the screen, each member at its own size */
+body.yodayo-tavern.waifuMode #yt-character-art.yt-art-group {
+    left: 10%;
+    right: 10%;
+}
+
+body.yodayo-tavern.waifuMode #yt-character-art .yt-art-member img {
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+}
+
 /* expression sprites, when Character Expressions is on, take the same place */
 body.yodayo-tavern.waifuMode #expression-wrapper .expression-holder,
 body.yodayo-tavern.waifuMode #visual-novel-wrapper .expression-holder {
