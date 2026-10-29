@@ -333,6 +333,10 @@ export function applyCustomize(settings) {
     appliedTokens = next;
 
     let style = document.getElementById(HIDE_STYLE_ID);
+    if (!enabled) {
+        style?.remove();
+        return;
+    }
     if (!style) {
         style = el('style');
         style.id = HIDE_STYLE_ID;

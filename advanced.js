@@ -153,6 +153,10 @@ export function applyAdvanced(settings) {
         } else if (item.type === 'select') {
             body.dataset[`yt${item.key[0].toUpperCase()}${item.key.slice(1)}`] = String(value);
         } else if (item.type === 'textarea') {
+            if (!settings.enabled) {
+                document.getElementById(RAW_CSS_ID)?.remove();
+                continue;
+            }
             let style = document.getElementById(RAW_CSS_ID);
             if (!style) {
                 style = document.createElement('style');

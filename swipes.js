@@ -4,6 +4,9 @@
 const SINGLE = /^\s*1\D*\/\D*1\s*$/;
 
 function markSingleSwipes() {
+    if (!document.body.classList.contains('yodayo-tavern')) {
+        return;
+    }
     for (const counter of document.querySelectorAll('#chat .mes .swipes-counter')) {
         const mes = counter.closest('.mes');
         mes?.classList.toggle('yt-single-swipe', SINGLE.test(counter.textContent ?? ''));

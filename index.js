@@ -4,6 +4,7 @@ import { initTavernHome } from './home.js';
 import { applyPhoneNav } from './phone.js';
 import { applyCustomize, initCustomize, openCustomize } from './customize.js';
 import { registerTheme } from './theme-exclusive.js';
+import { setMounted } from './mount.js';
 import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
 import { applySheetWidths, initSheetResizers } from './sheets.js';
 import { applyVnHeight, initVnMode } from './vn.js';
@@ -238,6 +239,8 @@ function applySettings() {
     syncTavernHome();
     // last, so a custom font family wins over the font setting
     applyCustomize(settings);
+    // while off, nothing of the theme stays in the page
+    setMounted(settings.enabled);
 }
 
 function syncSettingsUI() {
@@ -736,9 +739,8 @@ async function init() {
         updateCharacterArt();
     });
 
-    if (getSettings().enabled && isMoonlitEnabled()) {
-        toastr.warning('Moonlit Echoes is also enabled and will override parts of the Yodayo Tavern look.', 'Yodayo Tavern Theme');
-    }
+    // everything above added its controls to the page; while the theme is off they go back out
+    setMounted(getSettings().enabled);
 }
 
 // Start while SillyTavern's loading screen is still up: it waits for APP_INITIALIZED

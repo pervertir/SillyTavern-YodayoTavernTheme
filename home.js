@@ -677,7 +677,16 @@ export function initTavernHome(isEnabled) {
         document.body.classList.toggle(ACTIVE_CLASS, show);
         syncAssistant(chat, show);
         if (!show) {
-            existing?.remove();
+            if (existing) {
+                // SillyTavern's welcome panel goes back where it came from, as it was
+                const adopted = existing.querySelector('.welcomePanel');
+                if (adopted) {
+                    adopted.querySelectorAll('.yt-recent-label').forEach(label => label.remove());
+                    adopted.querySelectorAll('.yt-flip').forEach(item => item.classList.remove('yt-flip'));
+                    chat.prepend(adopted);
+                }
+                existing.remove();
+            }
             return;
         }
         const home = existing ?? buildHome();

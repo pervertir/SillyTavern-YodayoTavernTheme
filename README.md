@@ -197,6 +197,7 @@ remembered.
 - `phone.js`: which edge the phone menu bar sits on
 - `avatars.js`: pre-scales chat and character list avatars so they stay sharp
 - `customize.js`: the Customize page (every token, layout toggle and setting in one place)
+- `mount.js`: takes everything the theme added out of the page while it is off, and puts it back
 - `theme-exclusive.js`: one theme at a time, shared unchanged with pervertir's other themes
 - `bgremove.js`: Remove background, through the Background Removal server plugin
 - `colors.js`: chat colors (all characters or per character), character image and export/import
