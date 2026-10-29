@@ -339,9 +339,49 @@ body.yodayo-tavern #rm_button_bar #bulkSelectedCount:empty {
     display: none;
 }
 
-/* The character panel's way back to the character list reads as a back arrow, not a list */
-body.yodayo-tavern #rm_button_characters::before {
+/* Every "back" control in SillyTavern's panels is the same round back button as the chat's
+   Back to home: the character panel's list icon (which read as bullet points), the editor
+   and group editor's back arrows, and the backgrounds' Back to folders */
+body.yodayo-tavern :is(#rm_button_characters, #rm_button_back, #rm_button_back_from_group) {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    margin: 0;
+    padding: 0;
+    background-color: var(--yt-glass-raised);
+    border: 1px solid var(--yt-line-strong);
+    border-radius: 9999px;
+    color: var(--yt-text);
+    font-size: 14px;
+    opacity: 1;
+    cursor: pointer;
+    transition: background-color var(--yt-fast) var(--yt-ease), color var(--yt-fast) var(--yt-ease);
+}
+
+body.yodayo-tavern :is(#rm_button_characters, #rm_button_back, #rm_button_back_from_group)::before {
     content: '\f060';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+}
+
+body.yodayo-tavern :is(#rm_button_characters, #rm_button_back, #rm_button_back_from_group):hover {
+    background-color: var(--yt-surface-3);
+    color: var(--yt-accent);
+}
+
+body.yodayo-tavern #bg_back_to_folders {
+    width: auto;
+    border-radius: 9999px;
+    padding: 0 14px 0 10px;
+}
+
+body.yodayo-tavern #bg_back_to_folders i {
+    font-size: 13px;
 }
 
 /* the name block under the portrait spans the card (SillyTavern caps it at 100px) */
