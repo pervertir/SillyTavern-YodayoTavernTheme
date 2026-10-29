@@ -80,9 +80,11 @@ To install by hand, clone this repo into
 
 ### Background removal (optional)
 
-The **Remove background** button in the chat look editor cuts the character image out of
-its background with [ToonOut](https://huggingface.co/joelseytre/toonout) (BiRefNet
-fine-tuned for anime). Extensions can't run code outside the browser, so this runs on your
+With the plugin installed, the character image beside the chat is cut out of its background
+automatically, so you get your chat background with the character standing on it. Each image
+is processed once and saved. Turn this off in the theme's settings, or per character or chat
+with the **Remove background** button in the chat look editor. The cut-out is made with
+[ToonOut](https://huggingface.co/joelseytre/toonout) (BiRefNet fine-tuned for anime). Extensions can't run code outside the browser, so this runs on your
 machine in a separate server plugin,
 [Background Removal](https://github.com/pervertir/SillyTavern-BackgroundRemoval). The rest
 of the theme works without it.

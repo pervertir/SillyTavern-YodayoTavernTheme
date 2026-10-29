@@ -9,5 +9,9 @@
     "version": "1.0.0",
     "license": "MIT",
     "homepage": "https://github.com/pervertir/SillyTavern-YodayoTavernTheme",
-    "auto_update": true
+    "auto_update": true,
+    "hooks": {
+        "install": "reloadForNewVersion",
+        "update": "reloadForNewVersion"
+    }
 }

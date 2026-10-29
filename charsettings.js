@@ -5,7 +5,7 @@
 
 import { COLOR_FIELDS } from './colors.js';
 import { ADVANCED_GROUPS } from './advanced.js';
-import { getCachedCutout, isCutoutPending } from './bgremove.js';
+import { getCachedCutout, isCutoutPending, isPluginAvailable } from './bgremove.js';
 import { debounce, el, getCurrentAvatar, getCurrentAvatarUrl, HEX_COLOR, makeDraggable, readAsDataUrl, TITLE, unwrapCssUrl } from './util.js';
 
 const COG_ID = 'yt-chat-settings-cog';
@@ -56,8 +56,9 @@ export function getEffectiveOverrides(settings) {
         advanced: { ...character.advanced, ...chat.advanced },
         background: chat.background || character.background || '',
         image: chat.image || character.image || '',
-        // background removal is off unless this chat or character turns it on
-        removeBg: chat.removeBg ?? character.removeBg ?? false,
+        // a chat or character can turn background removal on or off; otherwise it's automatic
+        // whenever the server plugin is installed
+        removeBg: chat.removeBg ?? character.removeBg ?? (Boolean(settings.autoRemoveBg) && isPluginAvailable()),
     };
 }
 

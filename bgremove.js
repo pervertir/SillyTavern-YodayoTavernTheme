@@ -17,6 +17,13 @@ const failed = new Set();
 
 let getSettings = () => ({});
 let saveSettings = () => {};
+/** Whether the server plugin answered; until then backgrounds aren't removed automatically */
+let pluginAvailable = false;
+
+/** Whether the Background Removal server plugin is installed and running */
+export function isPluginAvailable() {
+    return pluginAvailable;
+}
 
 class PluginMissingError extends Error {}
 
@@ -189,8 +196,17 @@ export async function revalidateCutout(src) {
  * @param {object} options
  * @param {() => object} options.getSettings
  * @param {() => void} options.saveSettings
+ * @param {() => void} options.onAvailable Called once the server plugin is found
  */
 export function initBackgroundRemoval(options) {
     getSettings = options.getSettings;
     saveSettings = options.saveSettings;
+    fetch(`${PLUGIN_URL}/status`, { cache: 'no-store' })
+        .then((response) => {
+            pluginAvailable = response.ok;
+            if (pluginAvailable) {
+                options.onAvailable();
+            }
+        })
+        .catch(() => {});
 }

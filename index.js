@@ -63,6 +63,8 @@ const defaultSettings = Object.freeze({
     chatThemes: {},
     /** Background-removed character images: { [source URL]: { path, version } } */
     cutouts: {},
+    /** Remove character image backgrounds without asking when the server plugin is installed */
+    autoRemoveBg: true,
 });
 
 let syncTavernHome = () => {};
@@ -287,6 +289,7 @@ function syncSettingsUI() {
     $('#yt_flat_bg').prop('checked', settings.flatBackground);
     $('#yt_chat_position').val(settings.chatPosition);
     $('#yt_character_art').prop('checked', settings.characterArt);
+    $('#yt_auto_remove_bg').prop('checked', settings.autoRemoveBg);
     $('#yt_nav_position').val(settings.navPosition);
     $('#yt_nav_trigger').val(settings.navTrigger);
     $('#yt_nav_shortcut').val(settings.navShortcut);
@@ -344,6 +347,10 @@ function bindSettingsUI() {
     });
     $('#yt_character_art').on('change', function () {
         update('characterArt', $(this).prop('checked'));
+    });
+    $('#yt_auto_remove_bg').on('change', function () {
+        update('autoRemoveBg', $(this).prop('checked'));
+        refreshCharacterSettings();
     });
     $('#yt_tavern_home').on('change', function () {
         update('tavernHome', $(this).prop('checked'));
@@ -686,7 +693,14 @@ async function init() {
     }
 
     initSharpAvatars(() => getSettings().enabled);
-    initBackgroundRemoval({ getSettings, saveSettings });
+    initBackgroundRemoval({
+        getSettings,
+        saveSettings,
+        onAvailable: () => {
+            updateCharacterArt();
+            refreshCharacterSettings();
+        },
+    });
 
     refreshCharacterSettings = initCharacterSettings({ getSettings, onChange: applyAndSave });
     document.getElementById('yt_reset_all')?.addEventListener('click', resetAllSettings);
@@ -747,6 +761,28 @@ async function init() {
     // everything above added its controls to the page; while the theme is off they go back out
     setMountCallback(() => refreshSliderFills());
     setMounted(getSettings().enabled);
+}
+
+/**
+ * Manifest hook for install and update: SillyTavern keeps running the old code until the page
+ * reloads, so reload once if the theme is on. A second call within a minute (another update in the same batch)
+ * doesn't reload again.
+ */
+export function reloadForNewVersion() {
+    if (SillyTavern.getContext().extensionSettings[MODULE_NAME]?.enabled === false) {
+        return;
+    }
+    const key = 'yodayoTavernThemeReloadedAt';
+    try {
+        if (Date.now() - Number(sessionStorage.getItem(key)) < 60_000) {
+            return;
+        }
+        sessionStorage.setItem(key, String(Date.now()));
+    } catch {
+        // without sessionStorage there is no loop to guard against across reloads
+    }
+    toastr.info('Reloading to apply the new version…', TITLE);
+    setTimeout(() => location.reload(), 1500);
 }
 
 // Start while SillyTavern's loading screen is still up: it waits for APP_INITIALIZED
