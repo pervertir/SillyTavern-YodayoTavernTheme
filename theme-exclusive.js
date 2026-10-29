@@ -275,8 +275,10 @@ function takeOver(theme, { announce = true } = {}) {
     }
     const offNames = [];
     for (const other of othersOn(theme)) {
+        // a theme running on this page turns itself off on the event below (its own
+        // disable()); one that isn't running yet is switched off in its settings
         const settings = extensionSettings[other.settingsKey];
-        if (settings) {
+        if (!other.live && settings) {
             settings.enabled = false;
         }
         offNames.push(other.name);
@@ -297,7 +299,7 @@ function takeOver(theme, { announce = true } = {}) {
     }
     const parts = [];
     if (offNames.length) {
-        parts.push(tr('Turned off {0} so they don\'t clash.').replace('{0}', listNames(offNames)));
+        parts.push(tr('Turned off {0} so the themes don\'t clash.').replace('{0}', listNames(offNames)));
     }
     // the pause is mentioned once per theme
     if (theme.pauseUserTheme() && own && !own.pauseNoticeShown && hasUserTheme()) {

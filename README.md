@@ -80,9 +80,11 @@ To install by hand, clone this repo into
 
 ### Background removal (optional)
 
-The **Remove background** button in the chat look editor cuts the character image out of
-its background with [ToonOut](https://huggingface.co/joelseytre/toonout) (BiRefNet
-fine-tuned for anime). Extensions can't run code outside the browser, so this runs on your
+With the plugin installed, the character image beside the chat is cut out of its background
+automatically, so you get your chat background with the character standing on it. Each image
+is processed once and saved. Turn this off in the theme's settings, or per character or chat
+with the **Remove background** button in the chat look editor. The cut-out is made with
+[ToonOut](https://huggingface.co/joelseytre/toonout) (BiRefNet fine-tuned for anime). Extensions can't run code outside the browser, so this runs on your
 machine in a separate server plugin,
 [Background Removal](https://github.com/pervertir/SillyTavern-BackgroundRemoval). The rest
 of the theme works without it.
@@ -176,9 +178,10 @@ remembered.
 - **Other theme extensions:** only one theme runs at a time. Turning this theme on turns off
   pervertir's other themes (Discord, iMessage, Microsoft Teams) straight away, and disables
   other theme extensions such as Moonlit Echoes, with a Reload button to finish. Nothing is
-  deleted; turn them back on in **Manage extensions**. **Pause my Custom CSS and UI theme**
-  (off by default) also sets aside SillyTavern's own Custom CSS and UI theme preset while this
-  theme is on, without changing them.
+  deleted; turn them back on in **Manage extensions**. SillyTavern's Custom CSS is set aside
+  while this theme is on and comes back when it's off, unchanged. **Also pause my UI theme
+  preset** (off by default) does the same for the preset's chat style, avatar shape and Visual
+  Novel mode.
 - **Theme presets:** the extension overrides SillyTavern's theme colors while it is
   enabled, so any built-in theme preset works underneath it.
 - **Font:** Inter isn't bundled. Install it locally for an exact match, otherwise

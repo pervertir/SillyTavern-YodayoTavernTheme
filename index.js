@@ -63,6 +63,8 @@ const defaultSettings = Object.freeze({
     chatThemes: {},
     /** Background-removed character images: { [source URL]: { path, version } } */
     cutouts: {},
+    /** Remove character image backgrounds without asking when the server plugin is installed */
+    autoRemoveBg: true,
 });
 
 let syncTavernHome = () => {};
@@ -87,6 +89,8 @@ const ST_RECENT_DEFAULTS = { maxDisplayed: 15, collapsedDisplayed: 3 };
 const THEME_RECENT_DEFAULTS = { maxDisplayed: 20, collapsedDisplayed: 20 };
 
 const ART_ID = 'yt-character-art';
+/** Custom character images that failed to load this session; the card shows instead */
+const brokenArt = new Set();
 /** Character images at least this share of the art area's height fill it; smaller ones keep
  * their own size, so none is enlarged more than 1.25×. */
 const ART_FILL_RATIO = 0.8;
@@ -151,7 +155,7 @@ function isMoonlitEnabled() {
 /** Image for the open solo chat's character: a custom image if set, else the card. */
 function getCharacterImageUrl() {
     const override = getEffectiveOverrides(getSettings()).image || getCharacterImageOverride(getSettings());
-    return override || getCurrentAvatarUrl() || null;
+    return (override && !brokenArt.has(override) ? override : getCurrentAvatarUrl()) || null;
 }
 
 /** Puts the character image on the side opposite the chat when it is docked left or right. */
@@ -183,6 +187,13 @@ function updateCharacterArt() {
             art.classList.toggle('yt-art-fill', big);
         };
         img.addEventListener('load', fit);
+        img.addEventListener('error', () => {
+            const src = img.getAttribute('src');
+            if (src && src !== getCurrentAvatarUrl()) {
+                brokenArt.add(src);
+                updateCharacterArt();
+            }
+        });
         new ResizeObserver(() => img.complete && fit()).observe(art);
         art.append(img);
         document.body.append(art);
@@ -190,6 +201,29 @@ function updateCharacterArt() {
     const img = art.querySelector('img');
     if (img.getAttribute('src') !== url) {
         img.setAttribute('src', url);
+    }
+}
+
+/** SillyTavern's Custom CSS is written for its own look, so it stays switched off while the
+ * theme is on. theme-exclusive.js may be muting it too; whoever unmutes last restores the original. */
+function muteCustomCss(mute) {
+    const style = document.getElementById('custom-style');
+    if (!style) {
+        return;
+    }
+    const { dataset } = style;
+    if (mute) {
+        dataset.ytMedia ??= dataset.stThemeMedia ?? style.getAttribute('media') ?? '';
+        style.setAttribute('media', 'not all');
+    } else if (!mute && dataset.ytMedia !== undefined) {
+        if (dataset.stThemeMedia === undefined) {
+            if (dataset.ytMedia) {
+                style.setAttribute('media', dataset.ytMedia);
+            } else {
+                style.removeAttribute('media');
+            }
+        }
+        delete dataset.ytMedia;
     }
 }
 
@@ -238,6 +272,7 @@ function applySettings() {
     // last, so a custom font family wins over the font setting
     applyCustomize(settings);
     applyFavicon(settings.enabled);
+    muteCustomCss(settings.enabled);
     // while off, nothing of the theme stays in the page
     setMounted(settings.enabled);
 }
@@ -254,6 +289,7 @@ function syncSettingsUI() {
     $('#yt_flat_bg').prop('checked', settings.flatBackground);
     $('#yt_chat_position').val(settings.chatPosition);
     $('#yt_character_art').prop('checked', settings.characterArt);
+    $('#yt_auto_remove_bg').prop('checked', settings.autoRemoveBg);
     $('#yt_nav_position').val(settings.navPosition);
     $('#yt_nav_trigger').val(settings.navTrigger);
     $('#yt_nav_shortcut').val(settings.navShortcut);
@@ -282,6 +318,8 @@ function bindSettingsUI() {
     $('#yt_pause_user_theme').on('change', function () {
         update('pauseUserTheme', $(this).prop('checked'));
         exclusive.changed();
+        // unpausing the preset puts the Custom CSS back too; it stays off while the theme is on
+        muteCustomCss(getSettings().enabled);
     });
     $('#yt_accent').on('input', function () {
         update('accent', String($(this).val()));
@@ -309,6 +347,10 @@ function bindSettingsUI() {
     });
     $('#yt_character_art').on('change', function () {
         update('characterArt', $(this).prop('checked'));
+    });
+    $('#yt_auto_remove_bg').on('change', function () {
+        update('autoRemoveBg', $(this).prop('checked'));
+        refreshCharacterSettings();
     });
     $('#yt_tavern_home').on('change', function () {
         update('tavernHome', $(this).prop('checked'));
@@ -651,7 +693,14 @@ async function init() {
     }
 
     initSharpAvatars(() => getSettings().enabled);
-    initBackgroundRemoval({ getSettings, saveSettings });
+    initBackgroundRemoval({
+        getSettings,
+        saveSettings,
+        onAvailable: () => {
+            updateCharacterArt();
+            refreshCharacterSettings();
+        },
+    });
 
     refreshCharacterSettings = initCharacterSettings({ getSettings, onChange: applyAndSave });
     document.getElementById('yt_reset_all')?.addEventListener('click', resetAllSettings);
@@ -712,6 +761,28 @@ async function init() {
     // everything above added its controls to the page; while the theme is off they go back out
     setMountCallback(() => refreshSliderFills());
     setMounted(getSettings().enabled);
+}
+
+/**
+ * Manifest hook for install and update: SillyTavern keeps running the old code until the page
+ * reloads, so reload once if the theme is on. A second call within a minute (another update in the same batch)
+ * doesn't reload again.
+ */
+export function reloadForNewVersion() {
+    if (SillyTavern.getContext().extensionSettings[MODULE_NAME]?.enabled === false) {
+        return;
+    }
+    const key = 'yodayoTavernThemeReloadedAt';
+    try {
+        if (Date.now() - Number(sessionStorage.getItem(key)) < 60_000) {
+            return;
+        }
+        sessionStorage.setItem(key, String(Date.now()));
+    } catch {
+        // without sessionStorage there is no loop to guard against across reloads
+    }
+    toastr.info('Reloading to apply the new version…', TITLE);
+    setTimeout(() => location.reload(), 1500);
 }
 
 // Start while SillyTavern's loading screen is still up: it waits for APP_INITIALIZED
