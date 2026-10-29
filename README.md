@@ -124,7 +124,7 @@ The settings below are the most common ones:
 | Bubble opacity | How see-through chat bubbles and the message box are (default 80%). |
 | Tavern home page | Turns the welcome screen into a Yodayo-style character browser: recent chats, search, tag chips and a grid of character and group cards. An ST Assistant tab opens a chat with SillyTavern's assistant, and New group starts a group chat. |
 | Menu bar position | Put SillyTavern's menu bar on the left, right, top or bottom edge (desktop; phones keep SillyTavern's top bar). Menus open beside it. |
-| Show menu bar | Always; with the SillyTavern-logo menu button in the nearest corner; with a small arrow tab on its edge; or on hover at its edge (auto-hide). |
+| Show menu bar | Always; with the Moescape-logo menu button in the nearest corner; with a small arrow tab on its edge; or on hover at its edge (auto-hide). |
 | Menu bar shortcut | A key combination that shows or hides the menu bar, Alt+M by default. |
 | Menu bar on phones | Bottom (default) or top. |
 | Menu width | Each menu opens at a width that suits it (for example 440px for AI settings, 820px for User Settings). Drag an open menu's edge to resize it; each menu remembers its own width. Double-click the edge to reset. |

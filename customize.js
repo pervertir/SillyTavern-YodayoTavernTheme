@@ -43,7 +43,7 @@ const HIDEABLE = [
     ['mesNames', 'Messages: names', '#chat .mes .ch_name .name_text'],
     ['mesButtons', 'Messages: action buttons', '#chat .mes .mes_buttons'],
     ['swipeArrows', 'Messages: swipe arrows and counter', '#chat .swipe_left, #chat .swipeRightBlock'],
-    ['menuLogo', 'Menu bar: SillyTavern logo button', '#yt-rail-toggle'],
+    ['menuLogo', 'Menu bar: logo button', '#yt-rail-toggle'],
 ];
 
 const px = (min, max, step = 1) => ({ kind: 'number', unit: 'px', min, max, step });

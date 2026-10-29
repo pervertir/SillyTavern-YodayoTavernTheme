@@ -5,6 +5,7 @@ import { deleteCharacter } from '../../../../script.js';
 import { renderTemplateAsync } from '../../../templates.js';
 import { openWelcomeScreen } from '../../../welcome-screen.js';
 import { getCachedCutout } from './bgremove.js';
+import { LOGO_URL } from './brand.js';
 
 const HOME_ID = 'yt-home';
 const ACTIVE_CLASS = 'yt-home-active';
@@ -602,7 +603,8 @@ function getAssistantInfo(chat) {
         name: message.getAttribute('ch_name') ?? '',
         // SillyTavern's own rendered (and sanitized) greeting
         greeting: message.querySelector('.mes_text')?.innerHTML ?? '',
-        src: file ? `characters/${encodeURIComponent(file)}` : thumbnail,
+        // with no assistant chosen, SillyTavern's logo greets; Moescape's ghost does instead
+        src: file ? `characters/${encodeURIComponent(file)}` : (/(^|\/)img\/(five|logo)\.png$/.test(thumbnail) ? LOGO_URL : thumbnail),
     };
 }
 

@@ -16,6 +16,7 @@ import { initSettingsPopout } from './popout.js';
 import { placePagination } from './pagination.js';
 import { initSharpAvatars, sharpenAvatars } from './avatars.js';
 import { getCutout, initBackgroundRemoval, revalidateCutout } from './bgremove.js';
+import { applyFavicon, applySplashLogo, LOGO_URL } from './brand.js';
 import { applyBackgroundOverride, getEffectiveOverrides, initCharacterSettings } from './charsettings.js';
 
 const MODULE_NAME = 'yodayoTavernTheme';
@@ -240,6 +241,7 @@ function applySettings() {
     syncTavernHome();
     // last, so a custom font family wins over the font setting
     applyCustomize(settings);
+    applyFavicon(settings.enabled);
     // while off, nothing of the theme stays in the page
     setMounted(settings.enabled);
 }
@@ -412,7 +414,7 @@ function matchesShortcut(event, shortcut) {
     return event.key.toLowerCase() === key || code === key;
 }
 
-/** SillyTavern-logo button and arrow tab that open the bar; Escape or a click elsewhere closes it again. */
+/** Moescape-logo button and arrow tab that open the bar; Escape or a click elsewhere closes it again. */
 function initRailToggle() {
     const arrow = document.createElement('button');
     arrow.id = RAIL_ARROW_ID;
@@ -438,7 +440,7 @@ function initRailToggle() {
     button.type = 'button';
     button.title = 'Menu';
     const logo = document.createElement('img');
-    logo.src = 'img/logo.png';
+    logo.src = LOGO_URL;
     logo.alt = '';
     button.append(logo);
     button.setAttribute('aria-label', 'Menu');
@@ -749,5 +751,7 @@ async function init() {
 // Start while SillyTavern's loading screen is still up: it waits for APP_INITIALIZED
 // listeners before fading the screen out (APP_READY only fires after). Both events re-fire
 // for late listeners, so a theme enabled later still starts.
-const { eventSource: readySource, eventTypes: readyTypes } = SillyTavern.getContext();
+const { eventSource: readySource, eventTypes: readyTypes, extensionSettings: startSettings } = SillyTavern.getContext();
 readySource.once(readyTypes.APP_INITIALIZED, init);
+// the theme is on unless its settings say otherwise (it starts enabled)
+applySplashLogo(startSettings[MODULE_NAME]?.enabled ?? defaultSettings.enabled);
