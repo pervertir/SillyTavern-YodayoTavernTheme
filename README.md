@@ -145,8 +145,9 @@ The settings below are the most common ones:
 
 With the chat docked to one side, the character appears on the other. If you use
 Character Expressions, the expression sprite moves there. Otherwise the extension
-shows the character's card image. Group chats and Visual Novel mode keep their own
-layout, and on phones the chat always fills the screen.
+shows the character's card image. In a group chat every member stands there side by side:
+whoever spoke last is in front and a little bigger, and a member glows while writing a
+reply. On phones the chat always fills the screen.
 
 ### Chat styles and visual novel mode
 
@@ -208,6 +209,7 @@ remembered.
 - `mount.js`: takes everything the theme added out of the page while it is off, and puts it back
 - `theme-exclusive.js`: one theme at a time, shared unchanged with pervertir's other themes
 - `bgremove.js`: Remove background, through the Background Removal server plugin
+- `groupart.js`: the group chat lineup beside the chat
 - `colors.js`: chat colors (all characters or per character), character image and export/import
 - `util.js`: small helpers the other modules share
 - `style.css`: imports the theme modules in `css/` (tokens, navigation, controls, chat,

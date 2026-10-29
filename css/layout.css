@@ -80,9 +80,76 @@ body.yodayo-tavern #yt-character-art img {
     filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.5));
 }
 
-/* A visible expression sprite already shows the character, so the card image steps aside */
-body.yodayo-tavern:has(#expression-wrapper img.expression[src]:not([src=""])) #yt-character-art {
+/* A visible expression sprite already shows the character, so the card image steps aside.
+   A group lineup shows everyone, so there the single sprite steps aside instead. */
+body.yodayo-tavern:has(#expression-wrapper img.expression[src]:not([src=""])) #yt-character-art:not(.yt-art-group) {
     display: none;
+}
+
+body.yodayo-tavern:not(.waifuMode):has(#yt-character-art.yt-art-group) #expression-wrapper {
+    display: none;
+}
+
+/* Group chats: the members side by side, overlapping a little. The last speaker stands in
+   front, a little bigger; the others step back and dim. */
+body.yodayo-tavern #yt-character-art.yt-art-group {
+    padding: 0 16px;
+}
+
+body.yodayo-tavern #yt-character-art .yt-art-member {
+    /* neighbours overlap by a quarter of a member, and the row just fills the area */
+    --yt-member-width: calc(100% / (var(--yt-lineup-count, 1) * 0.75 + 0.25));
+    flex: 0 0 var(--yt-member-width);
+    min-width: 0;
+    height: 92%;
+    margin: 0 calc(var(--yt-member-width) * -0.125);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    transform: scale(0.88);
+    transform-origin: bottom center;
+    filter: brightness(0.6) saturate(0.75);
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.45s ease;
+}
+
+body.yodayo-tavern #yt-character-art .yt-art-member:first-child {
+    margin-left: 0;
+}
+
+body.yodayo-tavern #yt-character-art .yt-art-member:last-child {
+    margin-right: 0;
+}
+
+body.yodayo-tavern #yt-character-art .yt-art-member img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+body.yodayo-tavern #yt-character-art .yt-art-member.yt-art-speaker {
+    z-index: 1;
+    transform: scale(1.04);
+    filter: drop-shadow(0 0 22px color-mix(in srgb, var(--yt-accent) 45%, transparent));
+}
+
+/* a member writing a reply glows until it's done */
+body.yodayo-tavern #yt-character-art .yt-art-member.yt-art-replying {
+    animation: yt-art-replying 1.6s ease-in-out infinite;
+}
+
+@keyframes yt-art-replying {
+    50% {
+        filter: drop-shadow(0 0 36px color-mix(in srgb, var(--yt-accent) 75%, transparent));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.yodayo-tavern #yt-character-art .yt-art-member {
+        transition: none;
+    }
+
+    body.yodayo-tavern #yt-character-art .yt-art-member.yt-art-replying {
+        animation: none;
+    }
 }
 
 /* Mobile: keep bubbles readable on narrow screens */

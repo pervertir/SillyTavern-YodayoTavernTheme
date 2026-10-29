@@ -15,7 +15,8 @@ import { applyAdvanced, initAdvancedControls } from './advanced.js';
 import { initSettingsPopout } from './popout.js';
 import { placePagination } from './pagination.js';
 import { initSharpAvatars, sharpenAvatars } from './avatars.js';
-import { getCutout, initBackgroundRemoval, revalidateCutout } from './bgremove.js';
+import { getCutout, initBackgroundRemoval, isPluginAvailable, revalidateCutout } from './bgremove.js';
+import { getLineupMembers, initLineupEvents, renderLineup } from './groupart.js';
 import { applyFavicon, applySplashLogo, LOGO_URL } from './brand.js';
 import { applyBackgroundOverride, getEffectiveOverrides, initCharacterSettings } from './charsettings.js';
 import { BODY_CLASS, el, getCurrentAvatarUrl, MODULE_NAME, onActivate, TITLE } from './util.js';
@@ -158,47 +159,86 @@ function getCharacterImageUrl() {
     return (override && !brokenArt.has(override) ? override : getCurrentAvatarUrl()) || null;
 }
 
-/** Puts the character image on the side opposite the chat when it is docked left or right. */
-function updateCharacterArt() {
-    const settings = getSettings();
-    const docked = settings.chatPosition === 'left' || settings.chatPosition === 'right'
-        || document.body.classList.contains('waifuMode');
-    const source = settings.enabled && settings.characterArt && docked ? getCharacterImageUrl() : null;
-    // the cutout once it's ready; the original meanwhile
-    const url = source && getEffectiveOverrides(settings).removeBg
+/** The art area, made fresh when it switches between one character and a group lineup. */
+function getArtArea(lineup) {
+    let art = document.getElementById(ART_ID);
+    if (art && art.classList.contains('yt-art-group') !== lineup) {
+        art.remove();
+        art = null;
+    }
+    if (!art) {
+        art = el('div', lineup ? 'yt-art-group' : '');
+        art.id = ART_ID;
+        document.body.append(art);
+    }
+    return art;
+}
+
+/** The cutout of `source` when background removal is on for it and the cutout is ready, else `source`. */
+function withCutout(source, removeBg) {
+    return removeBg
         ? getCutout(source, () => {
             updateCharacterArt();
             refreshCharacterSettings();
         }) ?? source
         : source;
+}
 
-    let art = document.getElementById(ART_ID);
-    if (!url) {
-        art?.remove();
+/** Image for one member of a group chat: their custom image if set, else the card, cut out like a solo chat's. */
+function getMemberImageUrl(settings, avatar) {
+    const card = `characters/${encodeURIComponent(avatar)}`;
+    const custom = settings.characterThemes?.[avatar]?.image;
+    const source = custom && !brokenArt.has(custom) ? custom : card;
+    const chat = settings.chatThemes?.[SillyTavern.getContext().getCurrentChatId?.()];
+    const removeBg = chat?.removeBg ?? settings.characterThemes?.[avatar]?.removeBg
+        ?? (Boolean(settings.autoRemoveBg) && isPluginAvailable());
+    return withCutout(source, removeBg);
+}
+
+/** A custom or cutout image that won't load is skipped from now on. */
+function onArtError(src) {
+    if (src && !src.startsWith('characters/')) {
+        brokenArt.add(src);
+        updateCharacterArt();
+    }
+}
+
+/**
+ * Puts the character image on the side opposite the chat when it is docked left or right; in a
+ * group chat, every member side by side.
+ */
+function updateCharacterArt() {
+    const settings = getSettings();
+    const docked = settings.chatPosition === 'left' || settings.chatPosition === 'right'
+        || document.body.classList.contains('waifuMode');
+    const shown = settings.enabled && settings.characterArt && docked;
+
+    const members = shown ? getLineupMembers() : null;
+    if (members && members.length > 1) {
+        renderLineup(getArtArea(true), members, avatar => getMemberImageUrl(settings, avatar), onArtError);
         return;
     }
-    if (!art) {
-        art = el('div');
-        art.id = ART_ID;
-        const img = el('img');
+
+    const source = shown ? getCharacterImageUrl() : null;
+    if (!source) {
+        document.getElementById(ART_ID)?.remove();
+        return;
+    }
+    const url = withCutout(source, getEffectiveOverrides(settings).removeBg);
+    const art = getArtArea(false);
+    let img = art.querySelector('img');
+    if (!img) {
+        img = el('img');
         img.alt = '';
         const fit = () => {
             const big = img.naturalHeight >= art.clientHeight * ART_FILL_RATIO;
             art.classList.toggle('yt-art-fill', big);
         };
         img.addEventListener('load', fit);
-        img.addEventListener('error', () => {
-            const src = img.getAttribute('src');
-            if (src && src !== getCurrentAvatarUrl()) {
-                brokenArt.add(src);
-                updateCharacterArt();
-            }
-        });
+        img.addEventListener('error', () => onArtError(img.getAttribute('src')));
         new ResizeObserver(() => img.complete && fit()).observe(art);
         art.append(img);
-        document.body.append(art);
     }
-    const img = art.querySelector('img');
     if (img.getAttribute('src') !== url) {
         img.setAttribute('src', url);
     }
@@ -741,6 +781,7 @@ async function init() {
     initSwipeCounters();
     initVnMode({ getSettings, saveSettings, onModeChange: updateCharacterArt });
     initGroupCreate();
+    initLineupEvents(updateCharacterArt);
 
     const { eventSource, eventTypes } = SillyTavern.getContext();
     eventSource.on(eventTypes.CHAT_CHANGED, () => {
