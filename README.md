@@ -106,7 +106,11 @@ Open **Extensions → Yodayo Tavern Theme**. **Customize everything…** opens a
 you can change every part of the theme with a live preview at the top: Colors, Text, Shape,
 Spacing, Layout (show or hide individual parts), Messages, Chat background, Motion, and
 Advanced (your own CSS). Every change applies as you make it. Each section has its own reset,
-and the page has Reset all, Export and Import. The settings below are the most common ones:
+and the page has Reset all, Export and Import.
+
+![Customize page with its live preview](.github/customize.jpg)
+
+The settings below are the most common ones:
 
 ![Settings panel](.github/settings.jpg)
 
