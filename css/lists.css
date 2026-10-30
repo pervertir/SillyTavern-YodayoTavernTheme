@@ -78,6 +78,10 @@ body.yodayo-tavern:not(.charListGrid) #rm_print_characters_block .character_sele
 body.yodayo-tavern.charListGrid #rm_print_characters_block {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    /* each row as tall as its cards: the list has a fixed height and scrolls, and Firefox
+       squeezed auto rows into that height (cards clip their overflow, so they could shrink),
+       which piled every card onto the row below */
+    grid-auto-rows: max-content;
     gap: var(--yt-space-2);
     padding: var(--yt-space-2) 0;
 }
