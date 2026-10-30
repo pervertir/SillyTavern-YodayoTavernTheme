@@ -245,6 +245,21 @@ body.yodayo-tavern #chat .mes .mes_button:hover {
     background-color: var(--yt-surface-3);
 }
 
+/* SillyTavern shows some message buttons only when they apply (a checkpoint, a hidden message,
+   media, the extension turned on); the display set above would show them on every message */
+body.yodayo-tavern #chat .mes[bookmark_link=''] .mes_bookmark,
+body.yodayo-tavern #chat .mes:not([bookmark_link='']) .mes_create_bookmark,
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_hide,
+body.yodayo-tavern #chat .mes[is_system="false"] .mes_unhide,
+body.yodayo-tavern #chat .mes:not([data-media-display="gallery"]) .mes_media_gallery,
+body.yodayo-tavern #chat .mes:not([data-media-display="list"]) .mes_media_list,
+body.yodayo-tavern:not(.translate) #chat .mes .mes_translate,
+body.yodayo-tavern:not(.sd) #chat .mes .sd_message_gen,
+body.yodayo-tavern:not(.tts) #chat .mes .mes_narrate,
+body.yodayo-tavern #chat .mes[is_system="true"] .mes_narrate {
+    display: none;
+}
+
 body.yodayo-tavern #chat .mes .extraMesButtons {
     gap: 2px;
 }
