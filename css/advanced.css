@@ -159,7 +159,7 @@ body.yodayo-tavern:not(.yt-home-active)[data-yt-chat-fade="both"] #chat {
     mask-image: linear-gradient(to bottom, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
 }
 
-body.yodayo-tavern.yt-adv-modelIcon #chat .mes .icon-svg.timestamp-icon {
+body.yodayo-tavern.yt-adv-modelIcon:not(.documentstyle) #chat .mes .icon-svg.timestamp-icon {
     display: inline-block !important;
 }
 
@@ -168,12 +168,12 @@ body.yodayo-tavern.yt-adv-justify #chat .mes .mes_text {
     hyphens: auto;
 }
 
-body.yodayo-tavern.yt-adv-hideDetails #chat .mes :is(.mesIDDisplay, .mes_timer, .tokenCounterDisplay) {
+body.yodayo-tavern.yt-adv-hideDetails #chat .mes :is(.mesIDDisplay, .mes_timer, .tokenCounterDisplay, .timestamp) {
     opacity: 0;
     transition: opacity var(--yt-details-duration, 0.8s) var(--yt-ease);
 }
 
-body.yodayo-tavern.yt-adv-hideDetails #chat .mes:hover :is(.mesIDDisplay, .mes_timer, .tokenCounterDisplay) {
+body.yodayo-tavern.yt-adv-hideDetails #chat .mes:hover :is(.mesIDDisplay, .mes_timer, .tokenCounterDisplay, .timestamp) {
     opacity: 1;
 }
 

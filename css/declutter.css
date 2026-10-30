@@ -1,24 +1,10 @@
 /* Decluttering: controls stay out of sight until they're needed (hover, focus, or having
    something to show), and boxes that only add borders are dropped. See the plan doc. */
 
-/* Chat: swipe arrows and the counter show on hover or focus, and always on the last
-   message; with a single swipe (swipes.js marks it) the counter never shows */
-@media (hover: hover) {
-    body.yodayo-tavern #chat .mes:not(.last_mes) .swipe_left,
-    body.yodayo-tavern #chat .mes:not(.last_mes) .swipeRightBlock {
-        opacity: 0;
-        transition: opacity var(--yt-fast) var(--yt-ease);
-    }
-
-    body.yodayo-tavern #chat .mes:not(.last_mes):hover .swipe_left,
-    body.yodayo-tavern #chat .mes:not(.last_mes):hover .swipeRightBlock,
-    body.yodayo-tavern #chat .mes:not(.last_mes):focus-within .swipe_left,
-    body.yodayo-tavern #chat .mes:not(.last_mes):focus-within .swipeRightBlock {
-        opacity: 1;
-    }
-}
-
-body.yodayo-tavern #chat .mes.yt-single-swipe .swipes-counter {
+/* Chat: SillyTavern decides which messages show swipes (the last one, or every one with
+   "Swipes on all messages"). On the last message a lone "1/1" counter (swipes.js marks it)
+   stays hidden; with swipes on all messages every counter shows, as SillyTavern shows them. */
+body.yodayo-tavern:not(.swipeAllMessages) #chat .mes.yt-single-swipe .swipes-counter {
     visibility: hidden;
 }
 

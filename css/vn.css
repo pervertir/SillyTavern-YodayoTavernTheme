@@ -126,4 +126,17 @@ body.yodayo-tavern.yt-vn-resizing {
         left: 0;
         right: 0;
     }
+
+    /* the chat sits above the bottom menu bar, not behind it (SillyTavern pins it to the
+       bottom with !important on phones) */
+    body.yodayo-tavern.waifuMode:not(.yt-home-active) #sheld {
+        top: auto;
+        bottom: calc(var(--yt-m-bottom, 0px) + var(--yt-vn-gap)) !important;
+        height: var(--yt-vn-h);
+        max-height: none;
+    }
+
+    body.yodayo-tavern.waifuMode .yt-vn-handle {
+        bottom: calc(var(--yt-m-bottom, 0px) + var(--yt-vn-h) + var(--yt-vn-gap) - 7px);
+    }
 }

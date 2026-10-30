@@ -70,7 +70,7 @@ export const ADVANCED_GROUPS = Object.freeze([
             },
             { key: 'modelIcon', type: 'checkbox', label: 'Show the model icon on messages', def: false },
             { key: 'justify', type: 'checkbox', label: 'Justify message text', def: false },
-            { key: 'hideDetails', type: 'checkbox', label: 'Hide message details (ID, timer, tokens) until hover', def: false },
+            { key: 'hideDetails', type: 'checkbox', label: 'Hide message details (time, ID, timer, tokens) until hover', def: false },
             { key: 'detailsDuration', type: 'number', unit: 's', step: 0.1, min: 0, max: 3, label: 'Message details fade time', cssVar: '--yt-details-duration', def: 0.8 },
             { key: 'favSymbol', type: 'text', label: 'Favorite symbol', cssVar: '--yt-fav-symbol', def: '★', quoted: true },
             { key: 'favAnimation', type: 'checkbox', label: 'Animate the favorite symbol', def: true },
