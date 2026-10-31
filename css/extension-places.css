@@ -56,6 +56,26 @@ body.yodayo-tavern #gg-action-button-container {
     padding: 2px 4px;
 }
 
+/* It moves Quick Replies into this row: they scroll inside the room between its buttons */
+body.yodayo-tavern #gg-qr-container {
+    flex: 1 1 0;
+    min-width: 0;
+    margin-inline: 4px;
+    overflow: hidden;
+}
+
+body.yodayo-tavern #gg-qr-container > #qr--bar {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding-block: 0;
+}
+
+body.yodayo-tavern #gg-qr-container #qr--popoutTrigger {
+    background: var(--yt-glass-raised);
+}
+
 body.yodayo-tavern .gg-action-button,
 body.yodayo-tavern .gg-menu-button {
     box-sizing: border-box;
@@ -88,6 +108,33 @@ body.yodayo-tavern .gg-tools-menu {
 body.yodayo-tavern .gg-tools-menu > .interactable:hover,
 body.yodayo-tavern .gg-tools-menu .list-group-item:hover {
     background: var(--yt-accent-soft);
+    color: var(--yt-text);
+}
+
+/* Prompt Inspector adds its row twice */
+body.yodayo-tavern #inspectNextPromptButton ~ #inspectNextPromptButton {
+    display: none;
+}
+
+/* Notebook: opens at the top right, clear of the theme's title bar, until it is dragged */
+body.yodayo-tavern #notebookPanel {
+    left: auto;
+    right: 16px;
+    top: 72px;
+    width: min(420px, calc(100vw - 32px));
+    max-height: calc(100dvh - 160px);
+    background: var(--yt-glass-raised);
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern #notebookPanel .react-tabs__tab {
+    color: var(--yt-muted);
+    background: transparent;
+}
+
+body.yodayo-tavern #notebookPanel .react-tabs__tab--selected {
+    background: var(--yt-accent-soft);
+    border-color: var(--yt-line-strong);
     color: var(--yt-text);
 }
 
