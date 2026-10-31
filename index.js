@@ -3,6 +3,7 @@
 import { initTavernHome } from './home.js';
 import { applyPhoneNav } from './phone.js';
 import { applyCustomize, initCustomize, openCustomize } from './customize.js';
+import { registerExtensionSwitch } from './theme-extensions.js';
 import { registerTheme, reloadPage } from './theme-exclusive.js';
 import { setMountCallback, setMounted } from './mount.js';
 import { initGroupCreate } from './groups.js';
@@ -62,6 +63,9 @@ const defaultSettings = Object.freeze({
     /** Pause SillyTavern's Custom CSS and UI theme preset while on (theme-exclusive.js). Off:
      *  this theme builds on SillyTavern's chat styles and Visual Novel mode, which a preset sets. */
     pauseUserTheme: false,
+    /** Extensions picked to turn off with the theme, and the ones it has turned off */
+    switchExtensions: [],
+    switchedExtensions: [],
     /** Per-group overrides from the chat's cog: { [group id]: { colors, advanced, background, removeBg, members: { [avatar]: { image, removeBg, size } } } } */
     groupThemes: {},
     /** Per-chat overrides from the chat's cog: { [chat id]: { colors, advanced, background } } */
@@ -374,9 +378,13 @@ function bindSettingsUI() {
         // turning this theme on turns the other themes off
         if (on) {
             exclusive.activated();
+            extensionSwitch.sync();
             reloadWhenOn('Yodayo Tavern is on.');
         } else {
             exclusive.changed();
+            if (extensionSwitch.sync()) {
+                reloadPage(SillyTavern.getContext().translate('Extensions updated.'));
+            }
         }
     });
     $('#yt_pause_user_theme').on('change', function () {
@@ -737,6 +745,7 @@ async function init() {
     if (container) {
         const html = await renderExtensionTemplateAsync(EXTENSION_FOLDER, 'settings');
         $(container).append(html);
+        extensionSwitch.renderPicker(document.getElementById('yt_extension_switch'));
     } else {
         console.warn(`[${TITLE}] Extensions panel not found; the theme still applies, settings stay hidden.`);
     }
@@ -780,6 +789,9 @@ async function init() {
             getSettings().enabled = false;
             applyAndSave();
             syncSettingsUI();
+            if (extensionSwitch.sync()) {
+                reloadPage(SillyTavern.getContext().translate('Extensions updated.'));
+            }
         },
         pauseUserTheme: () => getSettings().pauseUserTheme,
     });
@@ -836,6 +848,13 @@ async function init() {
  * it's loaded into one that's already running. Called on a user's action only (installing,
  * turning on, updating), so it can't repeat by itself.
  */
+/** Extensions the person picked to turn off while the theme is on */
+const extensionSwitch = registerExtensionSwitch({
+    settings: getSettings,
+    isEnabled: () => !!getSettings().enabled,
+    reload: message => reloadPage(message),
+});
+
 function reloadWhenOn(message) {
     if (getSettings().enabled) {
         reloadPage(message, { stillWanted: () => getSettings().enabled });
