@@ -5,9 +5,13 @@ a character browser for a home page, frosted chat bubbles straight on your backg
 Yodayo-pink accent, Inter type, a menu bar on any edge with drawers as side sheets, and
 per-character looks.
 
-![Tavern home with the welcome assistant](.github/home.jpg)
+![Tavern home with the welcome assistant](.github/screenshots/home.webp)
+
+![home to chat](.github/screenshots/clip-home-to-chat.webp)
 
 Built and tested against **SillyTavern 1.19.0**.
+
+Every feature, with pictures: **[UI_SCREENSHOTS.md](UI_SCREENSHOTS.md)**.
 
 ## Features
 
@@ -22,7 +26,7 @@ normal. If the assistant has a cutout made with Remove background, the cutout is
 Recent chats sit above the characters as a row of circles. Rest the pointer on one for a
 second and it opens into a card with the chat's name, date, size and pin / rename / delete.
 
-![Recent chats hover card](.github/recent-chats.jpg)
+![Recent chats hover card](.github/screenshots/recent-chat-card.webp)
 
 ### Chat
 
@@ -33,7 +37,7 @@ full height when the picture is large enough.
 
 | Chat in the middle | Chat on the right |
 | --- | --- |
-| ![Chat in the middle](.github/chat.jpg) | ![Chat docked right with the character beside it](.github/chat-right.jpg) |
+| ![Chat in the middle](.github/screenshots/chat-middle.webp) | ![Chat docked right with the character beside it](.github/screenshots/chat-right.webp) |
 
 ### Looks per character and per chat
 
@@ -43,7 +47,7 @@ background effects, for this character or only this chat. In a group chat it set
 **This group** or **This group chat**, and picking a member gives them their own image,
 background removal and size. Every change applies as you type or drag.
 
-![Chat look editor](.github/look-editor.jpg)
+![Chat look editor](.github/screenshots/look-editor.webp)
 
 ### Menus
 
@@ -51,7 +55,7 @@ SillyTavern's menus open as frosted acrylic side sheets beside the menu bar, lik
 its width. The character list shows portrait cards in grid view, and every avatar is
 pre-scaled to its on-screen size so it stays sharp.
 
-![Character management menu](.github/characters.jpg)
+![Character management menu](.github/screenshots/menu-characters.webp)
 
 ### Phones
 
@@ -61,7 +65,7 @@ menu's icon highlighted. Menus rise from it as sheets. The Tavern window fits th
 
 | Home | Chat | Character menu |
 | --- | --- | --- |
-| ![Tavern home on a phone](.github/mobile-home.jpg) | ![Chat on a phone](.github/mobile-chat.jpg) | ![Character menu on a phone](.github/mobile-characters.jpg) |
+| ![Tavern home on a phone](.github/screenshots/phone-home.webp) | ![Chat on a phone](.github/screenshots/phone-chat.webp) | ![Character menu on a phone](.github/screenshots/phone-characters.webp) |
 
 Also: switch toggles, modern sliders and fields, popover menus, focus rings and readable
 contrast throughout; readable find-in-page highlights; and dragging an image already on the
@@ -111,11 +115,11 @@ Spacing, Layout (show or hide individual parts), Messages, Chat background, Moti
 Advanced (your own CSS). Every change applies as you make it. Each section has its own reset,
 and the page has Reset all, Export and Import.
 
-![Customize page with its live preview](.github/customize.jpg)
+![Customize page with its live preview](.github/screenshots/customize.webp)
 
 The settings below are the most common ones:
 
-![Settings panel](.github/settings.jpg)
+![Settings panel](.github/screenshots/settings-panel.webp)
 
 | Setting | What it does |
 | --- | --- |
