@@ -49,9 +49,15 @@ background removal and size. Every change applies as you type or drag.
 
 ![Chat look editor](.github/screenshots/look-editor.webp)
 
-### Nicknames per chat
+### Nicknames
 
-**Nicknames…** in the chat's cog (or `/nickname Name`) gives the people in the open chat, you included, another name in that chat only. Set one for this chat, this group or everywhere (`level=` on the command); the closest wins. Nicknames are also used in what's sent to the AI and in its replies on screen. Chats keep real names, so clearing a nickname puts them back everywhere.
+**Nicknames…** in the chat's cog (or `/nickname Name`) gives the people in the open chat, you included, another name. Set one for this chat, this group or everywhere (`level=` on the command); the closest wins. Nicknames show everywhere but the character editor, previews and tooltips included, and are used in what's sent to the AI. Chats keep real names, so clearing a nickname puts them back everywhere.
+
+### Light mode
+
+**Appearance** in the settings picks Dark, Light or Match system. On light, names and links use a darker shade of your accent so they stay readable.
+
+![Light mode](.github/screenshots/light-chat.webp)
 
 ### Menus
 
