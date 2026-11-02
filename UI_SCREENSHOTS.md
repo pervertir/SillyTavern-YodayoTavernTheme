@@ -36,6 +36,26 @@ The cog opens Theme for the character or this chat.
 
 ![look editor](.github/screenshots/look-editor.webp)
 
+## Nicknames
+
+Set one for this chat, this group or everywhere, for any character or for you; the closest wins. It shows everywhere but the character editor, and the AI gets it too. Chats keep real names, so clearing one puts them back.
+
+![nickname chat](.github/screenshots/nickname-chat.webp)
+
+![nickname editor](.github/screenshots/nickname-editor.webp)
+
+## Light mode
+
+Appearance: Dark, Light or Match system.
+
+![light home](.github/screenshots/light-home.webp)
+
+![light chat](.github/screenshots/light-chat.webp)
+
+![light menu](.github/screenshots/light-menu.webp)
+
+<img src=".github/screenshots/phone-light-chat.webp" width="260" alt="phone light chat">
+
 ## Accent color
 
 ![accent color](.github/screenshots/clip-accent-color.webp)
