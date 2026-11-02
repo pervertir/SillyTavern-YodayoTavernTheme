@@ -16,6 +16,8 @@ body.yodayo-tavern {
     --yt-warning: #fbbf24;
     --yt-accent: #f597e8;
     --yt-accent-ink: #1a1a1a;
+    /* the accent as text: light mode darkens it, as pink on white can't be read */
+    --yt-accent-text: var(--yt-accent);
     --yt-accent-soft: color-mix(in srgb, var(--yt-accent) 12%, transparent);
     --yt-accent-line: color-mix(in srgb, var(--yt-accent) 35%, transparent);
 
@@ -29,9 +31,9 @@ body.yodayo-tavern {
     --yt-glass-raised: rgb(44 46 48 / 0.78);
 
     /* Chat colors; the Colors section in the extension panel overrides these on <body> */
-    --yt-char-name: var(--yt-accent);
+    --yt-char-name: var(--yt-accent-text);
     --yt-char-text: var(--yt-text);
-    --yt-char-quote: var(--yt-accent);
+    --yt-char-quote: var(--yt-accent-text);
     --yt-char-em: var(--yt-muted);
     --yt-char-bubble: var(--yt-surface);
     --yt-user-name: var(--yt-text);
@@ -72,7 +74,7 @@ body.yodayo-tavern {
     --SmartThemeBodyColor: var(--yt-text);
     --SmartThemeEmColor: var(--yt-muted);
     --SmartThemeUnderlineColor: var(--yt-accent);
-    --SmartThemeQuoteColor: var(--yt-accent);
+    --SmartThemeQuoteColor: var(--yt-accent-text);
     --SmartThemeBlurTintColor: var(--yt-bg);
     --SmartThemeChatTintColor: var(--yt-bg);
     --SmartThemeUserMesBlurTintColor: var(--yt-accent-soft);
@@ -126,7 +128,7 @@ body.yodayo-tavern .text_muted {
 }
 
 body.yodayo-tavern a {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
     text-decoration-color: var(--yt-accent-line);
     text-underline-offset: 2px;
 }

@@ -115,5 +115,5 @@ body.yodayo-tavern #preloader {
 }
 
 body.yodayo-tavern #load-spinner {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }

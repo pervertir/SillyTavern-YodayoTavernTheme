@@ -68,7 +68,7 @@ body.yodayo-tavern #chat .mes[is_system="true"] .mes_text li {
 }
 
 body.yodayo-tavern #chat .mes[is_system="true"] .mes_text li::marker {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 body.yodayo-tavern #chat .mes[is_system="true"] .mes_text kbd,

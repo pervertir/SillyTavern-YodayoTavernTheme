@@ -109,7 +109,7 @@
 
     body.yodayo-tavern #top-settings-holder .drawer-icon.openIcon {
         background-color: var(--yt-accent-soft);
-        color: var(--yt-accent);
+        color: var(--yt-accent-text);
     }
 
     /* Menus: full-width sheets from the bar's edge, frosted like the Tavern window */
@@ -425,7 +425,7 @@
 
     body.yodayo-tavern.yt-m-assistant .yt-home-assistant-name {
         font-weight: 600;
-        color: var(--yt-accent);
+        color: var(--yt-accent-text);
         margin-bottom: 2px;
     }
 

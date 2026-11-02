@@ -32,7 +32,7 @@ body.yodayo-tavern .drawer-icon:hover {
 }
 
 body.yodayo-tavern .drawer-icon.openIcon {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
     background-color: var(--yt-accent-soft);
 }
 

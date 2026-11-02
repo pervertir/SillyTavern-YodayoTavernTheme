@@ -141,7 +141,7 @@ body.yodayo-tavern .yt-recent-arrow {
 
 body.yodayo-tavern .yt-recent-arrow:hover {
     background-color: var(--yt-surface-3);
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 body.yodayo-tavern .yt-recent-arrow[hidden] {
@@ -426,7 +426,7 @@ body.yodayo-tavern .yt-home-action {
     background: transparent;
     border: none;
     border-radius: var(--yt-radius);
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
     font: 600 14px var(--yt-font);
     cursor: pointer;
     transition: background-color var(--yt-fast) var(--yt-ease);
@@ -574,7 +574,7 @@ body.yodayo-tavern .yt-card-fav {
     justify-content: center;
     background-color: rgb(0 0 0 / 0.45);
     border-radius: 9999px;
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
     font-size: 11px;
 }
 
@@ -980,7 +980,7 @@ body.yodayo-tavern .yt-home-about-link i {
 
     body.yodayo-tavern .yt-home-assistant-name {
         font-weight: 600;
-        color: var(--yt-accent);
+        color: var(--yt-accent-text);
         margin-bottom: var(--yt-space-1);
     }
 

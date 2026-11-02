@@ -127,7 +127,7 @@ body.yodayo-tavern #chat .mes .extraMesButtons {
 
 body.yodayo-tavern #chat .mes .mes_button:hover,
 body.yodayo-tavern #chat .mes .extraMesButtonsHint:hover {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
     opacity: 1;
 }
 
@@ -149,7 +149,7 @@ body.yodayo-tavern #chat .swipes-counter {
 
 body.yodayo-tavern #chat .swipe_left:hover,
 body.yodayo-tavern #chat .swipe_right:hover {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
     background-color: var(--yt-panel-surface);
 }
 
@@ -174,7 +174,7 @@ body.yodayo-tavern #chat .mes_reasoning_details {
 /* Inline formatting */
 body.yodayo-tavern .mes_text q,
 body.yodayo-tavern .mes_text .quote {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 body.yodayo-tavern .mes_text em,
@@ -617,7 +617,7 @@ body.yodayo-tavern:not(:has(#chat .welcomePanel)) #yt-back-home {
 
 body.yodayo-tavern #yt-back-home:hover {
     background-color: var(--yt-surface-3);
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 /* keep the first message clear of the arrow */

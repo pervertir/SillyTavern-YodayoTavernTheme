@@ -64,7 +64,7 @@
 
 .yt-cz-pv-rail i:first-child {
     background: var(--yt-accent-soft);
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 .yt-cz-pv-window {

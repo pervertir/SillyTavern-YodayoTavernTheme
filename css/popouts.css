@@ -255,7 +255,7 @@ body.yodayo-tavern:not(:has(#chat .welcomePanel)) #yt-chat-settings-cog {
 
 body.yodayo-tavern #yt-chat-settings-cog:hover {
     background-color: var(--yt-surface-3);
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 /* Character image picker in the look editor */

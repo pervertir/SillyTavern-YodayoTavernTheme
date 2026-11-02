@@ -128,6 +128,7 @@ The settings below are the most common ones:
 | Setting | What it does |
 | --- | --- |
 | Enable theme | Turns the whole look on or off without uninstalling. Turning it on reloads the page once so it starts fresh. |
+| Appearance | Dark (the default), Light or Match system. |
 | Accent color | Recolors the send button, names, quotes and highlights. Reset returns to Yodayo pink. |
 | Your messages | Put your bubbles on the right (Yodayo style) or the left. |
 | Font | Inter (falls back to the system font), the system UI font, or SillyTavern's default. |

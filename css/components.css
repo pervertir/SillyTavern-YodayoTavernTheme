@@ -230,7 +230,7 @@ body.yodayo-tavern #tag_view_list .tag_as_folder.no_folder .tag_folder_indicator
 }
 
 body.yodayo-tavern #tag_view_list .tag_as_folder:not(.no_folder) {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 /* color pickers become pill swatches */

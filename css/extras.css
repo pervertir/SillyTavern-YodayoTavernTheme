@@ -179,7 +179,7 @@ body.yodayo-tavern #character_popup .editor_maximize {
 }
 
 body.yodayo-tavern #character_popup .editor_maximize:hover {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 /* creation form: the avatar picker is a rounded portrait with a ring on hover */
@@ -272,7 +272,7 @@ body.yodayo-tavern .mes_file_container {
 }
 
 body.yodayo-tavern .mes_file_icon {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 body.yodayo-tavern .mes_file_name {
@@ -289,7 +289,7 @@ body.yodayo-tavern .mes_file_size {
 
 /* checkpoint flag on messages that have one */
 body.yodayo-tavern .mes_bookmark {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 /* ---------- Zoomed avatar window ---------- */
@@ -345,7 +345,7 @@ body.yodayo-tavern :is(.hljs-comment, .hljs-quote) {
 }
 
 body.yodayo-tavern :is(.hljs-keyword, .hljs-selector-tag, .hljs-built_in, .hljs-doctag, .hljs-meta .hljs-keyword) {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 body.yodayo-tavern :is(.hljs-string, .hljs-regexp, .hljs-addition, .hljs-meta .hljs-string) {
@@ -396,7 +396,7 @@ body.yodayo-tavern .attachmentListItem.disabled {
 }
 
 body.yodayo-tavern .attachmentFileIcon {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 body.yodayo-tavern .attachmentListItemName {
@@ -475,7 +475,7 @@ body.yodayo-tavern .regex-script-label .drag-handle {
 }
 
 body.yodayo-tavern .regex-script-label .regex-toggle-on {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 body.yodayo-tavern .regex-script-label .menu_button {
@@ -565,7 +565,7 @@ body.yodayo-tavern .userRole {
     padding: 1px 10px;
     border-radius: 9999px;
     background-color: var(--yt-accent-soft);
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
     font-size: var(--yt-text-xs);
     font-weight: 600;
 }

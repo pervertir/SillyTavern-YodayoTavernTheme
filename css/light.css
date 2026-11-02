@@ -1,0 +1,92 @@
+/* Light mode: body.yt-light, from the Appearance setting. Nearly everything follows the tokens;
+   the rest are the few places that name a dark colour of their own. */
+
+body.yodayo-tavern.yt-light {
+    color-scheme: light;
+    --yt-bg: #f4f4f6;
+    --yt-surface: #ffffff;
+    --yt-surface-2: #f0f0f3;
+    --yt-surface-3: #e4e4e9;
+    --yt-line: rgba(30, 30, 40, 0.12);
+    --yt-line-strong: rgba(30, 30, 40, 0.22);
+    --yt-text: #1f2125;
+    --yt-muted: #5a5e66;
+    --yt-faint: #70747c;
+    --yt-danger: #c9302c;
+    --yt-success: #15803d;
+    --yt-warning: #a16207;
+    --yt-accent-text: color-mix(in srgb, var(--yt-accent) 50%, #000);
+    --yt-accent-soft: color-mix(in srgb, var(--yt-accent) 22%, transparent);
+    --yt-accent-line: color-mix(in srgb, var(--yt-accent) 60%, transparent);
+    --yt-panel-surface: rgb(255 255 255 / var(--yt-panel-alpha));
+    --yt-glass: rgb(255 255 255 / 0.78);
+    --yt-glass-raised: rgb(244 244 248 / 0.86);
+    --yt-rail-bg: rgb(255 255 255 / var(--yt-rail-alpha, 0.7));
+    --yt-user-bubble: color-mix(in srgb, var(--yt-accent) 26%, var(--yt-surface));
+    --yt-shadow-sm: 0 2px 8px rgba(20, 20, 40, 0.12);
+    --yt-shadow: 0 12px 32px rgba(20, 20, 40, 0.18);
+
+    /* SillyTavern's fixed palette assumes a dark UI, and extensions use it: white and black trade places */
+    --black30a: rgba(255, 255, 255, 0.3);
+    --black50a: rgba(255, 255, 255, 0.5);
+    --black60a: rgba(255, 255, 255, 0.6);
+    --black70a: rgba(255, 255, 255, 0.7);
+    --black90a: rgba(255, 255, 255, 0.9);
+    --black100: rgba(255, 255, 255, 1);
+    --white20a: rgba(0, 0, 0, 0.2);
+    --white30a: rgba(0, 0, 0, 0.3);
+    --white50a: rgba(0, 0, 0, 0.5);
+    --white60a: rgba(0, 0, 0, 0.6);
+    --white70a: rgba(0, 0, 0, 0.7);
+    --white100: rgba(0, 0, 0, 1);
+    --grey70: rgb(95, 95, 95);
+    --grey75: rgb(85, 85, 85);
+}
+
+/* No Blur: nearly solid, as in dark */
+body.yodayo-tavern.yt-light.no-blur {
+    --yt-glass: rgb(255 255 255 / 0.97);
+    --yt-glass-raised: rgb(244 244 248 / 0.98);
+}
+
+body.yodayo-tavern.yt-light #chat .mes_text a {
+    color: #1a56c4;
+}
+
+body.yodayo-tavern.yt-light #chat .mes_text pre code,
+body.yodayo-tavern.yt-light #chat .mes_text pre code.hljs {
+    background: none;
+    color: var(--yt-text);
+}
+
+body.yodayo-tavern.yt-light #chat .mes_text pre {
+    background: var(--yt-surface-2);
+}
+
+body.yodayo-tavern.yt-light #chat .mes_text pre :is(.hljs-keyword, .hljs-selector-tag, .hljs-literal) { color: #b3127a; }
+body.yodayo-tavern.yt-light #chat .mes_text pre :is(.hljs-string, .hljs-regexp, .hljs-addition) { color: #0b7a42; }
+body.yodayo-tavern.yt-light #chat .mes_text pre :is(.hljs-number, .hljs-attr, .hljs-attribute, .hljs-variable) { color: #0b5cad; }
+body.yodayo-tavern.yt-light #chat .mes_text pre :is(.hljs-title, .hljs-function, .hljs-section) { color: #6f42c1; }
+body.yodayo-tavern.yt-light #chat .mes_text pre :is(.hljs-comment, .hljs-quote) { color: #6a737d; }
+body.yodayo-tavern.yt-light #chat .mes_text pre :is(.hljs-built_in, .hljs-type) { color: #b35900; }
+
+body.yodayo-tavern.yt-light .yt-popout-button:hover {
+    background-color: rgba(0, 0, 0, 0.06);
+}
+
+@media screen and (max-width: 1000px) {
+    body.yodayo-tavern.yt-light.no-blur #left-nav-panel,
+    body.yodayo-tavern.yt-light.no-blur #right-nav-panel {
+        background-color: rgb(255 255 255 / 0.97) !important;
+    }
+
+    body.yodayo-tavern.yt-light .drawer-content,
+    body.yodayo-tavern.yt-light #top-settings-holder {
+        --yt-glass: rgb(255 255 255 / 0.96);
+    }
+}
+
+/* SillyTavern dims disabled parts by darkening them, which turns white fields grey */
+body.yodayo-tavern.yt-light .disabled {
+    filter: opacity(0.55);
+}

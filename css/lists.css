@@ -18,7 +18,7 @@ body.yodayo-tavern .bogus_folder_select:hover {
 
 body.yodayo-tavern .character_select.is_fav .ch_name,
 body.yodayo-tavern .group_select.is_fav .ch_name {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 /* Tags render as Yodayo-style chips */
@@ -371,7 +371,7 @@ body.yodayo-tavern :is(#rm_button_characters, #rm_button_back, #rm_button_back_f
 
 body.yodayo-tavern :is(#rm_button_characters, #rm_button_back, #rm_button_back_from_group):hover {
     background-color: var(--yt-surface-3);
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 body.yodayo-tavern #bg_back_to_folders {

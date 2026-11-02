@@ -34,6 +34,7 @@ const DEFAULT_ACCENT = '#f597e8';
 const defaultSettings = Object.freeze({
     enabled: true,
     accent: DEFAULT_ACCENT,
+    appearance: 'dark',
     userSide: 'right',
     font: 'inter',
     bubbleWidth: 720,
@@ -303,11 +304,18 @@ function muteCustomCss(mute) {
     }
 }
 
+const systemLight = window.matchMedia('(prefers-color-scheme: light)');
+
+function isLight(settings) {
+    return settings.appearance === 'light' || (settings.appearance === 'system' && systemLight.matches);
+}
+
 function applySettings() {
     const settings = getSettings();
     const body = document.body;
 
     body.classList.toggle(BODY_CLASS, settings.enabled);
+    body.classList.toggle('yt-light', settings.enabled && isLight(settings));
     body.classList.toggle('yt-user-left', settings.userSide === 'left');
     body.classList.toggle('yt-flat-bg', settings.flatBackground);
     body.classList.toggle('yt-pos-left', settings.chatPosition === 'left');
@@ -366,6 +374,7 @@ function syncSettingsUI() {
     $('#yt_enabled').prop('checked', settings.enabled);
     $('#yt_pause_user_theme').prop('checked', settings.pauseUserTheme);
     $('#yt_accent').val(settings.accent);
+    $('#yt_appearance').val(settings.appearance);
     $('#yt_user_side').val(settings.userSide);
     $('#yt_font').val(settings.font);
     $('#yt_bubble_width').val(settings.bubbleWidth);
@@ -417,6 +426,14 @@ function bindSettingsUI() {
     $('#yt_accent_reset').on('click', () => {
         update('accent', DEFAULT_ACCENT);
         syncSettingsUI();
+    });
+    $('#yt_appearance').on('change', function () {
+        update('appearance', String($(this).val()));
+    });
+    systemLight.addEventListener('change', () => {
+        if (getSettings().enabled && getSettings().appearance === 'system') {
+            applySettings();
+        }
     });
     $('#yt_user_side').on('change', function () {
         update('userSide', String($(this).val()));

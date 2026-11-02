@@ -110,7 +110,7 @@ body.yodayo-tavern #send_but:active {
 }
 
 body.yodayo-tavern #mes_stop {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 /* Burger (options) and wand (extensions) menus become popovers */

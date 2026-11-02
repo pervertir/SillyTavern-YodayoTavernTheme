@@ -108,7 +108,7 @@ body.yodayo-tavern.yt-adv-colorize .drawer-content h4,
 body.yodayo-tavern.yt-adv-colorize .drawer-content .inline-drawer-header b,
 body.yodayo-tavern.yt-adv-colorize .drawer-icon,
 body.yodayo-tavern.yt-adv-colorize .yt-home-divider {
-    color: var(--yt-accent);
+    color: var(--yt-accent-text);
 }
 
 body.yodayo-tavern.yt-adv-noRailAnimation #top-settings-holder,
