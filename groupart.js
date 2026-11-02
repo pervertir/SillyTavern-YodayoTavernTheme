@@ -72,8 +72,9 @@ function pickShown(members) {
  * @param {(avatar: string) => string} look.getUrl Image to show for a member
  * @param {(avatar: string) => number} look.getSize A member's height as a percentage of the usual
  * @param {(src: string) => void} look.onError Called with the src of an image that failed to load
+ * @param {() => void} look.onLoad Called when an image has loaded
  */
-export function renderLineup(art, members, { getUrl, getSize, onError }) {
+export function renderLineup(art, members, { getUrl, getSize, onError, onLoad }) {
     const shown = pickShown(members);
     const speaker = getSpeaker(members);
     const existing = new Map([...art.querySelectorAll('.yt-art-member')].map(node => [node.dataset.avatar, node]));
@@ -86,6 +87,7 @@ export function renderLineup(art, members, { getUrl, getSize, onError }) {
             img.alt = '';
             img.draggable = false;
             img.addEventListener('error', () => onError(img.getAttribute('src')));
+            img.addEventListener('load', onLoad);
             node.append(img);
         }
         const img = node.querySelector('img');

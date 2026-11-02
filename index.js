@@ -16,14 +16,14 @@ import { initSwipeCounters } from './swipes.js';
 import { applyAdvanced, initAdvancedControls } from './advanced.js';
 import { initSettingsPopout } from './popout.js';
 import { placePagination } from './pagination.js';
-import { initSharpAvatars, sharpenAvatars } from './avatars.js';
+import { initSharpAvatars, sharpenAvatars, sharpenEnlargedArt } from './avatars.js';
 import { initBackgroundThumbnails, restoreBackgroundThumbnails, sharpenBackgroundThumbnails } from './bgthumbs.js';
 import { getCutout, initBackgroundRemoval, revalidateCutout } from './bgremove.js';
 import { getLineupMembers, initLineupEvents, renderLineup } from './groupart.js';
 import { applyArtOffsets, initArtDrag } from './artdrag.js';
 import { applyFavicon, applySplashLogo, LOGO_URL } from './brand.js';
 import { applyBackgroundOverride, getEffectiveOverrides, getMemberOverrides, initCharacterSettings } from './charsettings.js';
-import { BODY_CLASS, el, getCurrentAvatarUrl, MODULE_NAME, onActivate, TITLE } from './util.js';
+import { BODY_CLASS, debounce, el, getCurrentAvatarUrl, MODULE_NAME, onActivate, TITLE } from './util.js';
 
 /** Folder path under scripts/extensions/, e.g. third-party/SillyTavern-YodayoTavernTheme */
 const EXTENSION_FOLDER = new URL('.', import.meta.url).pathname
@@ -75,6 +75,8 @@ const defaultSettings = Object.freeze({
     cutouts: {},
     /** Where characters were dragged beside the chat: { [chat id]: { [avatar]: [x, y] } }, shares of the art area */
     artOffsets: {},
+    /** Scale character images to the full screen height, even past their own size */
+    artFullHeight: false,
     /** Remove character image backgrounds without asking when the server plugin is installed */
     autoRemoveBg: true,
 });
@@ -212,6 +214,15 @@ function onArtError(src) {
     }
 }
 
+/** With full height on, images drawn larger than their files are sharpened; otherwise undone. */
+function sharpenArt() {
+    const settings = getSettings();
+    for (const img of document.querySelectorAll(`#${ART_ID} img`)) {
+        sharpenEnlargedArt(img, () => settings.enabled && settings.artFullHeight);
+    }
+}
+const sharpenArtSoon = debounce(sharpenArt, 250);
+
 /**
  * Puts the character image on the side opposite the chat when it is docked left or right; in a
  * group chat, every member side by side.
@@ -228,8 +239,10 @@ function updateCharacterArt() {
             getUrl: avatar => getMemberImageUrl(settings, avatar),
             getSize: avatar => getMemberOverrides(settings, avatar).size,
             onError: onArtError,
+            onLoad: sharpenArtSoon,
         });
         applyArtOffsets();
+        sharpenArt();
         return;
     }
 
@@ -248,6 +261,7 @@ function updateCharacterArt() {
         const fit = () => {
             const big = img.naturalHeight >= art.clientHeight * ART_FILL_RATIO;
             art.classList.toggle('yt-art-fill', big);
+            sharpenArtSoon();
         };
         img.addEventListener('load', fit);
         img.addEventListener('error', () => onArtError(img.getAttribute('src')));
@@ -263,6 +277,7 @@ function updateCharacterArt() {
         img.setAttribute('src', url);
     }
     applyArtOffsets();
+    sharpenArt();
 }
 
 /** SillyTavern's Custom CSS is written for its own look, so it stays switched off while the
@@ -297,6 +312,7 @@ function applySettings() {
     body.classList.toggle('yt-flat-bg', settings.flatBackground);
     body.classList.toggle('yt-pos-left', settings.chatPosition === 'left');
     body.classList.toggle('yt-pos-right', settings.chatPosition === 'right');
+    body.classList.toggle('yt-art-full', settings.artFullHeight);
     body.classList.add('yt-nav-rail');
     for (const position of NAV_POSITIONS) {
         body.classList.toggle(`yt-nav-${position}`, settings.navPosition === position);
@@ -357,6 +373,7 @@ function syncSettingsUI() {
     $('#yt_flat_bg').prop('checked', settings.flatBackground);
     $('#yt_chat_position').val(settings.chatPosition);
     $('#yt_character_art').prop('checked', settings.characterArt);
+    $('#yt_art_full_height').prop('checked', settings.artFullHeight);
     $('#yt_auto_remove_bg').prop('checked', settings.autoRemoveBg);
     $('#yt_nav_position').val(settings.navPosition);
     $('#yt_nav_trigger').val(settings.navTrigger);
@@ -420,6 +437,9 @@ function bindSettingsUI() {
     });
     $('#yt_character_art').on('change', function () {
         update('characterArt', $(this).prop('checked'));
+    });
+    $('#yt_art_full_height').on('change', function () {
+        update('artFullHeight', $(this).prop('checked'));
     });
     $('#yt_auto_remove_bg').on('change', function () {
         update('autoRemoveBg', $(this).prop('checked'));
@@ -822,6 +842,7 @@ async function init() {
     initGroupCreate();
     initLineupEvents(updateCharacterArt);
     initArtDrag({ getSettings, saveSettings });
+    window.addEventListener('resize', sharpenArtSoon);
 
     const { eventSource, eventTypes } = SillyTavern.getContext();
     eventSource.on(eventTypes.CHAT_CHANGED, () => {

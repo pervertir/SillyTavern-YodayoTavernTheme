@@ -126,6 +126,7 @@ const SECTIONS = [
         id: 'layout', title: 'Layout', note: 'Show or hide individual parts of the theme.', controls: [
             { type: 'setting', key: 'tavernHome', label: 'Tavern home page', kind: 'checkbox', def: true },
             { type: 'setting', key: 'characterArt', label: 'Character image beside a docked chat', kind: 'checkbox', def: true },
+            { type: 'setting', key: 'artFullHeight', label: 'Character images at full screen height', kind: 'checkbox', def: false },
             {
                 type: 'setting', key: 'chatPosition', label: 'Chat position', kind: 'select', def: 'middle',
                 options: [['left', 'Left'], ['middle', 'Middle'], ['right', 'Right']],

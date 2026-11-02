@@ -1,0 +1,54 @@
+/* "Full screen height": character images stand from the bottom of the window to the top, whatever
+   their own size. Height wins over width, so a wide image runs behind the chat (and can be dragged).
+   avatars.js sharpens an image this enlarges. Selectors repeat vn.css's so these win there too. */
+body.yodayo-tavern.yt-art-full #yt-character-art,
+body.yodayo-tavern.yt-art-full.waifuMode #yt-character-art,
+body.yodayo-tavern.yt-art-full.waifuMode.yt-pos-left #yt-character-art,
+body.yodayo-tavern.yt-art-full.waifuMode.yt-pos-right #yt-character-art {
+    top: 0;
+    bottom: 0;
+}
+
+body.yodayo-tavern.yt-art-full #yt-character-art img,
+body.yodayo-tavern.yt-art-full.waifuMode #yt-character-art img {
+    flex: none;
+    height: 100%;
+    width: auto;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+}
+
+/* group lineups: a member's size from the cog still scales it */
+body.yodayo-tavern.yt-art-full #yt-character-art .yt-art-member img,
+body.yodayo-tavern.yt-art-full.waifuMode #yt-character-art .yt-art-member img {
+    height: calc(100% * var(--yt-member-size, 1));
+    max-width: none;
+    max-height: none;
+}
+
+/* the speaker's usual extra size would cut off the top of the head */
+body.yodayo-tavern.yt-art-full #yt-character-art .yt-art-member.yt-art-speaker {
+    transform: translateX(-50%) scale(1);
+}
+
+/* expression sprites, when Character Expressions is on, take the same place */
+body.yodayo-tavern.yt-art-full #expression-wrapper .expression-holder,
+body.yodayo-tavern.yt-art-full #visual-novel-wrapper .expression-holder,
+body.yodayo-tavern.yt-art-full.waifuMode #expression-wrapper .expression-holder,
+body.yodayo-tavern.yt-art-full.waifuMode #visual-novel-wrapper .expression-holder {
+    top: 0;
+    bottom: 0;
+    height: 100dvh;
+    max-height: none;
+}
+
+body.yodayo-tavern.yt-art-full img.expression,
+body.yodayo-tavern.yt-art-full.waifuMode img.expression {
+    flex: none;
+    height: 100dvh;
+    width: auto;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+}

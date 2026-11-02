@@ -148,6 +148,7 @@ The settings below are the most common ones:
 | Export / Import | Save all theme settings, including per-character colors, to a JSON file and load them back. |
 | Chat position | Dock the chat window on the left, in the middle, or on the right. Also available from the round arrow button just left of the message box. |
 | Show character image | With the chat on the left or right, shows the character's image on the free side, at full height when the image is large enough. |
+| Scale character images to full height | Stands every character image from the bottom of the window to the top, enlarging and sharpening small ones (very small images still look soft). Wide images run behind the chat and can be dragged. Off by default. |
 | Hide chat background image | Hides your background for a flat Yodayo look. |
 
 ### Chat position

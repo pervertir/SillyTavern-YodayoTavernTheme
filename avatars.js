@@ -17,6 +17,8 @@ const CHAT_AVATARS = '#chat .mes .avatar img, #chat .recentChat .avatar img';
 const PANEL_AVATARS = '#right-nav-panel .avatar img, #avatar_load_preview, #PersonaManagement .avatar img';
 /** Shown at up to this much over its own size, a picture still looks sharp enough */
 const MAX_UPSCALE = 1.15;
+/** How strongly enlarged character art is sharpened */
+const UNSHARP_AMOUNT = 0.5;
 
 /** The full-size image behind a SillyTavern thumbnail URL, or null */
 function fullSizeUrl(src) {
@@ -70,6 +72,72 @@ export async function prescale(src, width, height, position) {
     context.drawImage(source, sx, sy, sw, sh, 0, 0, width, height);
     const blob = await canvas.convertToBlob({ type: 'image/png' });
     return URL.createObjectURL(blob);
+}
+
+/**
+ * `src` enlarged to width × height device pixels with high-quality smoothing, then a gentle
+ * unsharp mask as wide as the enlargement, since a browser's own enlarging looks softer. Enlarging
+ * can't add detail. Fails on an image from another site, whose pixels can't be read.
+ */
+async function enlarge(src, width, height) {
+    const image = await loadImage(src);
+    const canvas = new OffscreenCanvas(width, height);
+    const context = canvas.getContext('2d');
+    context.imageSmoothingQuality = 'high';
+    context.drawImage(image, 0, 0, width, height);
+
+    const radius = Math.max(2, height / image.naturalHeight);
+    const small = new OffscreenCanvas(Math.max(1, Math.round(width / radius)), Math.max(1, Math.round(height / radius)));
+    const smallContext = small.getContext('2d');
+    smallContext.imageSmoothingQuality = 'high';
+    smallContext.drawImage(canvas, 0, 0, small.width, small.height);
+    const blur = new OffscreenCanvas(width, height);
+    const blurContext = blur.getContext('2d');
+    blurContext.imageSmoothingQuality = 'high';
+    blurContext.drawImage(small, 0, 0, width, height);
+
+    const pixels = context.getImageData(0, 0, width, height);
+    const blurred = blurContext.getImageData(0, 0, width, height).data;
+    const { data } = pixels;
+    for (let i = 0; i < data.length; i += 4) {
+        data[i] += (data[i] - blurred[i]) * UNSHARP_AMOUNT;
+        data[i + 1] += (data[i + 1] - blurred[i + 1]) * UNSHARP_AMOUNT;
+        data[i + 2] += (data[i + 2] - blurred[i + 2]) * UNSHARP_AMOUNT;
+    }
+    context.putImageData(pixels, 0, 0);
+    const blob = await canvas.convertToBlob({ type: 'image/webp', quality: 0.95 });
+    return URL.createObjectURL(blob);
+}
+
+/**
+ * Character art drawn larger than its file. Shown through CSS `content`, like the avatars, so the
+ * img's src stays the file. With `wanted` false, or at a size that still looks sharp, it's undone.
+ * @param {HTMLImageElement} img
+ * @param {() => boolean} wanted
+ */
+export async function sharpenEnlargedArt(img, wanted) {
+    const src = img.getAttribute('src');
+    const ratio = window.devicePixelRatio || 1;
+    const width = Math.round(img.clientWidth * ratio);
+    const height = Math.round(img.clientHeight * ratio);
+    if (!wanted() || !src || !img.complete || !height || height <= img.naturalHeight * MAX_UPSCALE) {
+        img.style.removeProperty('content');
+        delete img.dataset.ytSharp;
+        return;
+    }
+    const key = `${src}|${width}x${height}|enlarged`;
+    if (img.dataset.ytSharp === key) {
+        return;
+    }
+    if (!cache.has(key)) {
+        cache.set(key, enlarge(src, width, height).catch(() => null));
+        trimCache();
+    }
+    const url = await cache.get(key);
+    if (url && img.getAttribute('src') === src && wanted()) {
+        img.style.setProperty('content', `url("${url}")`);
+        img.dataset.ytSharp = key;
+    }
 }
 
 /** @param {HTMLImageElement} img */
