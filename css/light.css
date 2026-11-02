@@ -88,5 +88,5 @@ body.yodayo-tavern.yt-light .yt-popout-button:hover {
 
 /* SillyTavern dims disabled parts by darkening them, which turns white fields grey */
 body.yodayo-tavern.yt-light .disabled {
-    filter: opacity(0.55);
+    filter: opacity(0.55) !important;
 }
