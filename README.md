@@ -51,7 +51,7 @@ background removal and size. Every change applies as you type or drag.
 
 ### Nicknames per chat
 
-**Nicknames…** in the chat's cog (or `/nickname Name`) gives the people in the open chat, you included, another name in that chat only. The AI still gets their real names.
+**Nicknames…** in the chat's cog (or `/nickname Name`) gives the people in the open chat, you included, another name in that chat only. Set one for this chat, this group or everywhere (`level=` on the command); the closest wins. Nicknames are also used in what's sent to the AI, and real names in its replies are saved as nicknames.
 
 ### Menus
 
