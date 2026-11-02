@@ -5,6 +5,7 @@
 // In a group chat the two levels are the group and the group chat, and each can also set
 // the image, background removal and size of every member.
 
+import { openNicknames } from './chat-nicknames.js';
 import { COLOR_FIELDS } from './colors.js';
 import { ADVANCED_GROUPS } from './advanced.js';
 import { getCachedCutout, isCutoutPending, isPluginAvailable } from './bgremove.js';
@@ -215,6 +216,10 @@ export function initCharacterSettings({ getSettings, onChange }) {
         bar.append(title, close);
 
         const body = el('div', 'yt-window-body');
+
+        const nicknames = el('div', 'menu_button', 'Nicknames…');
+        nicknames.addEventListener('click', () => openNicknames());
+        body.append(nicknames);
 
         // scope switch
         const scopes = el('div', 'yt-scope-switch');

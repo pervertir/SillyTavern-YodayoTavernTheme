@@ -49,6 +49,10 @@ background removal and size. Every change applies as you type or drag.
 
 ![Chat look editor](.github/screenshots/look-editor.webp)
 
+### Nicknames per chat
+
+**Nicknames…** in the chat's cog (or `/nickname Name`) gives the people in the open chat, you included, another name in that chat only. The AI still gets their real names.
+
 ### Menus
 
 SillyTavern's menus open as frosted acrylic side sheets beside the menu bar, like the Tavern window, and each one remembers

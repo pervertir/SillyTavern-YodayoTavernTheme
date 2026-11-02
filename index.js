@@ -1,5 +1,6 @@
 // Yodayo Tavern Theme: toggles the scoped styles in style.css and exposes a small settings panel.
 
+import { registerNicknames } from './chat-nicknames.js';
 import { initTavernHome } from './home.js';
 import { applyPhoneNav } from './phone.js';
 import { applyCustomize, initCustomize, openCustomize } from './customize.js';
@@ -778,6 +779,7 @@ async function init() {
 
     refreshCharacterSettings = initCharacterSettings({ getSettings, onChange: applyAndSave });
     document.getElementById('yt_reset_all')?.addEventListener('click', resetAllSettings);
+    registerNicknames({ isOn: () => document.body.classList.contains('yodayo-tavern') });
     exclusive = registerTheme({
         id: 'yodayo',
         name: 'Yodayo Tavern',
