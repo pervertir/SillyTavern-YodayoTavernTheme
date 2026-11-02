@@ -109,7 +109,8 @@ function getLastChatLabel(character) {
 function openRightPanel() {
     const panel = document.getElementById('right-nav-panel');
     if (panel && !panel.classList.contains('openDrawer')) {
-        document.querySelector('#rightNavHolder .drawer-toggle')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        // straight to SillyTavern's handler: Character Library catches clicks on this button for its own menu
+        $('#rightNavHolder > .drawer-toggle').triggerHandler('click');
     }
 }
 
