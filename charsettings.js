@@ -5,7 +5,7 @@
 // In a group chat the two levels are the group and the group chat, and each can also set
 // the image, background removal and size of every member.
 
-import { openNicknames } from './chat-nicknames.js';
+import { openNicknames } from './lib/chat-nicknames.js';
 import { COLOR_FIELDS } from './colors.js';
 import { ADVANCED_GROUPS } from './advanced.js';
 import { getCachedCutout, isCutoutPending, isPluginAvailable } from './bgremove.js';

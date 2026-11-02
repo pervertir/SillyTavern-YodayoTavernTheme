@@ -1,11 +1,11 @@
 // Yodayo Tavern Theme: toggles the scoped styles in style.css and exposes a small settings panel.
 
-import { registerNicknames } from './chat-nicknames.js';
+import { registerNicknames } from './lib/chat-nicknames.js';
 import { initTavernHome } from './home.js';
 import { applyPhoneNav } from './phone.js';
 import { applyCustomize, initCustomize, openCustomize } from './customize.js';
-import { registerExtensionSwitch } from './theme-extensions.js';
-import { registerTheme, reloadPage } from './theme-exclusive.js';
+import { registerExtensionSwitch } from './lib/theme-extensions.js';
+import { registerTheme, reloadPage } from './lib/theme-exclusive.js';
 import { setMountCallback, setMounted } from './mount.js';
 import { initGroupCreate } from './groups.js';
 import { applyColors, getCharacterImageOverride, initBackupControls, initColorControls } from './colors.js';
